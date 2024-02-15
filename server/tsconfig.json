@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "typeRoots": ["types/env.d.ts", "node_modules/@types"],
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "useUnknownInCatchVariables": false,
+    "paths": {
+      "@routes/*": ["./routes/*"],
+      "@controllers/*": ["./controllers/*"],
+      "@models/*": ["./models/*"],
+      "@validation/*": ["./validation/*"],
+      "@utils/*": ["./utils/*"],
+      "@config/*": ["./config/*"],
+      "@middlewares/*": ["./middlewares/*"],
+      "@types/*": ["./types/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
