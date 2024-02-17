@@ -1,16 +1,14 @@
-import mv from 'mv';
-import path from 'path';
 import { Response } from 'express';
-import crypto from 'crypto';
 import { formidable } from 'formidable';
 import { UserType, User } from '@models/User';
 import catchAsync from '@utils/catchAsync';
 import ErrorResponse from '@utils/errorResponse';
 import Email from '@utils/email';
 import { isAuthenticated } from '@middlewares/auth';
-import { bytesToMB } from '@utils/functions';
+import * as functions from '@utils/functions';
 import { zParse } from '@validation/index';
 import * as authValidation from '@validation/auth';
+import { Confirmation } from '@models/Confirmations';
 
 /**
  * @route POST /api/auth/login
@@ -19,25 +17,26 @@ import * as authValidation from '@validation/auth';
  */
 export const login = catchAsync(async (req, res, next) => {
   const { body } = await zParse(authValidation.login, req);
-  const { email, password, fcmToken } = body;
+  const { identifier, password, fcmToken } = body;
 
-  // Validate email & password
-  if (!email || !password) {
-    return next(new ErrorResponse('Please provide an email and password', 400));
-  }
-
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({
+    $or: [
+      { email: identifier },
+      { username: identifier },
+      { phone: identifier }
+    ]
+  }).select('+password');
 
   // User Not Found In DB
   if (!user) {
-    return next(new ErrorResponse('Invalid Email Or Password', 401));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   const isPasswordMatched = await user.matchPassword(password);
 
   // Wrong Password
   if (!isPasswordMatched) {
-    return next(new ErrorResponse('Invalid Email Or Password', 401));
+    return next(new ErrorResponse('Invalid credentials', 401));
   }
 
   await User.findByIdAndUpdate(user.id, { fcmToken });
@@ -49,29 +48,123 @@ export const login = catchAsync(async (req, res, next) => {
  * @desc let the user register
  * @secure false
  */
-export const register = catchAsync(async (req, res) => {
-  const { body } = await zParse(authValidation.register, req);
+export const register = catchAsync(async (req, res, next) => {
+  const form = formidable();
+  const [fields, files] = await form.parse(req);
+  const customFields = {};
+
+  for (const [key, value] of Object.entries(fields)) {
+    customFields[key] = value?.at(0) ?? null;
+  }
 
   const {
     name,
-    avatar = 'default-avatar.jpg',
+    username,
+    birthday,
     email,
     password,
-    phone,
+    confirmationCode,
     fcmToken
-  } = body;
+  } = await zParse(authValidation.register, customFields);
+
+  const confirmation = await Confirmation.findOne({
+    email,
+    code: confirmationCode
+  });
+
+  if (!confirmation) {
+    return next(new ErrorResponse('Cannot sign up without verification', 401));
+  }
+
+  const avatarFile = files.avatar?.at(0);
+  const filename = `${username.replace(' ', '-')}.jpg`;
+
+  if (avatarFile === undefined) {
+    return next(new ErrorResponse('No avatar uploaded', 404));
+  }
+
+  await functions.moveFromTemp(avatarFile, filename);
 
   const user = await User.create({
     name,
-    avatar,
+    username,
+    avatar: filename,
+    birthday,
     email,
-    phone,
-    fcmToken,
-    password
+    password,
+    fcmToken
   });
 
-  await new Email(user, {}).sendWelcome();
+  await Confirmation.deleteOne({
+    email,
+    code: confirmationCode
+  });
+
+  await new Email(name, email, {}).sendWelcome();
   sendTokenResponse(user, 200, res);
+});
+
+/**
+ * @route POST /api/auth/valid-username
+ * @desc Check whether the following username is valid
+ * @secure false
+ */
+export const verifyValidUsername = catchAsync(async (req, res) => {
+  const { body } = await zParse(authValidation.verifyValidUsername, req);
+  const { username } = body;
+  const user = await User.findOne({ username });
+
+  if (user) {
+    res.status(400).json({ success: false, message: 'Username already taken' });
+  } else {
+    res.status(200).json({ success: true, message: 'Username exists' });
+  }
+});
+
+/**
+ * @route POST /api/auth/send-confirmation
+ * @desc sends confirmation code to the user entered email address
+ * @secure false
+ */
+export const sendConfirmationCode = catchAsync(async (req, res) => {
+  const { body } = await zParse(authValidation.sendConfirmationCode, req);
+  const { email } = body;
+  const otp = functions.generateSixDigitRandomNumber().toString();
+
+  const confirmation = await Confirmation.findOne({ email });
+
+  if (confirmation != null) {
+    await Confirmation.updateOne({ email }, { email, code: otp });
+  } else {
+    await Confirmation.create({ code: otp, email });
+  }
+
+  await new Email(email, email, { otp }).sendConfirmationCode();
+
+  res.status(200).json({
+    success: true,
+    message: 'Confirmation code sent sucessfully'
+  });
+});
+
+/**
+ * @route POST /api/auth/verify-confirmation
+ * @desc verify the confirmation code sent to the user
+ * @secure false
+ */
+export const verifyConfirmationCode = catchAsync(async (req, res, next) => {
+  const { body } = await zParse(authValidation.verifyConfirmationCode, req);
+  const { email, code } = body;
+  const confirmation = await Confirmation.findOne({ email, code });
+
+  if (!confirmation) {
+    return next(new ErrorResponse('Invalid code entered or expired', 401));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Confirmation code verified sucessfully'
+  });
 });
 
 /**
@@ -170,51 +263,25 @@ export const updateAvatar = catchAsync(async (req, res, next) => {
   const user = req.user;
   const filename = `${user.name.replace(' ', '-')}.jpg`;
 
-  // Move The File From Temp To Avatar Dir
-  const moveFromTemp = async file => {
-    try {
-      const dest = path.join(__dirname, '../public/avatar', filename);
-      mv(file.avatar[0].filepath, dest, { mkdirp: true }, err => {
-        console.error(err);
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
+  const [, files] = await form.parse(req);
+  const avatar = files.avatar?.at(0);
 
-  // Parse form
-  form.parse(req, async (err, fields, file) => {
-    const avatar = file.avatar?.at(0);
+  if (avatar === undefined) {
+    return next(new ErrorResponse('No avatar uploaded', 404));
+  }
 
-    if (avatar === undefined) {
-      return next(new ErrorResponse('No avatar uploaded', 404));
-    }
+  await functions.moveFromTemp(avatar, filename);
+  const fieldsToUpdate = { avatar: filename };
 
-    const size = bytesToMB(avatar.size);
+  // Update user in DB
+  await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
+    new: true,
+    runValidators: true
+  });
 
-    if (size > 3) {
-      return next(
-        new ErrorResponse('File size cannot be greater than 3 MB', 401)
-      );
-    }
-
-    if (err) {
-      return next(err);
-    }
-
-    moveFromTemp(file);
-    const fieldsToUpdate = { avatar: filename };
-
-    // Update user in DB
-    await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true
-    });
-
-    res.status(200).json({
-      success: true,
-      message: 'Profile Photo Updated Sucessfully'
-    });
+  res.status(200).json({
+    success: true,
+    message: 'Profile Photo Updated Sucessfully'
   });
 });
 
@@ -235,7 +302,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
   }
 
   const token = user.getResetPasswordToken();
-  await new Email(user, { otp: token }).sendPasswordReset();
+  await new Email(user.name, user.email, { otp: token }).sendPasswordReset();
 
   try {
     res.status(200).json({
@@ -253,22 +320,41 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 });
 
 /**
+ * @route POST /api/auth/verify-forgot-password
+ * @desc verify the confirmation code sent to the user for password reset
+ * @secure false
+ */
+export const verifyForgotPasswordCode = catchAsync(async (req, res, next) => {
+  const { body } = await zParse(authValidation.verifyForgotPasswordCode, req);
+  const { email, code } = body;
+
+  const user = await User.findOne({
+    email,
+    resetPasswordToken: code,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid code entered or expired', 401));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Confirmation code verified sucessfully'
+  });
+});
+
+/**
  * @route POST /api/auth/reset-password/
  * @desc Resets a user's password when requested with right reset token
  * @secure false
  */
 export const resetPassword = catchAsync(async (req, res, next) => {
   const { body } = await zParse(authValidation.resetPassword, req);
-  const { token, password } = body;
+  const { code, password } = body;
 
-  const resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(token)
-    .digest('hex');
-
-  // Find The Hashed version
   const user = await User.findOne({
-    resetPasswordToken,
+    resetPasswordToken: code,
     resetPasswordExpire: { $gt: Date.now() }
   });
 

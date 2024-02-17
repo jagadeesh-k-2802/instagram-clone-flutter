@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -48,7 +47,6 @@ const schema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
     },
     phone: {
       type: String,
-      required: [true, 'Please add an Phone Number'],
       unique: true
     },
     password: {
@@ -56,11 +54,6 @@ const schema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
       required: [true, 'Please add a Password'],
       minlength: 6,
       select: false
-    },
-    address: {
-      type: String,
-      maxlength: 120,
-      default: ''
     },
     fcmToken: {
       type: String
@@ -106,13 +99,7 @@ schema.method('matchPassword', async function (enteredPassword: string) {
 // Generate and hash password token
 schema.method('getResetPasswordToken', function (): string {
   const resetToken = generateSixDigitRandomNumber().toString();
-
-  // Hash token and set to resetPasswordToken field
-  this.resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-
+  this.resetPasswordToken = resetToken
   // Set expire for 10 mins
   this.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
   return resetToken;
@@ -120,4 +107,5 @@ schema.method('getResetPasswordToken', function (): string {
 
 const User = mongoose.model<IUser, UserModel>('User', schema);
 type UserType = mongoose.HydratedDocument<IUser, IUserMethods>;
+
 export { UserType, User };

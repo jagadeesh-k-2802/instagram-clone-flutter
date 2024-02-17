@@ -1,9 +1,8 @@
-import { Request } from 'express';
 import { z, AnyZodObject } from 'zod';
 
 export async function zParse<T extends AnyZodObject>(
   schema: T,
-  req: Request
+  object: object
 ): Promise<z.infer<T>> {
-  return schema.parseAsync(req);
+  return schema.parseAsync(object);
 }

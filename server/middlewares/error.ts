@@ -15,8 +15,8 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       includePath: false,
       issueSeparator: '\n',
       maxIssuesInMessage: 3,
-      prefix: 'Error',
-      prefixSeparator: ': '
+      prefix: '',
+      prefixSeparator: ''
     });
 
     error = new ErrorResponse(validationError.toString(), 400);

@@ -35,6 +35,23 @@ ThemeData instagramAppTheme = ThemeData(
       ),
     ),
   ),
+  inputDecorationTheme: const InputDecorationTheme(
+    contentPadding: EdgeInsets.all(15.0),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(
+        width: 1,
+        color: lightGrayColor,
+      ),
+    ),
+    filled: true,
+    fillColor: lightGrayColor,
+  ),
+  datePickerTheme: const DatePickerThemeData(
+    backgroundColor: lightGrayColor,
+    headerBackgroundColor: lightGrayColor,
+    headerForegroundColor: Colors.black54,
+    surfaceTintColor: lightGrayColor,
+  ),
 );
 
 // Buttons

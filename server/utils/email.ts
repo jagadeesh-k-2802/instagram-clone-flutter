@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import { htmlToText } from 'html-to-text';
-import { UserType } from '@models/User';
 
 class Email {
   name: string;
@@ -9,11 +8,11 @@ class Email {
   data: Record<string, string>;
   from: string;
 
-  constructor(user: UserType, data: Record<string, string>) {
-    this.name = user.name;
-    this.to = user.email;
+  constructor(name: string, email: string, data: Record<string, string>) {
+    this.name = name;
+    this.to = email;
     this.data = data;
-    this.from = `Blood Donation <noreply@blood-donation.com>`;
+    this.from = `Instagram Clone <noreply@instagram-clone.com>`;
   }
 
   _newTransport() {
@@ -40,7 +39,7 @@ class Email {
   }
 
   // Send the actual email
-  async _send(template, subject) {
+  async _send(template: string, subject: string) {
     const path = `${__dirname}/../templates/${template}.ejs`;
     const data = { name: this.name, ...this.data };
     const html = await ejs.renderFile(path, data);
@@ -58,11 +57,15 @@ class Email {
 
   // Methods to send different mails
   async sendWelcome() {
-    await this._send('welcome', 'Welcome To Blood Donation App');
+    await this._send('welcome', 'Welcome To Instagram Clone');
+  }
+
+  async sendConfirmationCode() {
+    await this._send('confirmation', 'Instagram Clone - Confirmation Code');
   }
 
   async sendPasswordReset() {
-    await this._send('password-reset', 'Blood Donation - Password Reset');
+    await this._send('password-reset', 'Instagram Clone - Password Reset');
   }
 }
 

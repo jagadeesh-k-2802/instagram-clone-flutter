@@ -1,8 +1,9 @@
 import 'package:go_router/go_router.dart';
-import 'package:instagram_clone/screens/auth/forgot_password_screen.dart';
+import 'package:instagram_clone/screens/splash_screen.dart';
 import 'package:instagram_clone/screens/auth/login_screen.dart';
 import 'package:instagram_clone/screens/auth/signup_screen.dart';
-import 'package:instagram_clone/screens/splash_screen.dart';
+import 'package:instagram_clone/screens/auth/forgot_password_screen.dart';
+import 'package:instagram_clone/screens/home/home_screen.dart';
 
 final List<GoRoute> routes = [
   GoRoute(
@@ -24,6 +25,11 @@ final List<GoRoute> routes = [
     name: 'forgot-password',
     path: '/forgot-password',
     builder: (context, state) => const ForgotPasswordScreen(),
+  ),
+  GoRoute(
+    name: 'home',
+    path: '/home',
+    builder: (context, state) => const HomeScreen(),
   ),
 ];
 

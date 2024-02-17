@@ -1,6 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/models/auth.dart';
+import 'package:instagram_clone/redux/global_state.dart';
+import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,7 +14,34 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
   bool hidePassword = true;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+  Future<void> sendLoginRequest() async {
+    if (formKey.currentState?.validate() == false) return;
+
+    try {
+      await AuthService.login(
+        identifier: emailController.text,
+        password: passwordController.text,
+        fcmToken: '',
+      );
+
+      UserResponse userResponse = await AuthService.getMe();
+      store.dispatch(SetUserAction(userResponse.data));
+
+      if (!mounted) return;
+      context.goNamed('home');
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,51 +90,60 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 60),
-            TextFormField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                hintText: 'Phone Number, E-mail or Username',
-                contentPadding: EdgeInsets.all(16.0),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: lightGrayColor,
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      hintText: 'Phone Number, E-mail or Username',
+                    ),
+                    validator: (String? value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please, Enter E-mail, Username or Phone Number';
+                      }
+
+                      return null;
+                    },
                   ),
-                ),
-                filled: true,
-                fillColor: lightGrayColor,
-              ),
-            ),
-            const SizedBox(height: 15),
-            TextFormField(
-              obscureText: hidePassword,
-              keyboardType: TextInputType.visiblePassword,
-              decoration: InputDecoration(
-                hintText: 'Password',
-                contentPadding: const EdgeInsets.all(16.0),
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 1,
-                    color: lightGrayColor,
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: hidePassword,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          hidePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() => hidePassword = !hidePassword);
+                        },
+                      ),
+                    ),
+                    validator: (String? value) {
+                      if (value?.isEmpty == true) {
+                        return 'Please, Enter Password';
+                      }
+
+                      if ((value?.length ?? 0) < 6) {
+                        return 'Password should be atleast minimum 6 characters';
+                      }
+
+                      return null;
+                    },
                   ),
-                ),
-                filled: true,
-                fillColor: lightGrayColor,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    hidePassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      hidePassword = !hidePassword;
-                    });
-                  },
-                ),
+                ],
               ),
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: sendLoginRequest,
               child: const Text('Log In'),
             ),
             const SizedBox(height: 15),
