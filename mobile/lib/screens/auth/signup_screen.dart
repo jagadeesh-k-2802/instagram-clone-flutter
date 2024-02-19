@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:instagram_clone/models/auth.dart';
@@ -11,14 +12,14 @@ import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
 
-class SignupScreen extends StatefulWidget {
+class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   final formKey = GlobalKey<FormState>();
   Timer? debounceTimer;
   bool hidePassword = true;
@@ -90,7 +91,8 @@ class _SignupScreenState extends State<SignupScreen> {
       );
 
       UserResponse userResponse = await AuthService.getMe();
-      store.dispatch(SetUserAction(userResponse.data));
+      final appState = ref.read(appStateProvider.notifier);
+      appState.setUser(userResponse.data);
       if (!mounted) return;
       context.goNamed('home');
     } catch (error) {

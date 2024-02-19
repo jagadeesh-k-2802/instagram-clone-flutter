@@ -1,19 +1,20 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/redux/global_state.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   bool hidePassword = true;
   TextEditingController emailController = TextEditingController();
@@ -30,8 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       UserResponse userResponse = await AuthService.getMe();
-      store.dispatch(SetUserAction(userResponse.data));
-
+      final appState = ref.read(appStateProvider.notifier);
+      appState.setUser(userResponse.data);
       if (!mounted) return;
       context.goNamed('home');
     } catch (error) {
