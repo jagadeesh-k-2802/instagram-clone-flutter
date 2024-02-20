@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 const Color primaryColor = Color(0xff0095f6);
+const Color primaryColorDark = Color(0xff0891f7);
 const Color secondaryColor = Color(0xff0095f6);
-const Color lightGrayColor = Color(0xfffafafa);
+const Color secondaryColorDark = Color(0xff0891f7);
+const Color lightGrayColor = Color(0xFFF3F3F3);
 const double defaultPagePadding = 16;
 
 const MaterialColor primaryMaterialColor = MaterialColor(4281899248, {
@@ -25,6 +27,9 @@ ThemeData instagramAppTheme = ThemeData(
   scrollbarTheme: const ScrollbarThemeData().copyWith(
     thumbColor: MaterialStateProperty.all(primaryMaterialColor[500]),
   ),
+  appBarTheme: const AppBarTheme(
+    scrolledUnderElevation: 0.0,
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       foregroundColor: Colors.white,
@@ -36,7 +41,7 @@ ThemeData instagramAppTheme = ThemeData(
     ),
   ),
   inputDecorationTheme: const InputDecorationTheme(
-    contentPadding: EdgeInsets.all(15.0),
+    contentPadding: EdgeInsets.all(12.0),
     border: OutlineInputBorder(
       borderSide: BorderSide(
         width: 1,
@@ -52,6 +57,10 @@ ThemeData instagramAppTheme = ThemeData(
     headerForegroundColor: Colors.black54,
     surfaceTintColor: lightGrayColor,
   ),
+  bottomSheetTheme: const BottomSheetThemeData(
+    surfaceTintColor: lightGrayColor,
+    backgroundColor: Colors.white
+  )
 );
 
 // Buttons
@@ -66,10 +75,35 @@ final transparentButtonStyle = ElevatedButton.styleFrom(
   ),
 );
 
+final secondaryButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: lightGrayColor,
+  foregroundColor: Colors.black54,
+  elevation: 0,
+  minimumSize: const Size.fromHeight(45),
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(color: Colors.black26, width: 2.0),
+    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+  ),
+);
+
 // Typography
 TextStyle? headlineLargeBold(BuildContext context) {
   return Theme.of(context)
       .textTheme
       .headlineLarge
+      ?.copyWith(fontWeight: FontWeight.bold);
+}
+
+TextStyle? bodyLargeBold(BuildContext context) {
+  return Theme.of(context)
+      .textTheme
+      .bodyLarge
+      ?.copyWith(fontWeight: FontWeight.bold);
+}
+
+TextStyle? titleLargeBold(BuildContext context) {
+  return Theme.of(context)
+      .textTheme
+      .titleLarge
       ?.copyWith(fontWeight: FontWeight.bold);
 }

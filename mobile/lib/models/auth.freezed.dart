@@ -344,6 +344,7 @@ mixin _$UserResponseData {
   String get id => throw _privateConstructorUsedError;
   String get avatar => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get fcmToken => throw _privateConstructorUsedError;
@@ -365,6 +366,7 @@ abstract class $UserResponseDataCopyWith<$Res> {
       {String id,
       String avatar,
       String name,
+      String username,
       String email,
       String? phone,
       String? fcmToken,
@@ -387,6 +389,7 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
     Object? id = null,
     Object? avatar = null,
     Object? name = null,
+    Object? username = null,
     Object? email = null,
     Object? phone = freezed,
     Object? fcmToken = freezed,
@@ -404,6 +407,10 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
           ? _value.email
@@ -437,6 +444,7 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
       {String id,
       String avatar,
       String name,
+      String username,
       String email,
       String? phone,
       String? fcmToken,
@@ -457,6 +465,7 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
     Object? id = null,
     Object? avatar = null,
     Object? name = null,
+    Object? username = null,
     Object? email = null,
     Object? phone = freezed,
     Object? fcmToken = freezed,
@@ -474,6 +483,10 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
               as String,
       email: null == email
           ? _value.email
@@ -502,6 +515,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       {required this.id,
       required this.avatar,
       required this.name,
+      required this.username,
       required this.email,
       required this.phone,
       required this.fcmToken,
@@ -517,6 +531,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @override
   final String name;
   @override
+  final String username;
+  @override
   final String email;
   @override
   final String? phone;
@@ -527,7 +543,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
   @override
   String toString() {
-    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, email: $email, phone: $phone, fcmToken: $fcmToken, createdAt: $createdAt)';
+    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, phone: $phone, fcmToken: $fcmToken, createdAt: $createdAt)';
   }
 
   @override
@@ -538,6 +554,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.fcmToken, fcmToken) ||
@@ -548,8 +566,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, avatar, name, email, phone, fcmToken, createdAt);
+  int get hashCode => Object.hash(runtimeType, id, avatar, name, username,
+      email, phone, fcmToken, createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -571,6 +589,7 @@ abstract class _UserResponseData implements UserResponseData {
       {required final String id,
       required final String avatar,
       required final String name,
+      required final String username,
       required final String email,
       required final String? phone,
       required final String? fcmToken,
@@ -585,6 +604,8 @@ abstract class _UserResponseData implements UserResponseData {
   String get avatar;
   @override
   String get name;
+  @override
+  String get username;
   @override
   String get email;
   @override

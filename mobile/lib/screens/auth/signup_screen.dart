@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:instagram_clone/models/auth.dart';
-import 'package:instagram_clone/redux/global_state.dart';
+import 'package:instagram_clone/state/global_state.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/services/auth.dart';
@@ -91,10 +91,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       );
 
       UserResponse userResponse = await AuthService.getMe();
-      final appState = ref.read(appStateProvider.notifier);
+      final appState = ref.read(globalStateProvider.notifier);
       appState.setUser(userResponse.data);
       if (!mounted) return;
-      context.goNamed('home');
+      context.goNamed('feed');
     } catch (error) {
       if (!mounted) return;
 
@@ -500,7 +500,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 radius: 100,
                 child: ClipOval(
                   child: imageBytes == null
-                      ? Image.asset('assets/images/default_profile.png')
+                      ? Image.asset('assets/images/default-profile.png')
                       : Image.memory(imageBytes!),
                 ),
               ),

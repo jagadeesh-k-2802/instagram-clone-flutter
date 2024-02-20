@@ -21,10 +21,16 @@ dependencies:
   go_router: ^13.2.0
   flutter_secure_storage: ^9.0.0
   freezed_annotation: ^2.4.1
+  cached_network_image: ^3.3.1
   json_annotation: ^4.8.1
   flutter_riverpod: ^2.4.10
   riverpod_annotation: ^2.3.4
   flutter_svg: ^2.0.9
+  wechat_assets_picker: ^8.9.0-dev.1
+  photo_manager_image_provider: ^2.1.0
+
+dependency_overrides:
+  photo_manager: ^3.0.0-dev.2
 
 dev_dependencies:
   flutter_test:

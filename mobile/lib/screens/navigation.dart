@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:instagram_clone/screens/home/activity_screen.dart';
+import 'package:instagram_clone/screens/home/notifications_screen.dart';
 import 'package:instagram_clone/screens/home/feed_screen.dart';
 import 'package:instagram_clone/screens/home/message_screen.dart';
-import 'package:instagram_clone/screens/home/post_new_screen.dart';
+import 'package:instagram_clone/screens/home/new_post_screen.dart';
 import 'package:instagram_clone/screens/home/profile_screen.dart';
 import 'package:instagram_clone/screens/home/search_screen.dart';
+import 'package:instagram_clone/screens/home/settings_screen.dart';
 import 'package:instagram_clone/screens/splash_screen.dart';
 import 'package:instagram_clone/screens/auth/login_screen.dart';
 import 'package:instagram_clone/screens/auth/signup_screen.dart';
@@ -59,17 +60,10 @@ final List<RouteBase> routes = [
             ),
           ),
           GoRoute(
-            name: 'post-new',
-            path: '/post-new',
+            name: 'notifications',
+            path: '/notifications',
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: PostNewScreen(),
-            ),
-          ),
-          GoRoute(
-            name: 'activity',
-            path: '/activity',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ActivityScreen(),
+              child: NotificationsScreen(),
             ),
           ),
           GoRoute(
@@ -96,15 +90,28 @@ final List<RouteBase> routes = [
       ) {
         return SlideTransition(
           position: animation.drive(
-            Tween<Offset>(
-              begin: const Offset(0.75, 0),
-              end: Offset.zero,
-            ).chain(CurveTween(curve: Curves.easeIn)),
+            Tween<Offset>(begin: const Offset(0.5, 0), end: Offset.zero).chain(
+              CurveTween(curve: Curves.linear),
+            ),
           ),
           child: child,
         );
       },
       child: const MessageScreen(),
+    ),
+  ),
+  GoRoute(
+    name: 'new-post',
+    path: '/new-post',
+    pageBuilder: (context, state) => const NoTransitionPage(
+      child: NewPostScreen(),
+    ),
+  ),
+  GoRoute(
+    name: 'settings',
+    path: '/settings',
+    pageBuilder: (context, state) => const NoTransitionPage<void>(
+      child: SettingsScreen(),
     ),
   ),
 ];

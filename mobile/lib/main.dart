@@ -20,7 +20,7 @@ class App extends StatelessWidget {
       title: 'Instagram Clone',
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      theme: instagramAppTheme,
+      theme: instagramAppTheme
     );
   }
 }

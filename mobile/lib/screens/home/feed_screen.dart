@@ -19,9 +19,8 @@ class _FeedScreenState extends State<FeedScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset('assets/icons/logo.svg'),
-            InkWell(
+            GestureDetector(
               onTap: () => context.pushNamed('message'),
-              borderRadius: const BorderRadius.all(Radius.circular(50.0)),
               child: SvgPicture.asset(
                 'assets/icons/message.svg',
                 height: 26,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/auth.dart';
-import 'package:instagram_clone/redux/global_state.dart';
+import 'package:instagram_clone/state/global_state.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
 
@@ -31,10 +31,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
 
       UserResponse userResponse = await AuthService.getMe();
-      final appState = ref.read(appStateProvider.notifier);
+      final appState = ref.read(globalStateProvider.notifier);
       appState.setUser(userResponse.data);
       if (!mounted) return;
-      context.goNamed('home');
+      context.goNamed('feed');
     } catch (error) {
       if (!mounted) return;
 
@@ -87,7 +87,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               heightFactor: 0,
               child: SizedBox(
                 width: 200,
-                child: Image.asset('assets/images/instagram_text_logo.png'),
+                child: Image.asset('assets/icons/logo-black.png'),
               ),
             ),
             const SizedBox(height: 60),
