@@ -32,6 +32,8 @@ class UserResponseData with _$UserResponseData {
     required String name,
     required String username,
     required String email,
+    required String gender,
+    required String bio,
     required String? phone,
     required String? fcmToken,
     required String createdAt,

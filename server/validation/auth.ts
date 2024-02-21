@@ -24,6 +24,7 @@ export const register = z.object({
   email: z
     .string({ required_error: 'Email is required' })
     .email('Not a valid email'),
+  gender: z.string({ required_error: 'Gender is required' }),
   password: z
     .string({ required_error: 'Password is required' })
     .min(6, 'Password must contain atleast 6 characters'),
@@ -61,10 +62,15 @@ export const updateDetails = z.object({
     name: z
       .string({ required_error: 'Name is required' })
       .max(30, 'Name must not be greater than 30 characters'),
+    username: z
+      .string({ required_error: 'Username is required' })
+      .max(30, 'Name must not be greater than 30 characters'),
     email: z
       .string({ required_error: 'Email is required' })
       .email('Not a valid email'),
-    phone: z.string({ required_error: 'Phone is required' })
+    phone: z.string({ required_error: 'Phone is required' }),
+    bio: z.string({ required_error: 'Bio is required' }),
+    gender: z.string({ required_error: 'Gender is required' })
   })
 });
 
@@ -77,6 +83,10 @@ export const updatePassword = z.object({
       .string({ required_error: 'Confirm Password is required' })
       .min(6, 'Password must contain atleast 6 characters')
   })
+});
+
+export const updateAvatar = z.object({
+  removeAvatar: z.boolean({ required_error: 'removeAvatar is required' })
 });
 
 export const forgotPassword = z.object({

@@ -32,7 +32,7 @@ class AuthService {
       const storage = FlutterSecureStorage();
       await storage.write(key: tokenKey, value: tokenResponse.token);
       return tokenResponse;
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -42,6 +42,7 @@ class AuthService {
     required String username,
     required String birthday,
     required String email,
+    required String gender,
     required String? avatarPath,
     required String password,
     required String confirmationCode,
@@ -54,6 +55,7 @@ class AuthService {
       FormData data = FormData.fromMap({
         'name': name,
         'email': email,
+        'gender': gender,
         'username': username,
         'birthday': birthday,
         'password': password,
@@ -75,7 +77,7 @@ class AuthService {
       const storage = FlutterSecureStorage();
       await storage.write(key: tokenKey, value: tokenResponse.token);
       return tokenResponse;
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -96,7 +98,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -117,7 +119,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -139,7 +141,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -159,15 +161,18 @@ class AuthService {
       const storage = FlutterSecureStorage();
       await storage.delete(key: tokenKey);
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
 
   static Future<MessageResponse> updateUserDetails({
     required String name,
+    required String username,
     required String email,
     required String phone,
+    required String bio,
+    required String gender,
   }) async {
     try {
       final dio = await getDioClient();
@@ -175,8 +180,11 @@ class AuthService {
 
       var data = {
         'name': name,
+        'username': username,
         'email': email,
         'phone': phone,
+        'bio': bio,
+        'gender': gender,
       };
 
       final response = await dio.post(url, data: data);
@@ -187,7 +195,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -216,21 +224,28 @@ class AuthService {
       const storage = FlutterSecureStorage();
       await storage.write(key: tokenKey, value: tokenResponse.token);
       return tokenResponse;
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
 
   static Future<MessageResponse> updateAvatar({
-    required String localFilePath,
+    String? localFilePath,
+    bool removeAvatar = false,
   }) async {
     try {
       final dio = await getDioClient();
       const url = '$apiUrl/api/v1/auth/update-avatar';
 
       FormData data = FormData.fromMap({
-        'avatar': await MultipartFile.fromFile(localFilePath),
+        'removeAvatar': removeAvatar,
       });
+
+      if (localFilePath != null) {
+        data.files.add(
+          MapEntry('avatar', await MultipartFile.fromFile(localFilePath)),
+        );
+      }
 
       final response = await dio.post(url, data: data);
 
@@ -240,7 +255,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -260,7 +275,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -282,7 +297,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -303,7 +318,7 @@ class AuthService {
       }
 
       return MessageResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }
@@ -320,7 +335,7 @@ class AuthService {
       }
 
       return UserResponse.fromJson(response.data);
-    } catch (e) {
+    } catch (error) {
       rethrow;
     }
   }

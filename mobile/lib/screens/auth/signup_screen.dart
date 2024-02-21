@@ -25,6 +25,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   bool hidePassword = true;
   int currentWidget = 0;
   bool sentConfirmationAlready = false;
+  String? selectedGender;
   Uint8List? imageBytes;
   CroppedFile? croppedFile;
   bool? validUsername;
@@ -85,6 +86,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         birthday: birthdayController.text,
         avatarPath: croppedFile?.path,
         email: emailController.text,
+        gender: selectedGender ?? '',
         password: passwordController.text,
         confirmationCode: confirmationController.text,
         fcmToken: '',
@@ -242,6 +244,55 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
               return null;
             },
+          ),
+        ),
+        const SizedBox(height: 15),
+        ElevatedButton(
+          onPressed: () {
+            if (formKey.currentState?.validate() == true) {
+              setState(() => currentWidget++);
+            }
+          },
+          child: const Text('Next'),
+        )
+      ],
+    );
+  }
+
+  Widget buildGenderWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Select Your Gender',
+          style: headlineLargeBold(context),
+        ),
+        const SizedBox(height: 15),
+        Form(
+          key: formKey,
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              hintText: 'Gender',
+            ),
+            icon: const Icon(Icons.arrow_drop_down_sharp),
+            elevation: 16,
+            onChanged: (String? value) {
+              setState(() => selectedGender = value);
+            },
+            validator: (String? value) {
+              if (selectedGender == null) {
+                return 'Please, Select your Gender';
+              }
+
+              return null;
+            },
+            items: ['Male', 'Female'].map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
           ),
         ),
         const SizedBox(height: 15),
@@ -537,6 +588,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final List<Widget> widgets = [
       buildNameWidget(),
       buildPasswordWidget(),
+      buildGenderWidget(),
       buildBirthdayWidget(),
       buildUsernameWidget(),
       buildMobileEmailWidget(),

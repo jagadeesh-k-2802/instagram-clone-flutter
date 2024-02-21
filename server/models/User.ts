@@ -9,6 +9,8 @@ interface IUser {
   username: string;
   avatar: string;
   email: string;
+  gender: string;
+  bio: string;
   phone: string;
   password?: string;
   address: string;
@@ -39,11 +41,24 @@ const schema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
       maxlength: [20, 'Name should not exceed 16 characters'],
       unique: true
     },
-    avatar: String,
+    avatar: {
+      type: String,
+      default: 'default-profile.png'
+    },
     email: {
       type: String,
       required: [true, 'Please add an Email'],
       unique: true
+    },
+    gender: {
+      type: String,
+      required: [true, 'Please add gender'],
+      enum: ['Male', 'Female']
+    },
+    bio: {
+      type: String,
+      default: '',
+      maxlength: 150
     },
     phone: {
       type: String,
@@ -99,7 +114,7 @@ schema.method('matchPassword', async function (enteredPassword: string) {
 // Generate and hash password token
 schema.method('getResetPasswordToken', function (): string {
   const resetToken = generateSixDigitRandomNumber().toString();
-  this.resetPasswordToken = resetToken
+  this.resetPasswordToken = resetToken;
   // Set expire for 10 mins
   this.resetPasswordExpire = new Date(Date.now() + 10 * 60 * 1000);
   return resetToken;

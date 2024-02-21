@@ -62,6 +62,7 @@ export const register = catchAsync(async (req, res, next) => {
     username,
     birthday,
     email,
+    gender,
     password,
     confirmationCode,
     fcmToken
@@ -91,6 +92,7 @@ export const register = catchAsync(async (req, res, next) => {
     avatar: filename,
     birthday,
     email,
+    gender,
     password,
     fcmToken
   });
@@ -199,13 +201,16 @@ export const logout = catchAsync(async (req, res) => {
  */
 export const updateDetails = catchAsync(async (req, res) => {
   const { body } = await zParse(authValidation.updateDetails, req);
-  const { name, email, phone } = body;
+  const { name, username, email, phone, bio, gender } = body;
   const user = req.user;
 
   const fieldsToUpdate = {
     name,
+    username,
     email,
-    phone
+    phone,
+    bio,
+    gender
   };
 
   await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
@@ -263,26 +268,51 @@ export const updateAvatar = catchAsync(async (req, res, next) => {
   const user = req.user;
   const filename = `${user.name.replace(' ', '-')}.jpg`;
 
-  const [, files] = await form.parse(req);
-  const avatar = files.avatar?.at(0);
+  const [fields, files] = await form.parse(req);
+  const customFields = {};
 
-  if (avatar === undefined) {
-    return next(new ErrorResponse('No avatar uploaded', 404));
+  for (const [key, value] of Object.entries(fields)) {
+    customFields[key] = value?.at(0) === 'true' ? true : false;
   }
 
-  await functions.moveFromTemp(avatar, filename);
-  const fieldsToUpdate = { avatar: filename };
+  const { removeAvatar } = await zParse(
+    authValidation.updateAvatar,
+    customFields
+  );
 
-  // Update user in DB
-  await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
-    new: true,
-    runValidators: true
-  });
+  if (removeAvatar) {
+    const fieldsToUpdate = { avatar: 'default-profile.png' };
 
-  res.status(200).json({
-    success: true,
-    message: 'Profile Photo Updated Sucessfully'
-  });
+    await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile Photo Removed Sucessfully'
+    });
+  } else {
+    const avatar = files.avatar?.at(0);
+
+    if (avatar === undefined) {
+      return next(new ErrorResponse('No avatar uploaded', 404));
+    }
+
+    await functions.moveFromTemp(avatar, filename);
+    const fieldsToUpdate = { avatar: filename };
+
+    // Update user in DB
+    await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile Photo Updated Sucessfully'
+    });
+  }
 });
 
 /**

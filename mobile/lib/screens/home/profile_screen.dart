@@ -7,6 +7,7 @@ import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/state/global_state.dart';
 import 'package:instagram_clone/theme/theme.dart';
+import 'package:instagram_clone/widgets/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -18,7 +19,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void navigateToEditProfile() {
-    // TODO: Navigate to edit profile
+    context.pushNamed('profile-edit');
   }
 
   Widget buildProfileHeader({UserResponseData? user}) {
@@ -80,8 +81,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void showMenuModal() {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
     showModalBottomSheet(
       showDragHandle: true,
       context: context,
@@ -91,21 +90,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: double.maxFinite,
           child: Column(
             children: [
-              InkWell(
+              ClickableListItem(
+                text: 'Settings and Privacy',
+                prefixIcon: Icons.settings,
                 onTap: () {
                   Navigator.pop(context);
                   context.pushNamed('settings');
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.settings),
-                      const SizedBox(width: 8.0),
-                      Text('Settings and Privacy', style: textTheme.bodyLarge),
-                    ],
-                  ),
-                ),
               ),
             ],
           ),
@@ -116,7 +107,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserResponseData? user = ref.read(globalStateProvider).user;
+    UserResponseData? user = ref.watch(globalStateProvider).user;
     ScrollController outerController = ScrollController();
 
     return Scaffold(

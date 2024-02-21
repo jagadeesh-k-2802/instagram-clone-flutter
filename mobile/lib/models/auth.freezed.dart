@@ -346,6 +346,8 @@ mixin _$UserResponseData {
   String get name => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
+  String get gender => throw _privateConstructorUsedError;
+  String get bio => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get fcmToken => throw _privateConstructorUsedError;
   String get createdAt => throw _privateConstructorUsedError;
@@ -368,6 +370,8 @@ abstract class $UserResponseDataCopyWith<$Res> {
       String name,
       String username,
       String email,
+      String gender,
+      String bio,
       String? phone,
       String? fcmToken,
       String createdAt});
@@ -391,6 +395,8 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
     Object? name = null,
     Object? username = null,
     Object? email = null,
+    Object? gender = null,
+    Object? bio = null,
     Object? phone = freezed,
     Object? fcmToken = freezed,
     Object? createdAt = null,
@@ -415,6 +421,14 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      gender: null == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String,
+      bio: null == bio
+          ? _value.bio
+          : bio // ignore: cast_nullable_to_non_nullable
               as String,
       phone: freezed == phone
           ? _value.phone
@@ -446,6 +460,8 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
       String name,
       String username,
       String email,
+      String gender,
+      String bio,
       String? phone,
       String? fcmToken,
       String createdAt});
@@ -467,6 +483,8 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
     Object? name = null,
     Object? username = null,
     Object? email = null,
+    Object? gender = null,
+    Object? bio = null,
     Object? phone = freezed,
     Object? fcmToken = freezed,
     Object? createdAt = null,
@@ -491,6 +509,14 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
       email: null == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      gender: null == gender
+          ? _value.gender
+          : gender // ignore: cast_nullable_to_non_nullable
+              as String,
+      bio: null == bio
+          ? _value.bio
+          : bio // ignore: cast_nullable_to_non_nullable
               as String,
       phone: freezed == phone
           ? _value.phone
@@ -517,6 +543,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
       required this.name,
       required this.username,
       required this.email,
+      required this.gender,
+      required this.bio,
       required this.phone,
       required this.fcmToken,
       required this.createdAt});
@@ -535,6 +563,10 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @override
   final String email;
   @override
+  final String gender;
+  @override
+  final String bio;
+  @override
   final String? phone;
   @override
   final String? fcmToken;
@@ -543,7 +575,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
   @override
   String toString() {
-    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, phone: $phone, fcmToken: $fcmToken, createdAt: $createdAt)';
+    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, fcmToken: $fcmToken, createdAt: $createdAt)';
   }
 
   @override
@@ -557,6 +589,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.fcmToken, fcmToken) ||
                 other.fcmToken == fcmToken) &&
@@ -567,7 +601,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, avatar, name, username,
-      email, phone, fcmToken, createdAt);
+      email, gender, bio, phone, fcmToken, createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -591,6 +625,8 @@ abstract class _UserResponseData implements UserResponseData {
       required final String name,
       required final String username,
       required final String email,
+      required final String gender,
+      required final String bio,
       required final String? phone,
       required final String? fcmToken,
       required final String createdAt}) = _$UserResponseDataImpl;
@@ -608,6 +644,10 @@ abstract class _UserResponseData implements UserResponseData {
   String get username;
   @override
   String get email;
+  @override
+  String get gender;
+  @override
+  String get bio;
   @override
   String? get phone;
   @override

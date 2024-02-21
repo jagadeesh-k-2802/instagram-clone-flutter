@@ -4,26 +4,25 @@ import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class NewPostScreen extends StatefulWidget {
-  const NewPostScreen({super.key});
+class NewStoryScreen extends StatefulWidget {
+  const NewStoryScreen({super.key});
 
   @override
-  State<NewPostScreen> createState() => _NewPostScreenState();
+  State<NewStoryScreen> createState() => _NewStoryScreenState();
 }
 
-class _NewPostScreenState extends State<NewPostScreen> {
+class _NewStoryScreenState extends State<NewStoryScreen> {
   List<AssetEntity> localImages = [];
   AssetEntity? selectedImage;
   PermissionState permissionState = PermissionState.authorized;
   ScrollController outerController = ScrollController();
-  List<AssetEntity> selectImages = [];
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await fetchPhotos();
+      await fetchAssets();
     });
   }
 
@@ -40,18 +39,18 @@ class _NewPostScreenState extends State<NewPostScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(
-                'POST',
-                style: bodyLargeBold(context)?.copyWith(color: Colors.black),
-              ),
               GestureDetector(
-                onTap: () => context.pushReplacementNamed('new-story'),
+                onTap: () => context.pushReplacementNamed('new-post'),
                 child: Text(
-                  'STORY',
+                  'POST',
                   style: bodyLargeBold(context)?.copyWith(
                     color: Colors.black38,
                   ),
                 ),
+              ),
+              Text(
+                'STORY',
+                style: bodyLargeBold(context)?.copyWith(color: Colors.black),
               ),
             ],
           ),
@@ -60,7 +59,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
     );
   }
 
-  Future<void> fetchPhotos() async {
+  Future<void> fetchAssets({
+    RequestType type = RequestType.image,
+  }) async {
     await PhotoManager.clearFileCache();
     final PermissionState ps = await PhotoManager.requestPermissionExtend();
     Set<AssetEntity> results = {};
@@ -71,6 +72,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     if (ps.isAuth || ps.hasAccess) {
       final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
         filterOption: filter,
+        type: type,
       );
 
       for (AssetPathEntity path in paths.reversed) {
@@ -100,108 +102,68 @@ class _NewPostScreenState extends State<NewPostScreen> {
   }
 
   void selectImage(int index) {
-    setState(() => selectedImage = localImages[index]);
-
-    outerController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.fastLinearToSlowEaseIn,
-    );
-  }
-
-  void addToSelectedPhotos(int index) {
-    setState(() {
-      if (selectImages.contains(localImages[index])) {
-        selectImages.remove(localImages[index]);
-      } else {
-        selectImages.add(localImages[index]);
-      }
-    });
+    // TODO: Upload Story Image/Video
   }
 
   Future<void> showPhotoSelector() async {
     await PhotoManager.presentLimited();
-    await fetchPhotos();
+    await fetchAssets();
   }
 
-  void onPostUpload() {
-    if (selectedImage == null) return;
+  Widget buildTopBarItem({
+    required String text,
+    required IconData icon,
+    required void Function() onTap,
+  }) {
+    TextTheme textTheme = Theme.of(context).textTheme;
 
-    List<AssetEntity> data = [];
-
-    if (selectImages.isEmpty) {
-      data = [selectedImage!];
-    } else {
-      data = selectImages.toList();
-    }
-
-    context.pushNamed('post-upload', extra: data);
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(icon),
+              const SizedBox(height: 8.0),
+              Text(text, style: textTheme.bodyLarge)
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget buildGalleryItem(AssetEntity item, int index) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => selectImage(index),
-            onLongPress: () => addToSelectedPhotos(index),
-            child: AssetEntityImage(
-              key: Key(localImages[index].id),
-              item,
-              isOriginal: false,
-              thumbnailFormat: ThumbnailFormat.jpeg,
-              fit: BoxFit.cover,
-            ),
+  Widget buildTopBarItems() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Row(
+        children: [
+          buildTopBarItem(
+            text: 'Camera',
+            icon: Icons.camera,
+            onTap: () => context.pushNamed('story-capture'),
           ),
-        ),
-        Visibility(
-          visible: item.type == AssetType.video,
-          child: const Positioned.fill(
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.all(6.0),
-                child: Icon(
-                  Icons.videocam_sharp,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+          const SizedBox(width: 12.0),
+          buildTopBarItem(
+            text: 'Photos',
+            icon: Icons.photo,
+            onTap: () => fetchAssets(),
           ),
-        ),
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => addToSelectedPhotos(index),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(6.0),
-                child: Icon(
-                  selectImages.contains(item)
-                      ? Icons.circle
-                      : Icons.circle_outlined,
-                  color:
-                      selectImages.contains(item) ? primaryColor : Colors.white,
-                  size: 30.0,
-                ),
-              ),
-            ),
+          const SizedBox(width: 12.0),
+          buildTopBarItem(
+            text: 'Videos',
+            icon: Icons.play_circle_filled_rounded,
+            onTap: () => fetchAssets(type: RequestType.video),
           ),
-        ),
-        Visibility(
-          visible: selectImages.contains(item),
-          child: GestureDetector(
-            onTap: () => addToSelectedPhotos(index),
-            child: const Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.all(11.0),
-                child: Icon(Icons.done, color: Colors.white, size: 20),
-              ),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -222,31 +184,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
                 onPressed: () => (context.pop(context)),
                 icon: const Icon(Icons.close, size: 30),
               ),
-              title: const Text('New Post'),
-              actions: [
-                TextButton(
-                  onPressed: onPostUpload,
-                  child: Text(
-                    'Next',
-                    style: bodyLargeBold(context)?.copyWith(
-                      color: primaryColor,
-                    ),
-                  ),
-                ),
-              ],
+              title: const Text('New Story'),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(250),
-                child: selectedImage != null
-                    ? SizedBox(
-                        height: 250,
-                        child: AssetEntityImage(
-                          selectedImage!,
-                          isOriginal: false,
-                          thumbnailFormat: ThumbnailFormat.jpeg,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : Container(),
+                preferredSize: const Size.fromHeight(120),
+                child: buildTopBarItems(),
               ),
             )
           ];
@@ -280,8 +221,21 @@ class _NewPostScreenState extends State<NewPostScreen> {
             PhotoGrid(
               itemCount: localImages.length,
               itemBuilder: (BuildContext context, int index) {
-                AssetEntity item = localImages[index];
-                return buildGalleryItem(item, index);
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: GestureDetector(
+                        onTap: () => selectImage(index),
+                        child: AssetEntityImage(
+                          key: Key(localImages[index].id),
+                          localImages[index],
+                          thumbnailFormat: ThumbnailFormat.jpeg,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )
+                  ],
+                );
               },
             )
           ],
