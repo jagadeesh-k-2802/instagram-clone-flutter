@@ -82,6 +82,6 @@ class SearchUsersNotifier extends StateNotifier<SearchUsersState>
 }
 
 final searchUsersProvider =
-    StateNotifierProvider<SearchUsersNotifier, SearchUsersState>(
+    StateNotifierProvider.autoDispose<SearchUsersNotifier, SearchUsersState>(
   (_) => SearchUsersNotifier(),
 );

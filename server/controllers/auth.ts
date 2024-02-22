@@ -267,7 +267,6 @@ export const updateAvatar = catchAsync(async (req, res, next) => {
   const form = formidable();
   const user = req.user;
   const filename = `${user.name.replace(' ', '-')}.jpg`;
-
   const [fields, files] = await form.parse(req);
   const customFields = {};
 

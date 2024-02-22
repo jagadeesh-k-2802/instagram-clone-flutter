@@ -26,6 +26,7 @@ Map<String, dynamic> _$$SearchUsersResponseImplToJson(
 _$SearchUsersResponseDataImpl _$$SearchUsersResponseDataImplFromJson(
         Map<String, dynamic> json) =>
     _$SearchUsersResponseDataImpl(
+      id: json['id'] as String,
       avatar: json['avatar'] as String,
       name: json['name'] as String,
       username: json['username'] as String,
@@ -34,6 +35,7 @@ _$SearchUsersResponseDataImpl _$$SearchUsersResponseDataImplFromJson(
 Map<String, dynamic> _$$SearchUsersResponseDataImplToJson(
         _$SearchUsersResponseDataImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'avatar': instance.avatar,
       'name': instance.name,
       'username': instance.username,

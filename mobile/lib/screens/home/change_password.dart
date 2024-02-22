@@ -51,11 +51,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           padding: const EdgeInsets.symmetric(horizontal: defaultPagePadding),
           child: Column(
             children: [
+              const SizedBox(height: 8.0),
               Text(
                 'You\'ll be logged out of all sessions except this one to protect your account if anyone is trying to gain access.',
                 style: textTheme.bodyLarge,
               ),
-              const SizedBox(height: 8.0),
+              const SizedBox(height: 12.0),
               Text(
                 'Your password must be at least six characters and should include a combination of numbers, letters and special characters',
                 style: textTheme.bodyLarge,

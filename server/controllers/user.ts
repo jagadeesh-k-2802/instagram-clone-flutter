@@ -27,7 +27,7 @@ export const searchUsers = catchAsync(async (req, res) => {
     ]
   };
 
-  const users = await User.find(filter, 'name username avatar')
+  const users = await User.find(filter, 'id name username avatar')
     .skip(skip)
     .limit(limit);
 

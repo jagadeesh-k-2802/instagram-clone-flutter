@@ -186,6 +186,7 @@ SearchUsersResponseData _$SearchUsersResponseDataFromJson(
 
 /// @nodoc
 mixin _$SearchUsersResponseData {
+  String get id => throw _privateConstructorUsedError;
   String get avatar => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
@@ -202,7 +203,7 @@ abstract class $SearchUsersResponseDataCopyWith<$Res> {
           $Res Function(SearchUsersResponseData) then) =
       _$SearchUsersResponseDataCopyWithImpl<$Res, SearchUsersResponseData>;
   @useResult
-  $Res call({String avatar, String name, String username});
+  $Res call({String id, String avatar, String name, String username});
 }
 
 /// @nodoc
@@ -219,11 +220,16 @@ class _$SearchUsersResponseDataCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? avatar = null,
     Object? name = null,
     Object? username = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       avatar: null == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -249,7 +255,7 @@ abstract class _$$SearchUsersResponseDataImplCopyWith<$Res>
       __$$SearchUsersResponseDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String avatar, String name, String username});
+  $Res call({String id, String avatar, String name, String username});
 }
 
 /// @nodoc
@@ -265,11 +271,16 @@ class __$$SearchUsersResponseDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? avatar = null,
     Object? name = null,
     Object? username = null,
   }) {
     return _then(_$SearchUsersResponseDataImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       avatar: null == avatar
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
@@ -290,11 +301,16 @@ class __$$SearchUsersResponseDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SearchUsersResponseDataImpl implements _SearchUsersResponseData {
   const _$SearchUsersResponseDataImpl(
-      {required this.avatar, required this.name, required this.username});
+      {required this.id,
+      required this.avatar,
+      required this.name,
+      required this.username});
 
   factory _$SearchUsersResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$SearchUsersResponseDataImplFromJson(json);
 
+  @override
+  final String id;
   @override
   final String avatar;
   @override
@@ -304,7 +320,7 @@ class _$SearchUsersResponseDataImpl implements _SearchUsersResponseData {
 
   @override
   String toString() {
-    return 'SearchUsersResponseData(avatar: $avatar, name: $name, username: $username)';
+    return 'SearchUsersResponseData(id: $id, avatar: $avatar, name: $name, username: $username)';
   }
 
   @override
@@ -312,6 +328,7 @@ class _$SearchUsersResponseDataImpl implements _SearchUsersResponseData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SearchUsersResponseDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.username, username) ||
@@ -320,7 +337,7 @@ class _$SearchUsersResponseDataImpl implements _SearchUsersResponseData {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, avatar, name, username);
+  int get hashCode => Object.hash(runtimeType, id, avatar, name, username);
 
   @JsonKey(ignore: true)
   @override
@@ -339,13 +356,16 @@ class _$SearchUsersResponseDataImpl implements _SearchUsersResponseData {
 
 abstract class _SearchUsersResponseData implements SearchUsersResponseData {
   const factory _SearchUsersResponseData(
-      {required final String avatar,
+      {required final String id,
+      required final String avatar,
       required final String name,
       required final String username}) = _$SearchUsersResponseDataImpl;
 
   factory _SearchUsersResponseData.fromJson(Map<String, dynamic> json) =
       _$SearchUsersResponseDataImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get avatar;
   @override

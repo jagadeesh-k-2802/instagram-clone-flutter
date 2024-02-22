@@ -21,56 +21,62 @@ const MaterialColor primaryMaterialColor = MaterialColor(4281899248, {
 });
 
 ThemeData instagramAppTheme = ThemeData(
-    primaryColor: primaryColor,
-    colorScheme: const ColorScheme.light().copyWith(primary: primaryColor),
-    primarySwatch: primaryMaterialColor,
-    scrollbarTheme: const ScrollbarThemeData().copyWith(
-      thumbColor: MaterialStateProperty.all(primaryMaterialColor[500]),
+  primaryColor: primaryColor,
+  colorScheme: const ColorScheme.light().copyWith(primary: primaryColor),
+  primarySwatch: primaryMaterialColor,
+  scrollbarTheme: const ScrollbarThemeData().copyWith(
+    thumbColor: MaterialStateProperty.all(primaryMaterialColor[500]),
+  ),
+  appBarTheme: const AppBarTheme(
+    scrolledUnderElevation: 0.0,
+  ),
+  dividerTheme: const DividerThemeData(
+    color: Colors.black26,
+  ),
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: Colors.black87,
+    elevation: 0,
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
     ),
-    appBarTheme: const AppBarTheme(
-      scrolledUnderElevation: 0.0,
-    ),
-    snackBarTheme: SnackBarThemeData(
-      backgroundColor: Colors.black87,
-      elevation: 0,
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white,
+      backgroundColor: secondaryColor,
+      minimumSize: const Size.fromHeight(45),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8.0)),
       ),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: secondaryColor,
-        minimumSize: const Size.fromHeight(45),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
-        ),
+  ),
+  inputDecorationTheme: const InputDecorationTheme(
+    contentPadding: EdgeInsets.all(12.0),
+    border: OutlineInputBorder(
+      borderSide: BorderSide(
+        width: 1,
+        color: lightGrayColor,
       ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
-      contentPadding: EdgeInsets.all(12.0),
-      border: OutlineInputBorder(
-        borderSide: BorderSide(
-          width: 1,
-          color: lightGrayColor,
-        ),
-      ),
-      filled: true,
-      fillColor: lightGrayColor,
-    ),
-    datePickerTheme: const DatePickerThemeData(
-      backgroundColor: lightGrayColor,
-      headerBackgroundColor: lightGrayColor,
-      headerForegroundColor: Colors.black54,
-      surfaceTintColor: lightGrayColor,
-    ),
-    bottomSheetTheme: const BottomSheetThemeData(
-        surfaceTintColor: lightGrayColor, backgroundColor: Colors.white),
-    dialogTheme: const DialogTheme(
-      surfaceTintColor: lightGrayColor,
-      backgroundColor: Colors.white,
-    ));
+    filled: true,
+    fillColor: lightGrayColor,
+  ),
+  datePickerTheme: const DatePickerThemeData(
+    backgroundColor: lightGrayColor,
+    headerBackgroundColor: lightGrayColor,
+    headerForegroundColor: Colors.black54,
+    surfaceTintColor: lightGrayColor,
+  ),
+  bottomSheetTheme: const BottomSheetThemeData(
+    surfaceTintColor: lightGrayColor,
+    backgroundColor: Colors.white,
+  ),
+  dialogTheme: const DialogTheme(
+    surfaceTintColor: lightGrayColor,
+    backgroundColor: Colors.white,
+  ),
+);
 
 // Buttons
 final transparentButtonStyle = ElevatedButton.styleFrom(

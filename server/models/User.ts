@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { TokenInterface } from '../middlewares/auth';
 import { generateSixDigitRandomNumber } from '../utils/functions';
 
-interface IUser {
+interface User {
   name: string;
   username: string;
   avatar: string;
@@ -18,17 +18,18 @@ interface IUser {
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
   createdAt: Date;
+  updatedAt: Date;
 }
 
-interface IUserMethods {
+interface UserMethods {
   getSignedJwtToken(): string;
   matchPassword(enteredPassword: string): Promise<boolean>;
   getResetPasswordToken(): string;
 }
 
-type UserModel = mongoose.Model<IUser, object, IUserMethods>;
+type UserModel = mongoose.Model<User, object, UserMethods>;
 
-const schema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
+const schema = new mongoose.Schema<User, UserModel, UserMethods>(
   {
     name: {
       type: String,
@@ -74,10 +75,9 @@ const schema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
       type: String
     },
     resetPasswordToken: String,
-    resetPasswordExpire: Date,
-    createdAt: { type: Date, default: Date.now }
+    resetPasswordExpire: Date
   },
-  { toJSON: { virtuals: true } }
+  { toJSON: { virtuals: true }, timestamps: true }
 );
 
 // Hash password using bcrypt before saving
@@ -120,7 +120,7 @@ schema.method('getResetPasswordToken', function (): string {
   return resetToken;
 });
 
-const User = mongoose.model<IUser, UserModel>('User', schema);
-type UserType = mongoose.HydratedDocument<IUser, IUserMethods>;
+const User = mongoose.model<User, UserModel>('User', schema);
+type UserType = mongoose.HydratedDocument<User, UserMethods>;
 
 export { UserType, User };

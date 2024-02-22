@@ -16,6 +16,7 @@ class SearchUsersResponse with _$SearchUsersResponse {
 @freezed
 class SearchUsersResponseData with _$SearchUsersResponseData {
   const factory SearchUsersResponseData({
+    required String id,
     required String avatar,
     required String name,
     required String username,

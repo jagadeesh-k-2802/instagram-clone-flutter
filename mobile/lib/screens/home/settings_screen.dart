@@ -64,7 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                   ),
-                  const Divider(color: Colors.black26),
+                  const Divider(),
                   SizedBox(
                     width: double.maxFinite,
                     child: TextButton(

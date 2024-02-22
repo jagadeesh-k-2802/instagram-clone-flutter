@@ -124,7 +124,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     await fetchPhotos();
   }
 
-  void onPostUpload() {
+  Future<void> onPostUpload() async {
     if (selectedImage == null) return;
 
     List<AssetEntity> data = [];
@@ -178,25 +178,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                 padding: const EdgeInsets.all(6.0),
                 child: Icon(
                   selectImages.contains(item)
-                      ? Icons.circle
+                      ? Icons.check_circle
                       : Icons.circle_outlined,
                   color:
                       selectImages.contains(item) ? primaryColor : Colors.white,
                   size: 30.0,
                 ),
-              ),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: selectImages.contains(item),
-          child: GestureDetector(
-            onTap: () => addToSelectedPhotos(index),
-            child: const Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.all(11.0),
-                child: Icon(Icons.done, color: Colors.white, size: 20),
               ),
             ),
           ),

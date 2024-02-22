@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/widgets/clickable_list_item.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
@@ -17,6 +19,8 @@ class PostUploadScreen extends StatefulWidget {
 
 class _PostUploadScreenState extends State<PostUploadScreen> {
   List<AssetEntity> assets = [];
+  List<SearchUsersResponseData> selectedUsers = [];
+  TextEditingController captionController = TextEditingController();
 
   @override
   void initState() {
@@ -35,8 +39,34 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
     });
   }
 
-  void navigateToTagPeople() {
-    context.pushNamed('tag-people');
+  void navigateToTagPeople() async {
+    Object? users = await context.pushNamed('tag-people');
+
+    if (users is List<SearchUsersResponseData>) {
+      selectedUsers = users;
+    }
+  }
+
+  Future<void> onPostShare() async {
+    List<String> paths = [];
+
+    for (AssetEntity asset in assets) {
+      paths.add((await asset.file)?.path ?? '');
+    }
+
+    try {
+      await PostService.createPost(
+        caption: captionController.text,
+        taggedUsers: selectedUsers.map((e) => e.id).toList(),
+        localFilePaths: paths,
+      );
+    } catch (error) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString())),
+      );
+    }
   }
 
   @override
@@ -47,7 +77,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(12.0),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: onPostShare,
           child: const Text('Share'),
         ),
       ),
@@ -61,16 +91,13 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
                 itemCount: assets.length,
                 itemBuilder: (BuildContext context, int index) {
                   AssetEntity item = assets[index];
-
-                  return AssetEntityImage(
-                    item,
-                    fit: BoxFit.fitHeight,
-                  );
+                  return AssetEntityImage(item, fit: BoxFit.fitHeight);
                 },
               ),
             ),
             const SizedBox(height: 10.0),
             TextFormField(
+              controller: captionController,
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.newline,
               maxLines: 3,
@@ -85,7 +112,9 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
             ClickableListItem(
               prefixIcon: Icons.account_circle_rounded,
               suffixIcon: Icons.chevron_right,
-              text: 'Tag People',
+              text: selectedUsers.isEmpty
+                  ? 'Tag People'
+                  : selectedUsers.map((user) => user.name).join(','),
               onTap: navigateToTagPeople,
             ),
           ],
