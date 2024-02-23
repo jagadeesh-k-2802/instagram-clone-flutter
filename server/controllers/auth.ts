@@ -84,7 +84,7 @@ export const register = catchAsync(async (req, res, next) => {
     return next(new ErrorResponse('No avatar uploaded', 404));
   }
 
-  await functions.moveFromTemp(avatarFile, filename);
+  await functions.moveFromTemp(avatarFile, '../public/avatar', filename);
 
   const user = await User.create({
     name,
@@ -298,7 +298,7 @@ export const updateAvatar = catchAsync(async (req, res, next) => {
       return next(new ErrorResponse('No avatar uploaded', 404));
     }
 
-    await functions.moveFromTemp(avatar, filename);
+    await functions.moveFromTemp(avatar, '../public/avatar', filename);
     const fieldsToUpdate = { avatar: filename };
 
     // Update user in DB

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/services/post.dart';
+import 'package:instagram_clone/state/profile/user_posts_state.dart';
 import 'package:instagram_clone/widgets/clickable_list_item.dart';
+import 'package:instagram_clone/widgets/progress_button.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class PostUploadScreen extends StatefulWidget {
+class PostUploadScreen extends ConsumerStatefulWidget {
   final Object? data;
 
   const PostUploadScreen({
@@ -14,12 +17,13 @@ class PostUploadScreen extends StatefulWidget {
   });
 
   @override
-  State<PostUploadScreen> createState() => _PostUploadScreenState();
+  ConsumerState<PostUploadScreen> createState() => _PostUploadScreenState();
 }
 
-class _PostUploadScreenState extends State<PostUploadScreen> {
+class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
   List<AssetEntity> assets = [];
   List<SearchUsersResponseData> selectedUsers = [];
+  bool submitting = false;
   TextEditingController captionController = TextEditingController();
 
   @override
@@ -48,6 +52,7 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
   }
 
   Future<void> onPostShare() async {
+    setState(() => submitting = true);
     List<String> paths = [];
 
     for (AssetEntity asset in assets) {
@@ -60,12 +65,22 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
         taggedUsers: selectedUsers.map((e) => e.id).toList(),
         localFilePaths: paths,
       );
+
+      if (!mounted) return;
+      context.goNamed('feed');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your post has been uploaded')),
+      );
     } catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.toString())),
       );
+    } finally {
+      ref.read(userPostsProvider.notifier).invalidate();
+      setState(() => submitting = false);
     }
   }
 
@@ -74,11 +89,13 @@ class _PostUploadScreenState extends State<PostUploadScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('New Post')),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: ElevatedButton(
-          onPressed: onPostShare,
-          child: const Text('Share'),
+        child: ProgressButton(
+          inProgress: submitting,
+          onTap: onPostShare,
+          text: 'Share',
         ),
       ),
       body: SingleChildScrollView(

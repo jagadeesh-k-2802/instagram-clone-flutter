@@ -9,38 +9,30 @@ import 'package:instagram_clone/state/global_state.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
-  const HomeScreen({super.key, required this.navigationShell});
+
+  const HomeScreen({Key? key, required this.navigationShell})
+      : super(key: key ?? const ValueKey('ScaffoldWithNestedNavigation'));
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  int currentIndex = 0;
-
-  void onNavigate(int selectedIndex) {
-    if (selectedIndex != 2) {
-      setState(() => currentIndex = selectedIndex);
+  void onNavigate(int index) {
+    // PostNew Screen
+    if (index == 2) {
+      context.pushNamed('new-post');
+      return;
     }
 
-    switch (selectedIndex) {
-      case 0:
-        context.pushNamed('feed');
-        break;
-      case 1:
-        context.pushNamed('search');
-        break;
-      case 2:
-        context.pushNamed('new-post');
-        break;
-      case 3:
-        context.pushNamed('notifications');
-        break;
-      case 4:
-        context.pushNamed('profile');
-        break;
-      default:
+    if (index > 2) {
+      index -= 1;
     }
+
+    widget.navigationShell.goBranch(
+      index,
+      initialLocation: index == widget.navigationShell.currentIndex,
+    );
   }
 
   @override
@@ -52,7 +44,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: onNavigate,
-        currentIndex: currentIndex,
+        currentIndex: widget.navigationShell.currentIndex >= 2
+            ? widget.navigationShell.currentIndex + 1
+            : widget.navigationShell.currentIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black45,
         type: BottomNavigationBarType.fixed,

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:instagram_clone/screens/home/change_password.dart';
-import 'package:instagram_clone/screens/home/new_story_screen.dart';
+import 'package:instagram_clone/screens/auth/change_password.dart';
+import 'package:instagram_clone/screens/profile/public_profile_screen.dart';
+import 'package:instagram_clone/screens/search/search_detail_screen.dart';
+import 'package:instagram_clone/screens/story/new_story_screen.dart';
 import 'package:instagram_clone/screens/home/notifications_screen.dart';
 import 'package:instagram_clone/screens/home/feed_screen.dart';
 import 'package:instagram_clone/screens/home/message_screen.dart';
-import 'package:instagram_clone/screens/home/new_post_screen.dart';
-import 'package:instagram_clone/screens/home/post_upload_screen.dart';
-import 'package:instagram_clone/screens/home/profile_edit_screen.dart';
-import 'package:instagram_clone/screens/home/profile_screen.dart';
-import 'package:instagram_clone/screens/home/search_screen.dart';
+import 'package:instagram_clone/screens/post/new_post_screen.dart';
+import 'package:instagram_clone/screens/post/post_upload_screen.dart';
+import 'package:instagram_clone/screens/profile/profile_edit_screen.dart';
+import 'package:instagram_clone/screens/profile/profile_screen.dart';
+import 'package:instagram_clone/screens/search/search_screen.dart';
 import 'package:instagram_clone/screens/home/settings_screen.dart';
-import 'package:instagram_clone/screens/home/story_capture_screen.dart';
-import 'package:instagram_clone/screens/home/tag_people_screen.dart';
+import 'package:instagram_clone/screens/story/story_capture_screen.dart';
+import 'package:instagram_clone/screens/post/tag_people_screen.dart';
 import 'package:instagram_clone/screens/splash_screen.dart';
 import 'package:instagram_clone/screens/auth/login_screen.dart';
 import 'package:instagram_clone/screens/auth/signup_screen.dart';
@@ -20,7 +22,6 @@ import 'package:instagram_clone/screens/auth/forgot_password_screen.dart';
 import 'package:instagram_clone/screens/home/home_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _homeNavigatorKey = GlobalKey<NavigatorState>();
 
 final List<RouteBase> routes = [
   GoRoute(
@@ -43,13 +44,19 @@ final List<RouteBase> routes = [
     path: '/forgot-password',
     builder: (context, state) => const ForgotPasswordScreen(),
   ),
+  GoRoute(
+    name: 'change-password',
+    path: '/change-password',
+    pageBuilder: (context, state) => const NoTransitionPage<void>(
+      child: ChangePasswordScreen(),
+    ),
+  ),
   StatefulShellRoute.indexedStack(
     builder: (context, state, navigationShell) {
       return HomeScreen(navigationShell: navigationShell);
     },
     branches: [
       StatefulShellBranch(
-        navigatorKey: _homeNavigatorKey,
         routes: [
           GoRoute(
             name: 'feed',
@@ -58,6 +65,10 @@ final List<RouteBase> routes = [
               child: FeedScreen(),
             ),
           ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
           GoRoute(
             name: 'search',
             path: '/search',
@@ -66,12 +77,34 @@ final List<RouteBase> routes = [
             ),
           ),
           GoRoute(
+            name: 'search-detail',
+            path: '/search-detail',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: SearchDetailScreen(),
+            ),
+          ),
+          GoRoute(
+            name: 'public-profile',
+            path: '/profile/:id',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: PublicProfileScreen(profileId: state.pathParameters['id']),
+            ),
+          ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
+          GoRoute(
             name: 'notifications',
             path: '/notifications',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: NotificationsScreen(),
             ),
           ),
+        ],
+      ),
+      StatefulShellBranch(
+        routes: [
           GoRoute(
             name: 'profile',
             path: '/profile',
@@ -146,13 +179,6 @@ final List<RouteBase> routes = [
     path: '/profile-edit',
     pageBuilder: (context, state) => const NoTransitionPage<void>(
       child: ProfileEditScreen(),
-    ),
-  ),
-  GoRoute(
-    name: 'change-password',
-    path: '/change-password',
-    pageBuilder: (context, state) => const NoTransitionPage<void>(
-      child: ChangePasswordScreen(),
     ),
   ),
   GoRoute(

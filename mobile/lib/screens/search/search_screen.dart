@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 
@@ -10,10 +11,16 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  void navigateToSearchDetail() {
+    context.pushNamed('search-detail');
+  }
+
   Widget buildSearchBar() {
     return SizedBox(
       height: 36,
       child: TextFormField(
+        readOnly: true,
+        onTap: navigateToSearchDetail,
         decoration: const InputDecoration(
           contentPadding: EdgeInsets.all(0),
           fillColor: lightGrayColor,

@@ -8,8 +8,9 @@ interface AssetItem {
 interface Post {
   caption: string;
   assets: mongoose.Types.ArraySubdocument<AssetItem>;
-  tagged: mongoose.Types.Array<mongoose.ObjectId>;
+  taggedUsers: mongoose.Types.Array<mongoose.ObjectId>;
   user: mongoose.ObjectId;
+  likeCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,11 +24,14 @@ const schema = new mongoose.Schema<Post>(
   {
     caption: {
       type: String,
-      required: [true, 'Caption is required'],
       maxlength: [350, 'Caption should not exceed 350 characters']
     },
-    assets: assetSchema,
-    tagged: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    likeCount: {
+      type: Number,
+      default: 0
+    },
+    assets: [assetSchema],
+    taggedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
   },
   { toJSON: { virtuals: true }, timestamps: true }
@@ -36,4 +40,4 @@ const schema = new mongoose.Schema<Post>(
 const Post = mongoose.model<Post>('Post', schema);
 type PostType = mongoose.HydratedDocument<Post>;
 
-export { PostType, Post };
+export { PostType, AssetItem as AssetType, Post };

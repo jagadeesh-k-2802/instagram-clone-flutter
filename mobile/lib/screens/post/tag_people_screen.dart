@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/user.dart';
-import 'package:instagram_clone/state/search_users.dart';
+import 'package:instagram_clone/state/search/search_users.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
@@ -19,7 +19,6 @@ class TagPeopleScreen extends ConsumerStatefulWidget {
 
 class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
   Timer? debounce;
-  List<String> taggedUsers = [];
   List<SearchUsersResponseData> selectedUsers = [];
 
   @override
@@ -123,22 +122,21 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
                     ],
                   ),
                   const Spacer(),
-                  Visibility(
-                    visible: selectedUsers.contains(item),
-                    child: const Icon(
-                      Icons.check_circle,
-                      color: primaryColor,
-                      size: 30.0,
-                    ),
+                  Icon(
+                    selectedUsers.contains(item)
+                        ? Icons.check_circle
+                        : Icons.circle_outlined,
+                    color: selectedUsers.contains(item)
+                        ? primaryColor
+                        : Colors.black38,
+                    size: 30.0,
                   ),
                 ],
               ),
             ),
           );
         },
-        noItemsFoundIndicatorBuilder: (context, controller) {
-          return Container();
-        },
+        noItemsFoundIndicatorBuilder: (context, controller) => Container(),
         pagedBuilder: (controller, builder) => PagedListView.separated(
           pagingController: controller,
           builderDelegate: builder,
