@@ -23,21 +23,29 @@ Map<String, dynamic> _$$GetUserResponseImplToJson(
 _$GetUserResponseDataImpl _$$GetUserResponseDataImplFromJson(
         Map<String, dynamic> json) =>
     _$GetUserResponseDataImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       name: json['name'] as String,
       username: json['username'] as String,
       avatar: json['avatar'] as String,
       bio: json['bio'] as String,
+      postCount: json['postCount'] as int,
+      followersCount: json['followersCount'] as int,
+      followingCount: json['followingCount'] as int,
+      isFollowed: json['isFollowed'] as bool,
     );
 
 Map<String, dynamic> _$$GetUserResponseDataImplToJson(
         _$GetUserResponseDataImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'name': instance.name,
       'username': instance.username,
       'avatar': instance.avatar,
       'bio': instance.bio,
+      'postCount': instance.postCount,
+      'followersCount': instance.followersCount,
+      'followingCount': instance.followingCount,
+      'isFollowed': instance.isFollowed,
     };
 
 _$GetUserPostsResponseImpl _$$GetUserPostsResponseImplFromJson(
@@ -120,4 +128,41 @@ Map<String, dynamic> _$$SearchUsersResponseDataImplToJson(
       'avatar': instance.avatar,
       'name': instance.name,
       'username': instance.username,
+    };
+
+_$GetFollowOfUserResponseImpl _$$GetFollowOfUserResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetFollowOfUserResponseImpl(
+      success: json['success'] as bool,
+      data: (json['data'] as List<dynamic>)
+          .map((e) =>
+              GetFollowOfUserResponseData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$GetFollowOfUserResponseImplToJson(
+        _$GetFollowOfUserResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'data': instance.data,
+    };
+
+_$GetFollowOfUserResponseDataImpl _$$GetFollowOfUserResponseDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetFollowOfUserResponseDataImpl(
+      id: json['_id'] as String,
+      name: json['name'] as String,
+      username: json['username'] as String,
+      avatar: json['avatar'] as String,
+      isFollowed: json['isFollowed'] as bool,
+    );
+
+Map<String, dynamic> _$$GetFollowOfUserResponseDataImplToJson(
+        _$GetFollowOfUserResponseDataImpl instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'name': instance.name,
+      'username': instance.username,
+      'avatar': instance.avatar,
+      'isFollowed': instance.isFollowed,
     };

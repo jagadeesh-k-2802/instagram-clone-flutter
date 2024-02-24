@@ -98,4 +98,94 @@ class UserService {
       rethrow;
     }
   }
+
+  static Future<MessageResponse> followUser({
+    required String userId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/follow/$userId';
+
+      final response = await dio.post(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<MessageResponse> unFollowUser({
+    required String userId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/unfollow/$userId';
+
+      final response = await dio.post(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetFollowOfUserResponse> getFollowers({
+    required String userId,
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/followers/$userId';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetFollowOfUserResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetFollowOfUserResponse> getFollowing({
+    required String userId,
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/following/$userId';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetFollowOfUserResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

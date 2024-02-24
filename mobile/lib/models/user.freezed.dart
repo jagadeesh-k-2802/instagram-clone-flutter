@@ -188,11 +188,16 @@ GetUserResponseData _$GetUserResponseDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GetUserResponseData {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get avatar => throw _privateConstructorUsedError;
   String get bio => throw _privateConstructorUsedError;
+  int get postCount => throw _privateConstructorUsedError;
+  int get followersCount => throw _privateConstructorUsedError;
+  int get followingCount => throw _privateConstructorUsedError;
+  bool get isFollowed => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -207,7 +212,15 @@ abstract class $GetUserResponseDataCopyWith<$Res> {
       _$GetUserResponseDataCopyWithImpl<$Res, GetUserResponseData>;
   @useResult
   $Res call(
-      {String id, String name, String username, String avatar, String bio});
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar,
+      String bio,
+      int postCount,
+      int followersCount,
+      int followingCount,
+      bool isFollowed});
 }
 
 /// @nodoc
@@ -228,6 +241,10 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
     Object? username = null,
     Object? avatar = null,
     Object? bio = null,
+    Object? postCount = null,
+    Object? followersCount = null,
+    Object? followingCount = null,
+    Object? isFollowed = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -250,6 +267,22 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String,
+      postCount: null == postCount
+          ? _value.postCount
+          : postCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followersCount: null == followersCount
+          ? _value.followersCount
+          : followersCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followingCount: null == followingCount
+          ? _value.followingCount
+          : followingCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      isFollowed: null == isFollowed
+          ? _value.isFollowed
+          : isFollowed // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -263,7 +296,15 @@ abstract class _$$GetUserResponseDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id, String name, String username, String avatar, String bio});
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar,
+      String bio,
+      int postCount,
+      int followersCount,
+      int followingCount,
+      bool isFollowed});
 }
 
 /// @nodoc
@@ -282,6 +323,10 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
     Object? username = null,
     Object? avatar = null,
     Object? bio = null,
+    Object? postCount = null,
+    Object? followersCount = null,
+    Object? followingCount = null,
+    Object? isFollowed = null,
   }) {
     return _then(_$GetUserResponseDataImpl(
       id: null == id
@@ -304,6 +349,22 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
           ? _value.bio
           : bio // ignore: cast_nullable_to_non_nullable
               as String,
+      postCount: null == postCount
+          ? _value.postCount
+          : postCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followersCount: null == followersCount
+          ? _value.followersCount
+          : followersCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      followingCount: null == followingCount
+          ? _value.followingCount
+          : followingCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      isFollowed: null == isFollowed
+          ? _value.isFollowed
+          : isFollowed // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -312,16 +373,21 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GetUserResponseDataImpl implements _GetUserResponseData {
   const _$GetUserResponseDataImpl(
-      {required this.id,
+      {@JsonKey(name: '_id') required this.id,
       required this.name,
       required this.username,
       required this.avatar,
-      required this.bio});
+      required this.bio,
+      required this.postCount,
+      required this.followersCount,
+      required this.followingCount,
+      required this.isFollowed});
 
   factory _$GetUserResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetUserResponseDataImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   @override
   final String name;
@@ -331,10 +397,18 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
   final String avatar;
   @override
   final String bio;
+  @override
+  final int postCount;
+  @override
+  final int followersCount;
+  @override
+  final int followingCount;
+  @override
+  final bool isFollowed;
 
   @override
   String toString() {
-    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio)';
+    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, isFollowed: $isFollowed)';
   }
 
   @override
@@ -347,12 +421,21 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
-            (identical(other.bio, bio) || other.bio == bio));
+            (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.postCount, postCount) ||
+                other.postCount == postCount) &&
+            (identical(other.followersCount, followersCount) ||
+                other.followersCount == followersCount) &&
+            (identical(other.followingCount, followingCount) ||
+                other.followingCount == followingCount) &&
+            (identical(other.isFollowed, isFollowed) ||
+                other.isFollowed == isFollowed));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, username, avatar, bio);
+  int get hashCode => Object.hash(runtimeType, id, name, username, avatar, bio,
+      postCount, followersCount, followingCount, isFollowed);
 
   @JsonKey(ignore: true)
   @override
@@ -371,16 +454,21 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
 
 abstract class _GetUserResponseData implements GetUserResponseData {
   const factory _GetUserResponseData(
-      {required final String id,
+      {@JsonKey(name: '_id') required final String id,
       required final String name,
       required final String username,
       required final String avatar,
-      required final String bio}) = _$GetUserResponseDataImpl;
+      required final String bio,
+      required final int postCount,
+      required final int followersCount,
+      required final int followingCount,
+      required final bool isFollowed}) = _$GetUserResponseDataImpl;
 
   factory _GetUserResponseData.fromJson(Map<String, dynamic> json) =
       _$GetUserResponseDataImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
   String get name;
@@ -390,6 +478,14 @@ abstract class _GetUserResponseData implements GetUserResponseData {
   String get avatar;
   @override
   String get bio;
+  @override
+  int get postCount;
+  @override
+  int get followersCount;
+  @override
+  int get followingCount;
+  @override
+  bool get isFollowed;
   @override
   @JsonKey(ignore: true)
   _$$GetUserResponseDataImplCopyWith<_$GetUserResponseDataImpl> get copyWith =>
@@ -1267,5 +1363,413 @@ abstract class _SearchUsersResponseData implements SearchUsersResponseData {
   @override
   @JsonKey(ignore: true)
   _$$SearchUsersResponseDataImplCopyWith<_$SearchUsersResponseDataImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetFollowOfUserResponse _$GetFollowOfUserResponseFromJson(
+    Map<String, dynamic> json) {
+  return _GetFollowOfUserResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetFollowOfUserResponse {
+  bool get success => throw _privateConstructorUsedError;
+  List<GetFollowOfUserResponseData> get data =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetFollowOfUserResponseCopyWith<GetFollowOfUserResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetFollowOfUserResponseCopyWith<$Res> {
+  factory $GetFollowOfUserResponseCopyWith(GetFollowOfUserResponse value,
+          $Res Function(GetFollowOfUserResponse) then) =
+      _$GetFollowOfUserResponseCopyWithImpl<$Res, GetFollowOfUserResponse>;
+  @useResult
+  $Res call({bool success, List<GetFollowOfUserResponseData> data});
+}
+
+/// @nodoc
+class _$GetFollowOfUserResponseCopyWithImpl<$Res,
+        $Val extends GetFollowOfUserResponse>
+    implements $GetFollowOfUserResponseCopyWith<$Res> {
+  _$GetFollowOfUserResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetFollowOfUserResponseData>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetFollowOfUserResponseImplCopyWith<$Res>
+    implements $GetFollowOfUserResponseCopyWith<$Res> {
+  factory _$$GetFollowOfUserResponseImplCopyWith(
+          _$GetFollowOfUserResponseImpl value,
+          $Res Function(_$GetFollowOfUserResponseImpl) then) =
+      __$$GetFollowOfUserResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, List<GetFollowOfUserResponseData> data});
+}
+
+/// @nodoc
+class __$$GetFollowOfUserResponseImplCopyWithImpl<$Res>
+    extends _$GetFollowOfUserResponseCopyWithImpl<$Res,
+        _$GetFollowOfUserResponseImpl>
+    implements _$$GetFollowOfUserResponseImplCopyWith<$Res> {
+  __$$GetFollowOfUserResponseImplCopyWithImpl(
+      _$GetFollowOfUserResponseImpl _value,
+      $Res Function(_$GetFollowOfUserResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_$GetFollowOfUserResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetFollowOfUserResponseData>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetFollowOfUserResponseImpl implements _GetFollowOfUserResponse {
+  const _$GetFollowOfUserResponseImpl(
+      {required this.success,
+      required final List<GetFollowOfUserResponseData> data})
+      : _data = data;
+
+  factory _$GetFollowOfUserResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetFollowOfUserResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  final List<GetFollowOfUserResponseData> _data;
+  @override
+  List<GetFollowOfUserResponseData> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  @override
+  String toString() {
+    return 'GetFollowOfUserResponse(success: $success, data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetFollowOfUserResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            const DeepCollectionEquality().equals(other._data, _data));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, success, const DeepCollectionEquality().hash(_data));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetFollowOfUserResponseImplCopyWith<_$GetFollowOfUserResponseImpl>
+      get copyWith => __$$GetFollowOfUserResponseImplCopyWithImpl<
+          _$GetFollowOfUserResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetFollowOfUserResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetFollowOfUserResponse implements GetFollowOfUserResponse {
+  const factory _GetFollowOfUserResponse(
+          {required final bool success,
+          required final List<GetFollowOfUserResponseData> data}) =
+      _$GetFollowOfUserResponseImpl;
+
+  factory _GetFollowOfUserResponse.fromJson(Map<String, dynamic> json) =
+      _$GetFollowOfUserResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  List<GetFollowOfUserResponseData> get data;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetFollowOfUserResponseImplCopyWith<_$GetFollowOfUserResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetFollowOfUserResponseData _$GetFollowOfUserResponseDataFromJson(
+    Map<String, dynamic> json) {
+  return _GetFollowOfUserResponseData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetFollowOfUserResponseData {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
+  bool get isFollowed => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetFollowOfUserResponseDataCopyWith<GetFollowOfUserResponseData>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetFollowOfUserResponseDataCopyWith<$Res> {
+  factory $GetFollowOfUserResponseDataCopyWith(
+          GetFollowOfUserResponseData value,
+          $Res Function(GetFollowOfUserResponseData) then) =
+      _$GetFollowOfUserResponseDataCopyWithImpl<$Res,
+          GetFollowOfUserResponseData>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar,
+      bool isFollowed});
+}
+
+/// @nodoc
+class _$GetFollowOfUserResponseDataCopyWithImpl<$Res,
+        $Val extends GetFollowOfUserResponseData>
+    implements $GetFollowOfUserResponseDataCopyWith<$Res> {
+  _$GetFollowOfUserResponseDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? username = null,
+    Object? avatar = null,
+    Object? isFollowed = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      isFollowed: null == isFollowed
+          ? _value.isFollowed
+          : isFollowed // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetFollowOfUserResponseDataImplCopyWith<$Res>
+    implements $GetFollowOfUserResponseDataCopyWith<$Res> {
+  factory _$$GetFollowOfUserResponseDataImplCopyWith(
+          _$GetFollowOfUserResponseDataImpl value,
+          $Res Function(_$GetFollowOfUserResponseDataImpl) then) =
+      __$$GetFollowOfUserResponseDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar,
+      bool isFollowed});
+}
+
+/// @nodoc
+class __$$GetFollowOfUserResponseDataImplCopyWithImpl<$Res>
+    extends _$GetFollowOfUserResponseDataCopyWithImpl<$Res,
+        _$GetFollowOfUserResponseDataImpl>
+    implements _$$GetFollowOfUserResponseDataImplCopyWith<$Res> {
+  __$$GetFollowOfUserResponseDataImplCopyWithImpl(
+      _$GetFollowOfUserResponseDataImpl _value,
+      $Res Function(_$GetFollowOfUserResponseDataImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? username = null,
+    Object? avatar = null,
+    Object? isFollowed = null,
+  }) {
+    return _then(_$GetFollowOfUserResponseDataImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      isFollowed: null == isFollowed
+          ? _value.isFollowed
+          : isFollowed // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetFollowOfUserResponseDataImpl
+    implements _GetFollowOfUserResponseData {
+  const _$GetFollowOfUserResponseDataImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required this.name,
+      required this.username,
+      required this.avatar,
+      required this.isFollowed});
+
+  factory _$GetFollowOfUserResponseDataImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$GetFollowOfUserResponseDataImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String name;
+  @override
+  final String username;
+  @override
+  final String avatar;
+  @override
+  final bool isFollowed;
+
+  @override
+  String toString() {
+    return 'GetFollowOfUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, isFollowed: $isFollowed)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetFollowOfUserResponseDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.isFollowed, isFollowed) ||
+                other.isFollowed == isFollowed));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, username, avatar, isFollowed);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetFollowOfUserResponseDataImplCopyWith<_$GetFollowOfUserResponseDataImpl>
+      get copyWith => __$$GetFollowOfUserResponseDataImplCopyWithImpl<
+          _$GetFollowOfUserResponseDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetFollowOfUserResponseDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetFollowOfUserResponseData
+    implements GetFollowOfUserResponseData {
+  const factory _GetFollowOfUserResponseData(
+      {@JsonKey(name: '_id') required final String id,
+      required final String name,
+      required final String username,
+      required final String avatar,
+      required final bool isFollowed}) = _$GetFollowOfUserResponseDataImpl;
+
+  factory _GetFollowOfUserResponseData.fromJson(Map<String, dynamic> json) =
+      _$GetFollowOfUserResponseDataImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get name;
+  @override
+  String get username;
+  @override
+  String get avatar;
+  @override
+  bool get isFollowed;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetFollowOfUserResponseDataImplCopyWith<_$GetFollowOfUserResponseDataImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

@@ -35,6 +35,9 @@ class UserResponseData with _$UserResponseData {
     required String gender,
     required String bio,
     required String? phone,
+    required int postCount,
+    required int followersCount,
+    required int followingCount,
     required String? fcmToken,
     required String createdAt,
   }) = _UserResponseData;

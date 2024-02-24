@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
-import 'package:instagram_clone/state/search/search_users.dart';
+import 'package:instagram_clone/state/search/search_users_state.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
@@ -69,19 +69,18 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
         firstPageKey: 1,
         limit: 20,
         provider: searchUsersProvider,
-        pullToRefresh: true,
         itemBuilder: (context, item, index) {
           return InkWell(
             onTap: () => openUserProfile(item),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: defaultPagePadding,
-                vertical: 8.0,
+                vertical: 2.0,
               ),
               child: Row(
                 children: [
                   CircleAvatar(
-                    radius: 32.0,
+                    radius: 30.0,
                     child: ClipOval(
                       child: CachedNetworkImage(
                         imageUrl: '$apiUrl/avatar/${item.avatar}',

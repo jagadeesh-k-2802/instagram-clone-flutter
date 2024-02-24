@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/services/post.dart';
+import 'package:instagram_clone/state/global_state.dart';
 import 'package:instagram_clone/state/profile/user_posts_state.dart';
 import 'package:instagram_clone/widgets/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/progress_button.dart';
@@ -68,6 +69,8 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
 
       if (!mounted) return;
       context.goNamed('feed');
+
+      ref.read(globalStateProvider.notifier).incrementPostCount();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your post has been uploaded')),

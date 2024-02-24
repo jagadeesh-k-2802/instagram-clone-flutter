@@ -11,7 +11,7 @@ class HomeScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
 
   const HomeScreen({Key? key, required this.navigationShell})
-      : super(key: key ?? const ValueKey('ScaffoldWithNestedNavigation'));
+      : super(key: key ?? const ValueKey('HomeScreenNavigationShell'));
 
   @override
   ConsumerState<HomeScreen> createState() => _HomeScreenState();

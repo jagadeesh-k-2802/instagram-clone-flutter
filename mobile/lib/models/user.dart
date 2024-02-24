@@ -16,11 +16,15 @@ class GetUserResponse with _$GetUserResponse {
 @freezed
 class GetUserResponseData with _$GetUserResponseData {
   const factory GetUserResponseData({
-    required String id,
+    @JsonKey(name: '_id') required String id,
     required String name,
     required String username,
     required String avatar,
     required String bio,
+    required int postCount,
+    required int followersCount,
+    required int followingCount,
+    required bool isFollowed,
   }) = _GetUserResponseData;
 
   factory GetUserResponseData.fromJson(Map<String, Object?> json) =>
@@ -83,4 +87,29 @@ class SearchUsersResponseData with _$SearchUsersResponseData {
 
   factory SearchUsersResponseData.fromJson(Map<String, Object?> json) =>
       _$SearchUsersResponseDataFromJson(json);
+}
+
+@freezed
+class GetFollowOfUserResponse with _$GetFollowOfUserResponse {
+  const factory GetFollowOfUserResponse({
+    required bool success,
+    required List<GetFollowOfUserResponseData> data,
+  }) = _GetFollowOfUserResponse;
+
+  factory GetFollowOfUserResponse.fromJson(Map<String, Object?> json) =>
+      _$GetFollowOfUserResponseFromJson(json);
+}
+
+@freezed
+class GetFollowOfUserResponseData with _$GetFollowOfUserResponseData {
+  const factory GetFollowOfUserResponseData({
+    @JsonKey(name: '_id') required String id,
+    required String name,
+    required String username,
+    required String avatar,
+    required bool isFollowed,
+  }) = _GetFollowOfUserResponseData;
+
+  factory GetFollowOfUserResponseData.fromJson(Map<String, Object?> json) =>
+      _$GetFollowOfUserResponseDataFromJson(json);
 }

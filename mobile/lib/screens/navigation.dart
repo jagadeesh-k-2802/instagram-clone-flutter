@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/screens/auth/change_password.dart';
+import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/screens/profile/public_profile_screen.dart';
 import 'package:instagram_clone/screens/search/search_detail_screen.dart';
 import 'package:instagram_clone/screens/story/new_story_screen.dart';
@@ -87,7 +88,21 @@ final List<RouteBase> routes = [
             name: 'public-profile',
             path: '/profile/:id',
             pageBuilder: (context, state) => NoTransitionPage(
-              child: PublicProfileScreen(profileId: state.pathParameters['id']),
+              child: PublicProfileScreen(
+                profileId: state.pathParameters['id'],
+                onFollowChange: state.extra,
+              ),
+            ),
+          ),
+          GoRoute(
+            name: 'follow-detail',
+            path: '/follow-detail/:id/:username/:initialScreen',
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: FollowDetailScreen(
+                userId: state.pathParameters['id'],
+                username: state.pathParameters['username'],
+                initialScreen: state.pathParameters['initialScreen'],
+              ),
             ),
           ),
         ],

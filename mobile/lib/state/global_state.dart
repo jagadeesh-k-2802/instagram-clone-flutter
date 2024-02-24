@@ -14,6 +14,28 @@ class GlobalStateNotifier extends StateNotifier<Data> {
   void setUser(UserResponseData? user) {
     state = GlobalState(user);
   }
+
+  void incrementPostCount() {
+    state = GlobalState(
+      state.user?.copyWith(postCount: (state.user?.postCount ?? 0) + 1),
+    );
+  }
+
+  void incrementFollowingCount() {
+    state = GlobalState(
+      state.user?.copyWith(
+        followingCount: (state.user?.followingCount ?? 0) + 1,
+      ),
+    );
+  }
+
+  void decrementFollowingCount() {
+    state = GlobalState(
+      state.user?.copyWith(
+        followingCount: (state.user?.followingCount ?? 0) - 1,
+      ),
+    );
+  }
 }
 
 final _initialState = GlobalState(null);

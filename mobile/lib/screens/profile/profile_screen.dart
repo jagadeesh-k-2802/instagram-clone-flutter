@@ -11,6 +11,7 @@ import 'package:instagram_clone/state/global_state.dart';
 import 'package:instagram_clone/state/profile/user_posts_state.dart';
 import 'package:instagram_clone/state/profile/user_tagged_posts_state.dart';
 import 'package:instagram_clone/theme/theme.dart';
+import 'package:instagram_clone/utils/functions.dart';
 import 'package:instagram_clone/widgets/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
@@ -50,27 +51,50 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 width: 75,
                 child: Column(
                   children: [
-                    Text('0', style: titleLargeBold(context)),
+                    Text(
+                      instagramNumberFormatter(user?.postCount ?? 0),
+                      style: titleLargeBold(context),
+                    ),
                     Text('Posts', style: textTheme.bodyMedium),
                   ],
                 ),
               ),
-              SizedBox(
-                width: 75,
-                child: Column(
-                  children: [
-                    Text('0', style: titleLargeBold(context)),
-                    Text('Followers', style: textTheme.bodyMedium),
-                  ],
+              GestureDetector(
+                onTap: () => navigateToFollowDetail(
+                  user?.id ?? '',
+                  user?.username ?? '',
+                  'followers',
+                ),
+                child: SizedBox(
+                  width: 75,
+                  child: Column(
+                    children: [
+                      Text(
+                        instagramNumberFormatter(user?.followersCount ?? 0),
+                        style: titleLargeBold(context),
+                      ),
+                      Text('Followers', style: textTheme.bodyMedium),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(
-                width: 75,
-                child: Column(
-                  children: [
-                    Text('0', style: titleLargeBold(context)),
-                    Text('Following', style: textTheme.bodyMedium),
-                  ],
+              GestureDetector(
+                onTap: () => navigateToFollowDetail(
+                  user?.id ?? '',
+                  user?.username ?? '',
+                  'following',
+                ),
+                child: SizedBox(
+                  width: 75,
+                  child: Column(
+                    children: [
+                      Text(
+                        instagramNumberFormatter(user?.followingCount ?? 0),
+                        style: titleLargeBold(context),
+                      ),
+                      Text('Following', style: textTheme.bodyMedium),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -80,11 +104,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             user?.name ?? '',
             style: bodyLargeBold(context),
           ),
+          const SizedBox(height: 4.0),
           Visibility(
-            visible: user?.bio != null,
+            visible: user?.bio.isNotEmpty == true,
             child: Column(
               children: [
-                const SizedBox(height: 8.0),
                 Text(
                   user?.bio ?? '',
                   style: textTheme.bodyLarge,
@@ -139,6 +163,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     // TODO: Open Post in Post Detail Screen
   }
 
+  void navigateToFollowDetail(
+    String userId,
+    String username,
+    String initialScreen,
+  ) {
+    context.push('/follow-detail/$userId/$username/$initialScreen');
+  }
+
   @override
   Widget build(BuildContext context) {
     UserResponseData? user = ref.watch(globalStateProvider).user;
@@ -168,7 +200,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ],
               ),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(220),
+                preferredSize: Size.fromHeight(
+                  user?.bio.isNotEmpty == true ? 220 : 170,
+                ),
                 child: buildProfileHeader(user: user),
               ),
             )
@@ -250,7 +284,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             gridDelegate: photoGrid,
                           ),
                         ),
-                        RiverPagedBuilder.autoDispose(
+                        RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
                           provider: userTaggedPostsProvider,

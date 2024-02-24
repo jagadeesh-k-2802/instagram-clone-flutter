@@ -4,5 +4,9 @@ analyzer:
   plugins:
     - custom_lint
 
+  errors:
+    # For JsonKey() annotation
+    invalid_annotation_target: ignore
+
 linter:
   rules:

@@ -6,6 +6,8 @@ import { zParse } from '@validation/index';
 import { AssetType, Post } from '@models/Post';
 import * as functions from '@utils/functions';
 import ErrorResponse from '@utils/errorResponse';
+import { User } from '@models/User';
+import mongoose from 'mongoose';
 
 /**
  * @route GET /api/post/my-posts
@@ -64,6 +66,7 @@ export const createPost = catchAsync(async (req, res, next) => {
   const [fields, files] = await form.parse(req);
   const customFields = {};
 
+  // Transform form-data to object
   for (const [key, value] of Object.entries(fields)) {
     switch (key) {
       case 'taggedUsers':
@@ -98,6 +101,7 @@ export const createPost = catchAsync(async (req, res, next) => {
 
   const uniqueId = uuidv4();
 
+  // Copy each file to directory
   for await (const file of files.files) {
     const regex = file.originalFilename?.match(/\.[^/]+$/);
     const ext = regex != null ? regex[0] : '';
@@ -113,7 +117,19 @@ export const createPost = catchAsync(async (req, res, next) => {
     assets.push({ assetType, url: `${uniqueId}/${newFilename}` });
   }
 
-  await Post.create({ caption, taggedUsers, assets, user });
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await Post.create({ caption, taggedUsers, assets, user });
+    await User.findByIdAndUpdate(user.id, { $inc: { postCount: 1 } });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
 
   res.status(201).json({
     success: true,

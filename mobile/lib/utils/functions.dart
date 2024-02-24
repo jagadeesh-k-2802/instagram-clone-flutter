@@ -24,3 +24,21 @@ bool validEmailAddress(String? email) {
 Future<bool> hasInternetConnection() async {
   return await InternetConnectionChecker().hasConnection;
 }
+
+/// instagramNumberFormatter
+/// * Format numbers like instagram
+///
+String instagramNumberFormatter(int number) {
+  if (number < 2000) {
+    return number.toString();
+  } else if (number < 1000000) {
+    double result = number / 1000;
+    return '${result.toStringAsFixed(1)}K';
+  } else if (number < 1000000000) {
+    double result = number / 1000000;
+    return '${result.toStringAsFixed(1)}M';
+  } else {
+    double result = number / 1000000000;
+    return '${result.toStringAsFixed(1)}B';
+  }
+}

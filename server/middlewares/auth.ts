@@ -38,7 +38,7 @@ const isAuthenticated = async (req: Request) => {
     } else {
       return false;
     }
-  } catch (err) {
+  } catch (error) {
     return false;
   }
 };

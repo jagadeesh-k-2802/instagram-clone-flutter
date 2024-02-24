@@ -29,7 +29,7 @@ class SearchUsersState extends PagedState<int, UserData> {
       records: records,
       error: error,
       nextPageKey: nextPageKey,
-      previousPageKeys: super.previousPageKeys,
+      previousPageKeys: previousPageKeys,
     );
 
     return SearchUsersState(
@@ -68,8 +68,8 @@ class SearchUsersNotifier extends StateNotifier<SearchUsersState>
         nextPageKey: users.data.isEmpty ? null : page + 1,
         previousPageKeys: {...state.previousPageKeys, page}.toList(),
       );
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
+    } catch (error) {
+      state = state.copyWith(error: error.toString());
     }
 
     return null;

@@ -114,6 +114,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
       if (selectImages.contains(localImages[index])) {
         selectImages.remove(localImages[index]);
       } else {
+        if (selectImages.length >= 5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cannot select more than 5 items')),
+          );
+          return;
+        }
+
         selectImages.add(localImages[index]);
       }
     });

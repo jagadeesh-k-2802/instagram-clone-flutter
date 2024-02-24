@@ -15,6 +15,9 @@ interface User {
   password?: string;
   address: string;
   fcmToken: string;
+  postCount: number;
+  followersCount: number;
+  followingCount: number;
   resetPasswordToken?: string;
   resetPasswordExpire?: Date;
   createdAt: Date;
@@ -74,6 +77,9 @@ const schema = new mongoose.Schema<User, UserModel, UserMethods>(
     fcmToken: {
       type: String
     },
+    postCount: { type: Number, default: 0 },
+    followersCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
     resetPasswordToken: String,
     resetPasswordExpire: Date
   },

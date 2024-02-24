@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/user.dart';
-import 'package:instagram_clone/state/search/search_users.dart';
+import 'package:instagram_clone/state/search/search_users_state.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
@@ -64,6 +64,13 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
       if (selectedUsers.contains(user)) {
         selectedUsers.remove(user);
       } else {
+        if (selectedUsers.length >= 5) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Cannot select more than 5 users')),
+          );
+          return;
+        }
+
         selectedUsers.add(user);
       }
     });
@@ -78,17 +85,15 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
       appBar: AppBar(
         title: buildSearchBar(searchUsersNotifier),
         automaticallyImplyLeading: false,
-        actions: [
-          TextButton(
-            onPressed: onDone,
-            child: Text(
-              'Done',
-              style: bodyLargeBold(context)?.copyWith(
-                color: primaryColor,
-              ),
-            ),
-          ),
-        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: ElevatedButton(
+          onPressed: onDone,
+          child:  Text('Done (${selectedUsers.length})'),
+        ),
       ),
       body: RiverPagedBuilder.autoDispose(
         firstPageKey: 1,

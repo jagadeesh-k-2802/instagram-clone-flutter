@@ -338,7 +338,7 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
       success: true,
       message: 'Password reset OTP sent to your E-mail ID'
     });
-  } catch (err) {
+  } catch (error) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();
