@@ -11,6 +11,7 @@ interface Post {
   taggedUsers: mongoose.Types.Array<mongoose.ObjectId>;
   user: mongoose.ObjectId;
   likeCount: number;
+  commentCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,10 @@ const schema = new mongoose.Schema<Post>(
       maxlength: [350, 'Caption should not exceed 350 characters']
     },
     likeCount: {
+      type: Number,
+      default: 0
+    },
+    commentCount: {
       type: Number,
       default: 0
     },

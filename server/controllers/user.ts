@@ -52,7 +52,8 @@ export const getUserPosts = catchAsync(async (req, res) => {
   const posts = await Post.find({ user: userId })
     .select('id caption assets')
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
   res.status(200).json({ success: true, data: posts });
 });
@@ -71,7 +72,8 @@ export const getUserTaggedPosts = catchAsync(async (req, res) => {
   const posts = await Post.find({ taggedUsers: userId })
     .select('id caption assets')
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
   res.status(200).json({ success: true, data: posts });
 });
@@ -145,6 +147,7 @@ export const getFollowers = catchAsync(async (req, res) => {
     .limit(limit)
     .populate<{ followerId: UserType }>('followerId', 'id name username avatar')
     .select('followerId')
+    .sort({ createdAt: -1 })
     .lean();
 
   const followerIds = followers.map(follower => follower.followerId);
@@ -182,6 +185,7 @@ export const getFollowing = catchAsync(async (req, res) => {
     .limit(limit)
     .select('followeeId')
     .populate<{ followeeId: UserType }>('followeeId', 'id name username avatar')
+    .sort({ createdAt: -1 })
     .lean();
 
   const followingIds = following.map(follower => follower.followeeId);

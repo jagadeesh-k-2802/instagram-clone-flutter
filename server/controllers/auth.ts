@@ -1,14 +1,14 @@
 import { Response } from 'express';
 import { formidable } from 'formidable';
 import { UserType, User } from '@models/User';
+import { Confirmation } from '@models/Confirmations';
 import catchAsync from '@utils/catchAsync';
 import ErrorResponse from '@utils/errorResponse';
 import Email from '@utils/email';
 import { isAuthenticated } from '@middlewares/auth';
-import * as functions from '@utils/functions';
 import { zParse } from '@validation/index';
+import * as functions from '@utils/functions';
 import * as authValidation from '@validation/auth';
-import { Confirmation } from '@models/Confirmations';
 
 /**
  * @route POST /api/auth/login

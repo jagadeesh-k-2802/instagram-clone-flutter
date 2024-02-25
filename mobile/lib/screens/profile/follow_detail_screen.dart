@@ -7,10 +7,10 @@ import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/services/user.dart';
-import 'package:instagram_clone/state/global_state.dart';
-import 'package:instagram_clone/state/profile/user_followers_state.dart';
-import 'package:instagram_clone/state/profile/user_following_state.dart';
-import 'package:instagram_clone/state/public-profile/get_user_state.dart';
+import 'package:instagram_clone/state/global_state_provider.dart';
+import 'package:instagram_clone/state/profile/user_followers_provider.dart';
+import 'package:instagram_clone/state/profile/user_following_provider.dart';
+import 'package:instagram_clone/state/public-profile/user_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
@@ -41,6 +41,7 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
       ref.refresh(getPublicUserProvider(userId)).isRefreshing;
       followingNotifier.updateFollow(userId, true);
       followersNotifier.updateFollow(userId, true);
+      ref.read(globalStateProvider.notifier).incrementFollowingCount();
     } catch (error) {
       // Do Nothing
     }
@@ -56,6 +57,7 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
       ref.refresh(getPublicUserProvider(widget.userId ?? '')).isRefreshing;
       followingNotifier.updateFollow(userId, false);
       followersNotifier.updateFollow(userId, false);
+      ref.read(globalStateProvider.notifier).decrementFollowingCount();
     } catch (error) {
       // Do Nothing
     }
@@ -70,9 +72,11 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
       if (action == 'follow') {
         followingNotifier.updateFollow(item.id, true);
         followersNotifier.updateFollow(item.id, true);
+        ref.read(globalStateProvider.notifier).incrementFollowingCount();
       } else {
         followingNotifier.updateFollow(item.id, false);
         followersNotifier.updateFollow(item.id, false);
+        ref.read(globalStateProvider.notifier).decrementFollowingCount();
       }
     });
   }

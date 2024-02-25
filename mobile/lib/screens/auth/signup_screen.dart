@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:instagram_clone/models/auth.dart';
-import 'package:instagram_clone/state/global_state.dart';
+import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/services/auth.dart';

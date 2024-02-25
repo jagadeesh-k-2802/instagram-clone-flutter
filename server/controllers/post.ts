@@ -1,13 +1,16 @@
+import mongoose from 'mongoose';
 import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
-import catchAsync from '@utils/catchAsync';
-import * as postValidation from '@validation/post';
-import { zParse } from '@validation/index';
 import { AssetType, Post } from '@models/Post';
-import * as functions from '@utils/functions';
-import ErrorResponse from '@utils/errorResponse';
 import { User } from '@models/User';
-import mongoose from 'mongoose';
+import { UserFollows } from '@models/UserFollows';
+import { PostLikes } from '@models/PostLikes';
+import { PostSaves } from '@models/PostSaves';
+import { zParse } from '@validation/index';
+import catchAsync from '@utils/catchAsync';
+import ErrorResponse from '@utils/errorResponse';
+import * as functions from '@utils/functions';
+import * as postValidation from '@validation/post';
 
 /**
  * @route GET /api/post/my-posts
@@ -24,7 +27,7 @@ export const getUserPosts = catchAsync(async (req, res) => {
     .select('id caption assets')
     .skip(skip)
     .limit(limit)
-    .exec();
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
@@ -47,12 +50,219 @@ export const getUserTaggedPosts = catchAsync(async (req, res) => {
     .select('id caption assets')
     .skip(skip)
     .limit(limit)
-    .exec();
+    .sort({ createdAt: -1 });
 
   res.status(200).json({
     success: true,
     data: posts
   });
+});
+
+/**
+ * @route POST /api/post/feed-posts
+ * @desc Fetch current user feed
+ * @secure true
+ */
+export const getFeedPosts = catchAsync(async (req, res) => {
+  const user = req.user;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const skip = (page - 1) * limit;
+
+  const followingUsers = await UserFollows.find({ followerId: user.id });
+  const followingUserIds: any[] = followingUsers.map(user => user.followeeId);
+  followingUserIds.push(new mongoose.Types.ObjectId(user.id));
+
+  const posts = await Post.aggregate([
+    { $match: { user: { $in: followingUserIds } } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user'
+      }
+    },
+    { $unwind: '$user' },
+    {
+      $project: {
+        _id: 1,
+        caption: 1,
+        'assets.assetType': 1,
+        'assets.url': 1,
+        'user._id': 1,
+        'user.name': 1,
+        'user.avatar': 1,
+        'user.username': 1,
+        likeCount: 1,
+        isLiked: 1,
+        isSaved: 1,
+        createdAt: 1,
+        updatedAt: 1
+      }
+    },
+    {
+      $lookup: {
+        from: 'postlikes',
+        let: { postId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$postId', '$$postId'] },
+                  { $eq: ['$userId', new mongoose.Types.ObjectId(user.id)] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'isLiked'
+      }
+    },
+    {
+      $addFields: {
+        isLiked: { $gt: [{ $size: '$isLiked' }, 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: 'postsaves',
+        let: { postId: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$postId', '$$postId'] },
+                  { $eq: ['$userId', new mongoose.Types.ObjectId(user.id)] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'isSaved'
+      }
+    },
+    {
+      $addFields: {
+        isSaved: { $gt: [{ $size: '$isSaved' }, 0] }
+      }
+    },
+    { $skip: skip },
+    { $limit: limit },
+    { $sort: { createdAt: -1 } }
+  ]);
+
+  res.status(200).json({ success: true, data: posts });
+});
+
+/**
+ * @route POST /api/post/like/:id
+ * @desc let a user like a post
+ * @secure true
+ */
+export const likePost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // TODO: Send Push Notification
+
+  try {
+    await PostLikes.create({ userId: user.id, postId });
+    await Post.findByIdAndUpdate(postId, { $inc: { likeCount: 1 } });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+    return;
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({ success: true, message: 'Like succesful' });
+});
+
+/**
+ * @route POST /api/post/unlike/:id
+ * @desc let a user unlike a post
+ * @secure true
+ */
+export const unLikePost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // TODO: Send Push Notification
+
+  try {
+    await PostLikes.deleteOne({ userId: user.id, postId });
+    await Post.findByIdAndUpdate(postId, { $inc: { likeCount: -1 } });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({ success: true, message: 'Unlike succesful' });
+});
+
+/**
+ * @route POST /api/post/save/:id
+ * @desc let a user save a post
+ * @secure true
+ */
+export const savePost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // TODO: Send Push Notification
+
+  try {
+    await PostSaves.create({ userId: user.id, postId });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+    return;
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({ success: true, message: 'Like succesful' });
+});
+
+/**
+ * @route POST /api/post/unsave/:id
+ * @desc let a user unsave a post
+ * @secure true
+ */
+export const unSavePost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // TODO: Send Push Notification
+
+  try {
+    await PostSaves.deleteOne({ userId: user.id, postId });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({ success: true, message: 'Unlike succesful' });
 });
 
 /**

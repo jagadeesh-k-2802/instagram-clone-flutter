@@ -28,5 +28,5 @@ firebase-admin.json
 
 # Uploads
 /public/posts
-/public/avatar
-
+/public/avatar/*
+!/public/avatar/default-profile.png

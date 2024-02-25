@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/services/auth.dart';
-import 'package:instagram_clone/state/global_state.dart';
+import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/clickable_list_item.dart';
 

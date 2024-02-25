@@ -6,6 +6,7 @@ import errorHandler from '@middlewares/error';
 import authRoutes from '@routes/auth';
 import userRoutes from '@routes/user';
 import postRoutes from '@routes/post';
+import commentRoutes from '@routes/comment';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/comment', commentRoutes);
 
 // Error Handler
 app.use(errorHandler);

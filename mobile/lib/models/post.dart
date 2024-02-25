@@ -35,3 +35,45 @@ class PostAssetItem with _$PostAssetItem {
   factory PostAssetItem.fromJson(Map<String, Object?> json) =>
       _$PostAssetItemFromJson(json);
 }
+
+@freezed
+class GetFeedPostsResponse with _$GetFeedPostsResponse {
+  const factory GetFeedPostsResponse({
+    required bool success,
+    required List<GetFeedPostsResponseData> data,
+  }) = _GetFeedPostsResponse;
+
+  factory GetFeedPostsResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetFeedPostsResponseFromJson(json);
+}
+
+@freezed
+class GetFeedPostsResponseData with _$GetFeedPostsResponseData {
+  const factory GetFeedPostsResponseData({
+    @JsonKey(name: '_id') required String id,
+    required String caption,
+    required List<PostAssetItem> assets,
+    required int likeCount,
+    required PostUser user,
+    required bool isLiked,
+    required bool isSaved,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+  }) = _GetFeedPostsResponseData;
+
+  factory GetFeedPostsResponseData.fromJson(Map<String, dynamic> json) =>
+      _$GetFeedPostsResponseDataFromJson(json);
+}
+
+@freezed
+class PostUser with _$PostUser {
+  const factory PostUser({
+    @JsonKey(name: '_id') required String id,
+    required String name,
+    required String avatar,
+    required String username,
+  }) = _PostUser;
+
+  factory PostUser.fromJson(Map<String, Object?> json) =>
+      _$PostUserFromJson(json);
+}
