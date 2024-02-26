@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+/// Creates [Row] with optional [prefixIcon], [text] and optional
+/// [suffixIcon]. [onTap] is a callback to underlying [InkWell]
 class ClickableListItem extends StatelessWidget {
   final String text;
   final Color textColor;

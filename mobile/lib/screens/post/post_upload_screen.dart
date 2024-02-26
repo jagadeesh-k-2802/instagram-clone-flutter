@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/profile/user_posts_provider.dart';
@@ -10,6 +11,7 @@ import 'package:instagram_clone/widgets/progress_button.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class PostUploadScreen extends ConsumerStatefulWidget {
+  /// [data] should be [List<AssetEntity>] only
   final Object? data;
 
   const PostUploadScreen({
@@ -33,9 +35,7 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.data is List<AssetEntity>) {
-        setState(() {
-          assets = widget.data as List<AssetEntity>;
-        });
+        setState(() => assets = widget.data as List<AssetEntity>);
       } else {
         throw Exception(
           'PostUploadScreen: takes only List<AssetEntity> as param',
@@ -45,7 +45,7 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
   }
 
   void navigateToTagPeople() async {
-    Object? users = await context.pushNamed('tag-people');
+    Object? users = await context.pushNamed(Routes.tagPeople);
 
     if (users is List<SearchUsersResponseData>) {
       selectedUsers = users;
@@ -68,7 +68,7 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
       );
 
       if (!mounted) return;
-      context.goNamed('feed');
+      context.goNamed(Routes.feed);
 
       ref.read(globalStateProvider.notifier).incrementPostCount();
 
@@ -82,7 +82,8 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
         SnackBar(content: Text(error.toString())),
       );
     } finally {
-      ref.read(userPostsProvider.notifier).invalidate();
+      final currentUserId = ref.read(globalStateProvider).user?.id;
+      ref.read(userPostsProvider(currentUserId ?? '').notifier).invalidate();
       setState(() => submitting = false);
     }
   }

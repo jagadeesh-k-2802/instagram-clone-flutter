@@ -92,7 +92,7 @@ export const followUser = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await UserFollows.create({ followerId: user.id, followeeId });
+    await UserFollows.create({ follower: user.id, followee: followeeId });
     await User.findByIdAndUpdate(user.id, { $inc: { followingCount: 1 } });
     await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: 1 } });
     await session.commitTransaction();
@@ -118,7 +118,7 @@ export const unFollowUser = catchAsync(async (req, res, next) => {
   session.startTransaction();
 
   try {
-    await UserFollows.deleteOne({ followerId: user.id, followeeId });
+    await UserFollows.deleteOne({ follower: user.id, followee: followeeId });
     await User.findByIdAndUpdate(user.id, { $inc: { followingCount: -1 } });
     await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: -1 } });
     await session.commitTransaction();
@@ -142,27 +142,27 @@ export const getFollowers = catchAsync(async (req, res) => {
   const user = req.user;
   const limit = parseInt(req.query.limit as string) || 20;
 
-  const followers = await UserFollows.find({ followeeId: id })
+  const followers = await UserFollows.find({ followee: id })
     .skip((page - 1) * limit)
     .limit(limit)
-    .populate<{ followerId: UserType }>('followerId', 'id name username avatar')
-    .select('followerId')
+    .populate<{ follower: UserType }>('follower', 'id name username avatar')
+    .select('follower')
     .sort({ createdAt: -1 })
     .lean();
 
-  const followerIds = followers.map(follower => follower.followerId);
+  const followerIds = followers.map(follower => follower.follower);
 
   const followedBy = await UserFollows.find({
-    followerId: user.id,
-    followeeId: { $in: followerIds }
+    follower: user.id,
+    followee: { $in: followerIds }
   })
-    .select('followeeId')
+    .select('followee')
     .lean();
 
   const transformedFollowers = followers.map(follower => ({
-    ...follower.followerId,
+    ...follower.follower,
     isFollowed: !!followedBy.find(
-      x => x.followeeId.toString() === follower.followerId._id.toString()
+      x => x.followee.toString() === follower.follower._id.toString()
     )
   }));
 
@@ -180,27 +180,27 @@ export const getFollowing = catchAsync(async (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
 
-  const following = await UserFollows.find({ followerId: id })
+  const following = await UserFollows.find({ follower: id })
     .skip((page - 1) * limit)
     .limit(limit)
-    .select('followeeId')
-    .populate<{ followeeId: UserType }>('followeeId', 'id name username avatar')
+    .select('followee')
+    .populate<{ followee: UserType }>('followee', 'id name username avatar')
     .sort({ createdAt: -1 })
     .lean();
 
-  const followingIds = following.map(follower => follower.followeeId);
+  const followingIds = following.map(follower => follower.followee);
 
   const followingBy = await UserFollows.find({
-    followerId: user.id,
-    followeeId: { $in: followingIds }
+    follower: user.id,
+    followee: { $in: followingIds }
   })
-    .select('followeeId')
+    .select('followee')
     .lean();
 
   const transformedFollowing = following.map(follower => ({
-    ...follower.followeeId,
+    ...follower.followee,
     isFollowed: !!followingBy.find(
-      x => x.followeeId.toString() === follower.followeeId._id.toString()
+      x => x.followee.toString() === follower.followee._id.toString()
     )
   }));
 
@@ -235,8 +235,8 @@ export const getUser = catchAsync(async (req, res, next) => {
   }
 
   const isFollowed = await UserFollows.exists({
-    followerId: currUser.id,
-    followeeId: userId
+    follower: currUser.id,
+    followee: userId
   });
 
   res.status(200).json({

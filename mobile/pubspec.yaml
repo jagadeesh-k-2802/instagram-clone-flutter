@@ -10,26 +10,27 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Sorted by alphabetical order
   cupertino_icons: ^1.0.2
-  flutter_native_splash: ^2.3.10
-  internet_connection_checker: ^1.0.0+1
-  image_cropper: ^5.0.1
-  image_picker: ^1.0.7
-  moment_dart: ^1.1.0
+  cached_network_image: ^3.3.1
+  camerawesome: ^2.0.0+1
   dio: ^5.4.1
-  go_router: ^13.2.0
+  flutter_native_splash: ^2.3.10
   flutter_secure_storage: ^9.0.0
   freezed_annotation: ^2.4.1
-  cached_network_image: ^3.3.1
-  json_annotation: ^4.8.1
   flutter_riverpod: ^2.4.10
-  riverpod_annotation: ^2.3.4
   flutter_svg: ^2.0.9
-  wechat_assets_picker: ^8.9.0-dev.1
-  photo_manager_image_provider: ^2.1.0
-  camerawesome: ^2.0.0+1
+  go_router: ^13.2.0
+  internet_connection_checker: ^1.0.0+1
   infinite_scroll_pagination: ^3.2.0
+  image_cropper: ^5.0.1
+  image_picker: ^1.0.7
+  json_annotation: ^4.8.1
+  moment_dart: ^1.1.0
+  photo_manager_image_provider: ^2.1.0
+  riverpod_annotation: ^2.3.4
   riverpod_infinite_scroll: ^1.0.9
+  wechat_assets_picker: ^8.9.0-dev.1
 
 dependency_overrides:
   photo_manager: ^3.0.0-dev.2
@@ -38,12 +39,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^3.0.1
+  custom_lint: ^0.6.2
   build_runner: ^2.4.8
+  flutter_lints: ^3.0.1
   freezed: ^2.4.7
   json_serializable: ^6.7.1
   riverpod_generator: ^2.3.11
-  custom_lint: ^0.6.2
   riverpod_lint: ^2.3.9
 
 flutter:

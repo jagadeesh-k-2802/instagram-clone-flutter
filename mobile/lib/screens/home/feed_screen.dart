@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/comment.dart';
 import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/state/feed/comments_provider.dart';
@@ -19,7 +20,7 @@ class FeedScreen extends ConsumerStatefulWidget {
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
   Future<void> onLike(String postId) async {
-    ref.read(getFeedProvider.notifier).likePost(postId);
+    ref.read(feedProvider.notifier).likePost(postId);
 
     try {
       await PostService.likePost(postId: postId);
@@ -29,7 +30,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Future<void> onUnLike(String postId) async {
-    ref.read(getFeedProvider.notifier).unLikePost(postId);
+    ref.read(feedProvider.notifier).unLikePost(postId);
 
     try {
       await PostService.unLikePost(postId: postId);
@@ -41,7 +42,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Future<void> onComment(String postId, String comment) async {
     try {
       await CommentService.commentOnPost(postId: postId, comment: comment);
-      ref.read(getCommentsProvider(postId).notifier).invalidate();
+      ref.read(commentsProvider(postId).notifier).invalidate();
     } catch (error) {
       if (!mounted) return;
 
@@ -52,7 +53,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Future<void> onCommentLike(String postId, String commentId) async {
-    ref.read(getCommentsProvider(postId).notifier).likeComment(commentId);
+    ref.read(commentsProvider(postId).notifier).likeComment(commentId);
 
     try {
       await CommentService.likeComment(commentId: commentId);
@@ -62,7 +63,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Future<void> onCommentUnLike(String postId, String commentId) async {
-    ref.read(getCommentsProvider(postId).notifier).unLikeComment(commentId);
+    ref.read(commentsProvider(postId).notifier).unLikeComment(commentId);
 
     try {
       await CommentService.unLikeComment(commentId: commentId);
@@ -72,7 +73,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Future<void> onCommentDelete(String postId, String commentId) async {
-    ref.read(getCommentsProvider(postId).notifier).deleteComment(commentId);
+    ref.read(commentsProvider(postId).notifier).deleteComment(commentId);
 
     try {
       await CommentService.deleteComment(commentId: commentId);
@@ -87,7 +88,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Future<void> onSave(String postId) async {
     try {
-      ref.read(getFeedProvider.notifier).savePost(postId);
+      ref.read(feedProvider.notifier).savePost(postId);
       await PostService.savePost(postId: postId);
     } catch (error) {
       // Do Nothing
@@ -96,7 +97,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Future<void> onUnsave(String postId) async {
     try {
-      ref.read(getFeedProvider.notifier).unSavePost(postId);
+      ref.read(feedProvider.notifier).unSavePost(postId);
       await PostService.unSavePost(postId: postId);
     } catch (error) {
       // Do Nothing
@@ -119,7 +120,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 children: [
                   SvgPicture.asset('assets/icons/logo.svg'),
                   GestureDetector(
-                    onTap: () => context.pushNamed('message'),
+                    onTap: () => context.pushNamed(Routes.message),
                     child: SvgPicture.asset(
                       'assets/icons/message.svg',
                       height: 26,
@@ -137,7 +138,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
           child: RiverPagedBuilder.autoDispose(
             firstPageKey: 1,
             limit: 20,
-            provider: getFeedProvider,
+            provider: feedProvider,
             pullToRefresh: true,
             itemBuilder: (context, item, index) {
               return PostItem(

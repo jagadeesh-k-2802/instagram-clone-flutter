@@ -1,4 +1,4 @@
-extension StringExt on String {
+extension StringExtensions on String {
   /// take
   /// * Return only specified chars of length
   ///

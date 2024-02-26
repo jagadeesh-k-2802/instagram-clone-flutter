@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:instagram_clone/models/auth.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:moment_dart/moment_dart.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,7 +97,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       final appState = ref.read(globalStateProvider.notifier);
       appState.setUser(userResponse.data);
       if (!mounted) return;
-      context.goNamed('feed');
+      context.goNamed(Routes.feed);
     } catch (error) {
       if (!mounted) return;
 
@@ -598,9 +599,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     return PopScope(
       onPopInvoked: (bool hasPopped) {
-        if (!hasPopped && currentWidget == widgets.length - 1) {
-          return;
-        }
+        if (!hasPopped && currentWidget == widgets.length - 1) return;
 
         if (!hasPopped) {
           setState(() => currentWidget--);

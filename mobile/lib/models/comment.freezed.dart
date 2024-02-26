@@ -192,6 +192,7 @@ mixin _$GetCommentsResponseData {
   int get likeCount => throw _privateConstructorUsedError;
   bool get isLiked => throw _privateConstructorUsedError;
   CommentUser get user => throw _privateConstructorUsedError;
+  @DateTimeConvertor()
   String get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -212,7 +213,7 @@ abstract class $GetCommentsResponseDataCopyWith<$Res> {
       int likeCount,
       bool isLiked,
       CommentUser user,
-      String createdAt});
+      @DateTimeConvertor() String createdAt});
 
   $CommentUserCopyWith<$Res> get user;
 }
@@ -290,7 +291,7 @@ abstract class _$$GetCommentsResponseDataImplCopyWith<$Res>
       int likeCount,
       bool isLiked,
       CommentUser user,
-      String createdAt});
+      @DateTimeConvertor() String createdAt});
 
   @override
   $CommentUserCopyWith<$Res> get user;
@@ -354,7 +355,7 @@ class _$GetCommentsResponseDataImpl implements _GetCommentsResponseData {
       required this.likeCount,
       required this.isLiked,
       required this.user,
-      required this.createdAt});
+      @DateTimeConvertor() required this.createdAt});
 
   factory _$GetCommentsResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetCommentsResponseDataImplFromJson(json);
@@ -371,6 +372,7 @@ class _$GetCommentsResponseDataImpl implements _GetCommentsResponseData {
   @override
   final CommentUser user;
   @override
+  @DateTimeConvertor()
   final String createdAt;
 
   @override
@@ -415,12 +417,13 @@ class _$GetCommentsResponseDataImpl implements _GetCommentsResponseData {
 
 abstract class _GetCommentsResponseData implements GetCommentsResponseData {
   const factory _GetCommentsResponseData(
-      {@JsonKey(name: '_id') required final String id,
-      required final String comment,
-      required final int likeCount,
-      required final bool isLiked,
-      required final CommentUser user,
-      required final String createdAt}) = _$GetCommentsResponseDataImpl;
+          {@JsonKey(name: '_id') required final String id,
+          required final String comment,
+          required final int likeCount,
+          required final bool isLiked,
+          required final CommentUser user,
+          @DateTimeConvertor() required final String createdAt}) =
+      _$GetCommentsResponseDataImpl;
 
   factory _GetCommentsResponseData.fromJson(Map<String, dynamic> json) =
       _$GetCommentsResponseDataImpl.fromJson;
@@ -437,6 +440,7 @@ abstract class _GetCommentsResponseData implements GetCommentsResponseData {
   @override
   CommentUser get user;
   @override
+  @DateTimeConvertor()
   String get createdAt;
   @override
   @JsonKey(ignore: true)

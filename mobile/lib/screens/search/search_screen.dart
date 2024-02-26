@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 
@@ -12,7 +13,7 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   void navigateToSearchDetail() {
-    context.pushNamed('search-detail');
+    context.pushNamed(Routes.searchDetail);
   }
 
   Widget buildSearchBar() {

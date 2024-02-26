@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
@@ -58,7 +59,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       );
 
       if (!mounted) return;
-      context.goNamed('login');
+      context.goNamed(Routes.login);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

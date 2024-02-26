@@ -5,8 +5,8 @@ import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 typedef Data = GetFeedPostsResponseData;
 
-class FeedNotifier extends PagedNotifier<int, Data> {
-  FeedNotifier()
+class Notifier extends PagedNotifier<int, Data> {
+  Notifier()
       : super(
           nextPageKeyBuilder: NextPageKeyBuilderDefault.mysqlPagination,
           load: (int page, int limit) async {
@@ -56,7 +56,7 @@ class FeedNotifier extends PagedNotifier<int, Data> {
   }
 }
 
-final getFeedProvider =
-    StateNotifierProvider.autoDispose<FeedNotifier, PagedState<int, Data>>(
-  (_) => FeedNotifier(),
+final feedProvider =
+    StateNotifierProvider.autoDispose<Notifier, PagedState<int, Data>>(
+  (_) => Notifier(),
 );

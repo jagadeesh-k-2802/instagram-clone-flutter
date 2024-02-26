@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/search/search_users_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
@@ -25,9 +26,7 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
     super.dispose();
   }
 
-  Widget buildSearchBar(
-    SearchUsersNotifier searchUsersNotifier,
-  ) {
+  Widget buildSearchBar({required void Function(String value) onUpdate}) {
     return SizedBox(
       height: 36,
       child: TextFormField(
@@ -36,7 +35,7 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
           if (debounce?.isActive ?? false) debounce?.cancel();
 
           debounce = Timer(const Duration(milliseconds: 500), () {
-            searchUsersNotifier.updateSearchValue(value);
+            onUpdate(value);
           });
         },
         autofocus: true,
@@ -55,7 +54,7 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
   }
 
   void openUserProfile(UserData item) {
-    context.push('/profile/${item.id}');
+    context.push(Routes.publicProfilePath(item.id));
   }
 
   @override
@@ -64,7 +63,13 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
     final searchUsersNotifier = ref.watch(searchUsersProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: buildSearchBar(searchUsersNotifier)),
+      appBar: AppBar(
+        title: buildSearchBar(
+          onUpdate: (String value) {
+            searchUsersNotifier.updateSearchValue(value);
+          },
+        ),
+      ),
       body: RiverPagedBuilder.autoDispose(
         firstPageKey: 1,
         limit: 20,

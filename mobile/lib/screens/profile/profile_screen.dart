@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
-import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/profile/user_posts_provider.dart';
 import 'package:instagram_clone/state/profile/user_tagged_posts_provider.dart';
@@ -25,7 +27,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void navigateToEditProfile() {
-    context.pushNamed('profile-edit');
+    context.pushNamed(Routes.profileEdit);
   }
 
   Widget buildProfileHeader({UserResponseData? user}) {
@@ -136,16 +138,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
-          height: 80,
+          height: 170,
           width: double.maxFinite,
           child: Column(
             children: [
+              ClickableListItem(
+                text: 'Liked Posts',
+                prefixIcon: Icons.favorite,
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(Routes.likedPosts);
+                },
+              ),
+              ClickableListItem(
+                text: 'Saved Posts',
+                prefixIcon: Icons.bookmark,
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(Routes.savedPosts);
+                },
+              ),
               ClickableListItem(
                 text: 'Settings and Privacy',
                 prefixIcon: Icons.settings,
                 onTap: () {
                   Navigator.pop(context);
-                  context.pushNamed('settings');
+                  context.pushNamed(Routes.settings);
                 },
               ),
             ],
@@ -156,10 +174,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void navigateToNewPost() {
-    context.pushNamed('new-post');
+    context.pushNamed(Routes.newPost);
   }
 
-  void showPostItem(GetPostsResponseData item) {
+  void showPostItem(GetUserPostsResponseData item) {
     // TODO: Open Post in Post Detail Screen
   }
 
@@ -168,7 +186,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     String username,
     String initialScreen,
   ) {
-    context.push('/follow-detail/$userId/$username/$initialScreen');
+    context.pushNamed(
+      Routes.followDetail,
+      extra: FollowDetailScreenArgs(
+        userId: userId,
+        username: username,
+        initialScreen: initialScreen,
+      ),
+    );
   }
 
   @override
@@ -239,7 +264,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
-                          provider: userPostsProvider,
+                          provider: userPostsProvider(user?.id ?? ''),
                           pullToRefresh: true,
                           newPageProgressIndicatorBuilder: (
                             context,
@@ -262,8 +287,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               child: Center(
                                 child: Column(
                                   children: [
-                                    Text('Capture the moment with a friend',
-                                        style: bodyLargeBold(context)),
+                                    Text(
+                                      'Capture the moment with a friend',
+                                      style: bodyLargeBold(context),
+                                    ),
                                     TextButton(
                                       onPressed: navigateToNewPost,
                                       child: Text(
@@ -281,13 +308,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           pagedBuilder: (controller, builder) => PagedGridView(
                             pagingController: controller,
                             builderDelegate: builder,
-                            gridDelegate: photoGrid,
+                            gridDelegate: photoGridDelegate,
                           ),
                         ),
                         RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
-                          provider: userTaggedPostsProvider,
+                          provider: userTaggedPostsProvider(user?.id ?? ''),
                           pullToRefresh: true,
                           newPageProgressIndicatorBuilder: (
                             context,
@@ -325,7 +352,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           pagedBuilder: (controller, builder) => PagedGridView(
                             pagingController: controller,
                             builderDelegate: builder,
-                            gridDelegate: photoGrid,
+                            gridDelegate: photoGridDelegate,
                           ),
                         ),
                       ],

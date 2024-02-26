@@ -122,3 +122,10 @@ TextStyle? titleLargeBold(BuildContext context) {
       .titleLarge
       ?.copyWith(fontWeight: FontWeight.bold);
 }
+
+// Grids
+const photoGridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisCount: 3,
+  crossAxisSpacing: 5.0,
+  mainAxisSpacing: 5.0,
+);

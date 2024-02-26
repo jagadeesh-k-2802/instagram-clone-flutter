@@ -1,28 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:instagram_clone/models/auth.dart';
 
-typedef Data = GlobalState;
+typedef Data = State;
 
-class GlobalState {
+class State {
   UserResponseData? user;
-  GlobalState(this.user);
+  State(this.user);
 }
 
-class GlobalStateNotifier extends StateNotifier<Data> {
-  GlobalStateNotifier(super.state);
+class Notifier extends StateNotifier<Data> {
+  Notifier(super.state);
 
   void setUser(UserResponseData? user) {
-    state = GlobalState(user);
+    state = State(user);
   }
 
   void incrementPostCount() {
-    state = GlobalState(
+    state = State(
       state.user?.copyWith(postCount: (state.user?.postCount ?? 0) + 1),
     );
   }
 
   void incrementFollowingCount() {
-    state = GlobalState(
+    state = State(
       state.user?.copyWith(
         followingCount: (state.user?.followingCount ?? 0) + 1,
       ),
@@ -30,7 +30,7 @@ class GlobalStateNotifier extends StateNotifier<Data> {
   }
 
   void decrementFollowingCount() {
-    state = GlobalState(
+    state = State(
       state.user?.copyWith(
         followingCount: (state.user?.followingCount ?? 0) - 1,
       ),
@@ -38,8 +38,10 @@ class GlobalStateNotifier extends StateNotifier<Data> {
   }
 }
 
-final _initialState = GlobalState(null);
+final _initialState = State(null);
 
-final globalStateProvider = StateNotifierProvider<GlobalStateNotifier, Data>(
-  (ref) => GlobalStateNotifier(_initialState),
+/// [globalStateProvider] contains the application global state which includes
+/// the current authenticated [State.user]
+final globalStateProvider = StateNotifierProvider<Notifier, Data>(
+  (ref) => Notifier(_initialState),
 );

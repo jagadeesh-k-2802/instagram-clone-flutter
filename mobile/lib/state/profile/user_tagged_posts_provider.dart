@@ -1,16 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/models/post.dart';
-import 'package:instagram_clone/services/post.dart';
+import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/services/user.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
-typedef Data = GetPostsResponseData;
+typedef Data = GetUserPostsResponseData;
+typedef Provider = StateNotifierProvider<Notifier, PagedState<int, Data>>;
 
 class Notifier extends PagedNotifier<int, Data> {
-  Notifier()
+  final String id;
+
+  Notifier({required this.id})
       : super(
           nextPageKeyBuilder: NextPageKeyBuilderDefault.mysqlPagination,
-          load: (int page, int limit) async {
-            GetPostsResponse posts = await PostService.getTaggedPosts(
+          load: (page, limit) async {
+            GetUserPostsResponse posts = await UserService.getTaggedPosts(
+              id: id,
               page: page,
               limit: limit,
             );
@@ -18,14 +22,9 @@ class Notifier extends PagedNotifier<int, Data> {
             return posts.data;
           },
         );
-
-  void invalidate() {
-    state = const PagedState(records: [], nextPageKey: 1, previousPageKeys: []);
-    load(1, 20);
-  }
 }
 
 final userTaggedPostsProvider =
-    StateNotifierProvider<Notifier, PagedState<int, Data>>(
-  (_) => Notifier(),
+    StateNotifierProvider.family<Notifier, PagedState<int, Data>, String>(
+  (ref, id) => Notifier(id: id),
 );

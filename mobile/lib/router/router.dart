@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/router/transitions.dart';
 import 'package:instagram_clone/screens/auth/change_password.dart';
+import 'package:instagram_clone/screens/profile/account_privacy_screen.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
+import 'package:instagram_clone/screens/profile/liked_posts_screen.dart';
+import 'package:instagram_clone/screens/profile/saved_posts_screen.dart';
 import 'package:instagram_clone/screens/profile/public_profile_screen.dart';
 import 'package:instagram_clone/screens/search/search_detail_screen.dart';
 import 'package:instagram_clone/screens/story/new_story_screen.dart';
@@ -24,30 +29,30 @@ import 'package:instagram_clone/screens/home/home_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-final List<RouteBase> routes = [
+final List<RouteBase> _routes = [
   GoRoute(
-    name: 'splash',
-    path: '/',
+    name: Routes.splash,
+    path: '/${Routes.splash}',
     builder: (context, state) => const SplashScreen(),
   ),
   GoRoute(
-    name: 'login',
-    path: '/login',
+    name: Routes.login,
+    path: '/${Routes.login}',
     builder: (context, state) => const LoginScreen(),
   ),
   GoRoute(
-    name: 'signup',
-    path: '/signup',
+    name: Routes.signup,
+    path: '/${Routes.signup}',
     builder: (context, state) => const SignupScreen(),
   ),
   GoRoute(
-    name: 'forgot-password',
-    path: '/forgot-password',
+    name: Routes.forgotPassword,
+    path: '/${Routes.forgotPassword}',
     builder: (context, state) => const ForgotPasswordScreen(),
   ),
   GoRoute(
-    name: 'change-password',
-    path: '/change-password',
+    name: Routes.changePassword,
+    path: '/${Routes.changePassword}',
     pageBuilder: (context, state) => const NoTransitionPage<void>(
       child: ChangePasswordScreen(),
     ),
@@ -60,7 +65,7 @@ final List<RouteBase> routes = [
       StatefulShellBranch(
         routes: [
           GoRoute(
-            name: 'feed',
+            name: Routes.feed,
             path: '/feed',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: FeedScreen(),
@@ -71,22 +76,22 @@ final List<RouteBase> routes = [
       StatefulShellBranch(
         routes: [
           GoRoute(
-            name: 'search',
-            path: '/search',
+            name: Routes.search,
+            path: '/${Routes.search}',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: SearchScreen(),
             ),
           ),
           GoRoute(
-            name: 'search-detail',
-            path: '/search-detail',
+            name: Routes.searchDetail,
+            path: '/${Routes.searchDetail}',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: SearchDetailScreen(),
             ),
           ),
           GoRoute(
-            name: 'public-profile',
-            path: '/profile/:id',
+            name: Routes.publicProfilePath(''),
+            path: Routes.publicProfilePath(':id'),
             pageBuilder: (context, state) => NoTransitionPage(
               child: PublicProfileScreen(
                 profileId: state.pathParameters['id'],
@@ -95,14 +100,10 @@ final List<RouteBase> routes = [
             ),
           ),
           GoRoute(
-            name: 'follow-detail',
-            path: '/follow-detail/:id/:username/:initialScreen',
+            name: Routes.followDetail,
+            path: '/${Routes.followDetail}',
             pageBuilder: (context, state) => NoTransitionPage(
-              child: FollowDetailScreen(
-                userId: state.pathParameters['id'],
-                username: state.pathParameters['username'],
-                initialScreen: state.pathParameters['initialScreen'],
-              ),
+              child: FollowDetailScreen(args: state.extra),
             ),
           ),
         ],
@@ -110,8 +111,8 @@ final List<RouteBase> routes = [
       StatefulShellBranch(
         routes: [
           GoRoute(
-            name: 'notifications',
-            path: '/notifications',
+            name: Routes.notifications,
+            path: '/${Routes.notifications}',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: NotificationsScreen(),
             ),
@@ -121,10 +122,24 @@ final List<RouteBase> routes = [
       StatefulShellBranch(
         routes: [
           GoRoute(
-            name: 'profile',
-            path: '/profile',
+            name: Routes.profile,
+            path: '/${Routes.profile}',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: ProfileScreen(),
+            ),
+          ),
+          GoRoute(
+            name: Routes.likedPosts,
+            path: '/${Routes.likedPosts}',
+            pageBuilder: (context, state) => const NoTransitionPage<void>(
+              child: LikedPostsScreen(),
+            ),
+          ),
+          GoRoute(
+            name: Routes.savedPosts,
+            path: '/${Routes.savedPosts}',
+            pageBuilder: (context, state) => const NoTransitionPage<void>(
+              child: SavedPostsScreen(),
             ),
           ),
         ],
@@ -132,81 +147,76 @@ final List<RouteBase> routes = [
     ],
   ),
   GoRoute(
-    name: 'message',
-    path: '/message',
+    name: Routes.message,
+    path: '/${Routes.message}',
     pageBuilder: (context, state) => CustomTransitionPage<void>(
       key: state.pageKey,
-      transitionsBuilder: (
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      ) {
-        return SlideTransition(
-          position: animation.drive(
-            Tween<Offset>(begin: const Offset(0.5, 0), end: Offset.zero).chain(
-              CurveTween(curve: Curves.linear),
-            ),
-          ),
-          child: child,
-        );
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return LeftSlideTransition(animation: animation, child: child);
       },
       child: const MessageScreen(),
     ),
   ),
   GoRoute(
-    name: 'new-post',
-    path: '/new-post',
+    name: Routes.newPost,
+    path: '/${Routes.newPost}',
     pageBuilder: (context, state) => const NoTransitionPage(
       child: NewPostScreen(),
     ),
   ),
   GoRoute(
-    name: 'post-upload',
-    path: '/post-upload',
+    name: Routes.postUpload,
+    path: '/${Routes.postUpload}',
     pageBuilder: (context, state) => NoTransitionPage(
       child: PostUploadScreen(data: state.extra),
     ),
   ),
   GoRoute(
-    name: 'tag-people',
-    path: '/tag-people',
+    name: Routes.tagPeople,
+    path: '/${Routes.tagPeople}',
     pageBuilder: (context, state) => const NoTransitionPage(
       child: TagPeopleScreen(),
     ),
   ),
   GoRoute(
-    name: 'new-story',
-    path: '/new-story',
+    name: Routes.newStory,
+    path: '/${Routes.newStory}',
     pageBuilder: (context, state) => const NoTransitionPage(
       child: NewStoryScreen(),
     ),
   ),
   GoRoute(
-    name: 'story-capture',
-    path: '/story-capture',
+    name: Routes.storyCapture,
+    path: '/${Routes.storyCapture}',
     pageBuilder: (context, state) => const NoTransitionPage(
       child: StoryCaptureScreen(),
     ),
   ),
   GoRoute(
-    name: 'profile-edit',
-    path: '/profile-edit',
+    name: Routes.profileEdit,
+    path: '/${Routes.profileEdit}',
     pageBuilder: (context, state) => const NoTransitionPage<void>(
       child: ProfileEditScreen(),
     ),
   ),
   GoRoute(
-    name: 'settings',
-    path: '/settings',
+    name: Routes.settings,
+    path: '/${Routes.settings}',
     pageBuilder: (context, state) => const NoTransitionPage<void>(
       child: SettingsScreen(),
+    ),
+  ),
+  GoRoute(
+    name: Routes.accountPrivacy,
+    path: '/${Routes.accountPrivacy}',
+    pageBuilder: (context, state) => const NoTransitionPage<void>(
+      child: AccountPrivacyScreen(),
     ),
   ),
 ];
 
 final GoRouter router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   navigatorKey: _rootNavigatorKey,
-  routes: routes,
+  routes: _routes,
 );

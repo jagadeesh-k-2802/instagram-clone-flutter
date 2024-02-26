@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// [ProgressButton] wrapped around [ElevatedButton]that displays
+/// [CircularProgressIndicator] when [inProgress]
+/// else displays [text] takes [onTap] for callback
 class ProgressButton extends StatelessWidget {
   final bool inProgress;
   final void Function() onTap;

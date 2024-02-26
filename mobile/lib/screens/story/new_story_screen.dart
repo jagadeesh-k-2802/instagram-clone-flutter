@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -40,7 +41,7 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               GestureDetector(
-                onTap: () => context.pushReplacementNamed('new-post'),
+                onTap: () => context.pushReplacementNamed(Routes.newPost),
                 child: Text(
                   'POST',
                   style: bodyLargeBold(context)?.copyWith(
@@ -148,7 +149,7 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
           buildTopBarItem(
             text: 'Camera',
             icon: Icons.camera,
-            onTap: () => context.pushNamed('story-capture'),
+            onTap: () => context.pushNamed(Routes.storyCapture),
           ),
           const SizedBox(width: 12.0),
           buildTopBarItem(

@@ -53,6 +53,7 @@ export const register = catchAsync(async (req, res, next) => {
   const [fields, files] = await form.parse(req);
   const customFields = {};
 
+  // Transform form data to object
   for (const [key, value] of Object.entries(fields)) {
     customFields[key] = value?.at(0) ?? null;
   }
@@ -77,14 +78,14 @@ export const register = catchAsync(async (req, res, next) => {
     return next(new ErrorResponse('Cannot sign up without verification', 401));
   }
 
+  let filename = 'default-profile.png';
   const avatarFile = files.avatar?.at(0);
-  const filename = `${username.replace(' ', '-')}.jpg`;
 
-  if (avatarFile === undefined) {
-    return next(new ErrorResponse('No avatar uploaded', 404));
+  // If user has uploaded avatar while creating account
+  if (avatarFile !== undefined) {
+    filename = `${username.replace(' ', '-')}.jpg`;
+    await functions.moveFromTemp(avatarFile, '../public/avatar', filename);
   }
-
-  await functions.moveFromTemp(avatarFile, '../public/avatar', filename);
 
   const user = await User.create({
     name,
@@ -201,7 +202,7 @@ export const logout = catchAsync(async (req, res) => {
  */
 export const updateDetails = catchAsync(async (req, res) => {
   const { body } = await zParse(authValidation.updateDetails, req);
-  const { name, username, email, phone, bio, gender } = body;
+  const { name, username, email, phone, bio, gender, isPrivateAccount } = body;
   const user = req.user;
 
   const fieldsToUpdate = {
@@ -210,7 +211,8 @@ export const updateDetails = catchAsync(async (req, res) => {
     email,
     phone,
     bio,
-    gender
+    gender,
+    isPrivateAccount
   };
 
   await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
@@ -270,6 +272,7 @@ export const updateAvatar = catchAsync(async (req, res, next) => {
   const [fields, files] = await form.parse(req);
   const customFields = {};
 
+  // Transform form data to object
   for (const [key, value] of Object.entries(fields)) {
     customFields[key] = value?.at(0) === 'true' ? true : false;
   }
@@ -411,6 +414,7 @@ const sendTokenResponse = (
   res: Response
 ) => {
   const token = user.getSignedJwtToken();
+  // Remove password before sending user object
   user.password = undefined;
 
   res.status(statusCode).json({

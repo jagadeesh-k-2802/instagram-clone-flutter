@@ -81,7 +81,8 @@ _$GetFeedPostsResponseDataImpl _$$GetFeedPostsResponseDataImplFromJson(
       user: PostUser.fromJson(json['user'] as Map<String, dynamic>),
       isLiked: json['isLiked'] as bool,
       isSaved: json['isSaved'] as bool,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt:
+          const DateTimeConvertor().fromJson(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
@@ -95,7 +96,7 @@ Map<String, dynamic> _$$GetFeedPostsResponseDataImplToJson(
       'user': instance.user,
       'isLiked': instance.isLiked,
       'isSaved': instance.isSaved,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'createdAt': const DateTimeConvertor().toJson(instance.createdAt),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };
 
@@ -113,4 +114,52 @@ Map<String, dynamic> _$$PostUserImplToJson(_$PostUserImpl instance) =>
       'name': instance.name,
       'avatar': instance.avatar,
       'username': instance.username,
+    };
+
+_$GetUsersPostResponseImpl _$$GetUsersPostResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetUsersPostResponseImpl(
+      success: json['success'] as bool,
+      data: (json['data'] as List<dynamic>)
+          .map((e) =>
+              GetUsersPostResponseData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$GetUsersPostResponseImplToJson(
+        _$GetUsersPostResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'data': instance.data,
+    };
+
+_$GetUsersPostResponseDataImpl _$$GetUsersPostResponseDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetUsersPostResponseDataImpl(
+      id: json['id'] as String,
+      post: UserPostItem.fromJson(json['post'] as Map<String, dynamic>),
+      createdAt:
+          const DateTimeConvertor().fromJson(json['createdAt'] as String),
+    );
+
+Map<String, dynamic> _$$GetUsersPostResponseDataImplToJson(
+        _$GetUsersPostResponseDataImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'post': instance.post,
+      'createdAt': const DateTimeConvertor().toJson(instance.createdAt),
+    };
+
+_$UserPostItemImpl _$$UserPostItemImplFromJson(Map<String, dynamic> json) =>
+    _$UserPostItemImpl(
+      id: json['id'] as String,
+      assets: (json['assets'] as List<dynamic>)
+          .map((e) => PostAssetItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$UserPostItemImplToJson(_$UserPostItemImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'assets': instance.assets,
     };

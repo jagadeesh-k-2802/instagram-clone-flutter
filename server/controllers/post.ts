@@ -13,52 +13,6 @@ import * as functions from '@utils/functions';
 import * as postValidation from '@validation/post';
 
 /**
- * @route GET /api/post/my-posts
- * @desc Fetch current user uploaded posts
- * @secure true
- */
-export const getUserPosts = catchAsync(async (req, res) => {
-  const user = req.user;
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 20;
-  const skip = (page - 1) * limit;
-
-  const posts = await Post.find({ user: user.id })
-    .select('id caption assets')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
-
-  res.status(200).json({
-    success: true,
-    data: posts
-  });
-});
-
-/**
- * @route GET /api/post/tagged-posts
- * @desc Fetch current user tagged posts
- * @secure true
- */
-export const getUserTaggedPosts = catchAsync(async (req, res) => {
-  const user = req.user;
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 20;
-  const skip = (page - 1) * limit;
-
-  const posts = await Post.find({ taggedUsers: user.id })
-    .select('id caption assets')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
-
-  res.status(200).json({
-    success: true,
-    data: posts
-  });
-});
-
-/**
  * @route POST /api/post/feed-posts
  * @desc Fetch current user feed
  * @secure true
@@ -69,8 +23,9 @@ export const getFeedPosts = catchAsync(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 20;
   const skip = (page - 1) * limit;
 
-  const followingUsers = await UserFollows.find({ followerId: user.id });
-  const followingUserIds: any[] = followingUsers.map(user => user.followeeId);
+  type ObjectID = mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
+  const followingUsers = await UserFollows.find({ follower: user.id });
+  const followingUserIds: ObjectID[] = followingUsers.map(e => e.followee);
   followingUserIds.push(new mongoose.Types.ObjectId(user.id));
 
   const posts = await Post.aggregate([
@@ -104,14 +59,14 @@ export const getFeedPosts = catchAsync(async (req, res) => {
     {
       $lookup: {
         from: 'postlikes',
-        let: { postId: '$_id' },
+        let: { post: '$_id' },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ['$postId', '$$postId'] },
-                  { $eq: ['$userId', new mongoose.Types.ObjectId(user.id)] }
+                  { $eq: ['$post', '$$post'] },
+                  { $eq: ['$user', new mongoose.Types.ObjectId(user.id)] }
                 ]
               }
             }
@@ -128,14 +83,14 @@ export const getFeedPosts = catchAsync(async (req, res) => {
     {
       $lookup: {
         from: 'postsaves',
-        let: { postId: '$_id' },
+        let: { post: '$_id' },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ['$postId', '$$postId'] },
-                  { $eq: ['$userId', new mongoose.Types.ObjectId(user.id)] }
+                  { $eq: ['$post', '$$post'] },
+                  { $eq: ['$user', new mongoose.Types.ObjectId(user.id)] }
                 ]
               }
             }
@@ -171,7 +126,7 @@ export const likePost = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await PostLikes.create({ userId: user.id, postId });
+    await PostLikes.create({ user: user.id, post: postId });
     await Post.findByIdAndUpdate(postId, { $inc: { likeCount: 1 } });
     await session.commitTransaction();
   } catch (error) {
@@ -199,7 +154,7 @@ export const unLikePost = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await PostLikes.deleteOne({ userId: user.id, postId });
+    await PostLikes.deleteOne({ user: user.id, post: postId });
     await Post.findByIdAndUpdate(postId, { $inc: { likeCount: -1 } });
     await session.commitTransaction();
   } catch (error) {
@@ -263,6 +218,48 @@ export const unSavePost = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, message: 'Unlike succesful' });
+});
+
+/**
+ * @route POST /api/post/liked-posts/:id
+ * @desc Fetch posts liked by current user
+ * @secure true
+ */
+export const getLikedPosts = catchAsync(async (req, res) => {
+  const user = req.user;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const skip = (page - 1) * limit;
+
+  const posts = await PostLikes.find({ user })
+    .select('post createdAt')
+    .populate('post', 'id assets')
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({ success: true, data: posts });
+});
+
+/**
+ * @route POST /api/post/saved-posts/:id
+ * @desc Fetch posts saved by current user
+ * @secure true
+ */
+export const getSavedPosts = catchAsync(async (req, res) => {
+  const user = req.user;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const skip = (page - 1) * limit;
+
+  const posts = await PostSaves.find({ user })
+    .select('post createdAt')
+    .populate('post', 'id assets')
+    .skip(skip)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({ success: true, data: posts });
 });
 
 /**

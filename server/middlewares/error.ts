@@ -10,6 +10,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
+  // Zod Validation Error
   if (err instanceof ZodError) {
     const validationError = fromZodError(err, {
       includePath: false,
@@ -43,9 +44,12 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 400);
   }
 
-  const statusCode = error.statusCode ?? 500;
-  const errorMsg = error.message ?? 'Internal Server Error';
-  res.status(statusCode).json({ success: false, error: errorMsg });
+  // If ErrorResponse was passed in directly to next() also this would work
+  if (error instanceof ErrorResponse) {
+    res.status(error.statusCode).json({ success: false, error: error.message });
+  } else {
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
 };
 
 export default errorHandler;

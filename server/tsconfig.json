@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "typeRoots": ["types/env.d.ts", "node_modules/@types"],
+    "typeRoots": ["types/global.d.ts", "node_modules/@types"],
     "strictNullChecks": true,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false,

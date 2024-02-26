@@ -68,7 +68,10 @@ export const updateDetails = z.object({
     email: z
       .string({ required_error: 'Email is required' })
       .email('Not a valid email'),
-    phone: z.string({ required_error: 'Phone is required' }),
+    phone: z.string().optional().nullable(),
+    isPrivateAccount: z.boolean({
+      required_error: 'isPrivateAccount is required'
+    }),
     bio: z.string({ required_error: 'Bio is required' }),
     gender: z.string({ required_error: 'Gender is required' })
   })

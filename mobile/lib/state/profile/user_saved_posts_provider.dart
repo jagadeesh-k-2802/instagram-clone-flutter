@@ -1,20 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/models/user.dart';
-import 'package:instagram_clone/services/user.dart';
+import 'package:instagram_clone/models/post.dart';
+import 'package:instagram_clone/services/post.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
-typedef Data = GetUserPostsResponseData;
+typedef Data = GetUsersPostResponseData;
 typedef Provider = StateNotifierProvider<Notifier, PagedState<int, Data>>;
 
 class Notifier extends PagedNotifier<int, Data> {
-  final String id;
-
-  Notifier({required this.id})
+  Notifier()
       : super(
           nextPageKeyBuilder: NextPageKeyBuilderDefault.mysqlPagination,
           load: (page, limit) async {
-            GetUserPostsResponse posts = await UserService.getTaggedPosts(
-              id: id,
+            GetUsersPostResponse posts = await PostService.getSavedPosts(
               page: page,
               limit: limit,
             );
@@ -24,8 +21,7 @@ class Notifier extends PagedNotifier<int, Data> {
         );
 }
 
-Provider getUserTaggedProvider(String id) {
-  return StateNotifierProvider<Notifier, PagedState<int, Data>>(
-    (_) => Notifier(id: id),
-  );
-}
+final userSavedPostsProvider =
+    StateNotifierProvider.autoDispose<Notifier, PagedState<int, Data>>(
+  (_) => Notifier(),
+);

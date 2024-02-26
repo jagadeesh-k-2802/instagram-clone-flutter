@@ -5,10 +5,10 @@ import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 typedef Data = GetFollowOfUserResponseData;
 
-class FollowersNotifier extends PagedNotifier<int, Data> {
+class Notifier extends PagedNotifier<int, Data> {
   String userId;
 
-  FollowersNotifier({required this.userId})
+  Notifier({required this.userId})
       : super(
           nextPageKeyBuilder: NextPageKeyBuilderDefault.mysqlPagination,
           load: (int page, int limit) async {
@@ -31,7 +31,7 @@ class FollowersNotifier extends PagedNotifier<int, Data> {
   }
 }
 
-final getUserFollowersProvider = StateNotifierProvider.family
-    .autoDispose<FollowersNotifier, PagedState<int, Data>, String>(
-  (ref, userId) => FollowersNotifier(userId: userId),
+final userFollowersProvider = StateNotifierProvider.family
+    .autoDispose<Notifier, PagedState<int, Data>, String>(
+  (ref, userId) => Notifier(userId: userId),
 );

@@ -5,54 +5,6 @@ import 'package:instagram_clone/services/dio.dart';
 import 'package:instagram_clone/models/common.dart';
 
 class PostService {
-  static Future<GetPostsResponse> getMyPosts({
-    required int page,
-    required int limit,
-  }) async {
-    try {
-      final dio = await getDioClient();
-      const url = '$apiUrl/api/v1/post/my-posts';
-
-      final response = await dio.get(
-        url,
-        queryParameters: {'page': page, 'limit': limit},
-      );
-
-      if (response.statusCode != 200) {
-        var errorResponse = ErrorResponse.fromJson(response.data);
-        throw errorResponse.error;
-      }
-
-      return GetPostsResponse.fromJson(response.data);
-    } catch (error) {
-      rethrow;
-    }
-  }
-
-  static Future<GetPostsResponse> getTaggedPosts({
-    required int page,
-    required int limit,
-  }) async {
-    try {
-      final dio = await getDioClient();
-      const url = '$apiUrl/api/v1/post/tagged-posts';
-
-      final response = await dio.get(
-        url,
-        queryParameters: {'page': page, 'limit': limit},
-      );
-
-      if (response.statusCode != 200) {
-        var errorResponse = ErrorResponse.fromJson(response.data);
-        throw errorResponse.error;
-      }
-
-      return GetPostsResponse.fromJson(response.data);
-    } catch (error) {
-      rethrow;
-    }
-  }
-
   static Future<GetFeedPostsResponse> getFeedPosts({
     required int page,
     required int limit,
@@ -148,6 +100,54 @@ class PostService {
       }
 
       return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetUsersPostResponse> getLikedPosts({
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      const url = '$apiUrl/api/v1/post/liked-posts';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetUsersPostResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetUsersPostResponse> getSavedPosts({
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      const url = '$apiUrl/api/v1/post/saved-posts';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetUsersPostResponse.fromJson(response.data);
     } catch (error) {
       rethrow;
     }

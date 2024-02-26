@@ -173,6 +173,7 @@ class AuthService {
     required String phone,
     required String bio,
     required String gender,
+    required bool isPrivateAccount,
   }) async {
     try {
       final dio = await getDioClient();
@@ -185,6 +186,7 @@ class AuthService {
         'phone': phone,
         'bio': bio,
         'gender': gender,
+        'isPrivateAccount': isPrivateAccount,
       };
 
       final response = await dio.post(url, data: data);

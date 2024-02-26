@@ -135,6 +135,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
     if (formKey.currentState?.validate() == false) return;
 
     try {
+      UserResponseData? user = ref.read(globalStateProvider).user;
+
       await AuthService.updateUserDetails(
         name: nameController.text,
         username: usernameController.text,
@@ -142,6 +144,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         phone: phoneController.text,
         bio: bioController.text,
         gender: selectedGender ?? '',
+        isPrivateAccount: user?.isPrivateAccount ?? false,
       );
 
       UserResponse userResponse = await AuthService.getMe();

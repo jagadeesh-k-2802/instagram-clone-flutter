@@ -5,10 +5,10 @@ import 'package:instagram_clone/models/user.dart';
 
 typedef UserData = SearchUsersResponseData;
 
-class SearchUsersState extends PagedState<int, UserData> {
+class State extends PagedState<int, UserData> {
   final String search;
 
-  const SearchUsersState({
+  const State({
     this.search = '',
     super.records,
     String? super.error,
@@ -17,7 +17,7 @@ class SearchUsersState extends PagedState<int, UserData> {
   });
 
   @override
-  SearchUsersState copyWith({
+  State copyWith({
     String? search,
     List<UserData>? records,
     bool isEnd = false,
@@ -32,7 +32,7 @@ class SearchUsersState extends PagedState<int, UserData> {
       previousPageKeys: previousPageKeys,
     );
 
-    return SearchUsersState(
+    return State(
       search: search ?? this.search,
       records: sup.records,
       error: sup.error,
@@ -42,17 +42,18 @@ class SearchUsersState extends PagedState<int, UserData> {
   }
 }
 
-class SearchUsersNotifier extends StateNotifier<SearchUsersState>
-    with PagedNotifierMixin<int, UserData, SearchUsersState> {
-  SearchUsersNotifier() : super(const SearchUsersState());
+class Notifier extends StateNotifier<State>
+    with PagedNotifierMixin<int, UserData, State> {
+  Notifier() : super(const State());
 
   @override
   Future<List<UserData>?> load(int page, int limit) async {
     try {
       if (state.previousPageKeys.contains(page)) {
-        await Future.delayed(const Duration(seconds: 0), () {
-          state = state.copyWith();
-        });
+        await Future.delayed(
+          const Duration(seconds: 0),
+          () => state = state.copyWith(),
+        );
 
         return state.records;
       }
@@ -81,7 +82,6 @@ class SearchUsersNotifier extends StateNotifier<SearchUsersState>
   }
 }
 
-final searchUsersProvider =
-    StateNotifierProvider.autoDispose<SearchUsersNotifier, SearchUsersState>(
-  (_) => SearchUsersNotifier(),
+final searchUsersProvider = StateNotifierProvider.autoDispose<Notifier, State>(
+  (_) => Notifier(),
 );

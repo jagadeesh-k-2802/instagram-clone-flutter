@@ -349,10 +349,12 @@ mixin _$UserResponseData {
   String get gender => throw _privateConstructorUsedError;
   String get bio => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
+  bool get isPrivateAccount => throw _privateConstructorUsedError;
+  String? get fcmToken => throw _privateConstructorUsedError;
   int get postCount => throw _privateConstructorUsedError;
   int get followersCount => throw _privateConstructorUsedError;
   int get followingCount => throw _privateConstructorUsedError;
-  String? get fcmToken => throw _privateConstructorUsedError;
+  @DateTimeConvertor()
   String get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -376,11 +378,12 @@ abstract class $UserResponseDataCopyWith<$Res> {
       String gender,
       String bio,
       String? phone,
+      bool isPrivateAccount,
+      String? fcmToken,
       int postCount,
       int followersCount,
       int followingCount,
-      String? fcmToken,
-      String createdAt});
+      @DateTimeConvertor() String createdAt});
 }
 
 /// @nodoc
@@ -404,10 +407,11 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
     Object? gender = null,
     Object? bio = null,
     Object? phone = freezed,
+    Object? isPrivateAccount = null,
+    Object? fcmToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
-    Object? fcmToken = freezed,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -443,6 +447,14 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String?,
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
+              as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
       postCount: null == postCount
           ? _value.postCount
           : postCount // ignore: cast_nullable_to_non_nullable
@@ -455,10 +467,6 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
           ? _value.followingCount
           : followingCount // ignore: cast_nullable_to_non_nullable
               as int,
-      fcmToken: freezed == fcmToken
-          ? _value.fcmToken
-          : fcmToken // ignore: cast_nullable_to_non_nullable
-              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -484,11 +492,12 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
       String gender,
       String bio,
       String? phone,
+      bool isPrivateAccount,
+      String? fcmToken,
       int postCount,
       int followersCount,
       int followingCount,
-      String? fcmToken,
-      String createdAt});
+      @DateTimeConvertor() String createdAt});
 }
 
 /// @nodoc
@@ -510,10 +519,11 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
     Object? gender = null,
     Object? bio = null,
     Object? phone = freezed,
+    Object? isPrivateAccount = null,
+    Object? fcmToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
-    Object? fcmToken = freezed,
     Object? createdAt = null,
   }) {
     return _then(_$UserResponseDataImpl(
@@ -549,6 +559,14 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
           ? _value.phone
           : phone // ignore: cast_nullable_to_non_nullable
               as String?,
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
+              as bool,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
+              as String?,
       postCount: null == postCount
           ? _value.postCount
           : postCount // ignore: cast_nullable_to_non_nullable
@@ -561,10 +579,6 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
           ? _value.followingCount
           : followingCount // ignore: cast_nullable_to_non_nullable
               as int,
-      fcmToken: freezed == fcmToken
-          ? _value.fcmToken
-          : fcmToken // ignore: cast_nullable_to_non_nullable
-              as String?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -585,11 +599,12 @@ class _$UserResponseDataImpl implements _UserResponseData {
       required this.gender,
       required this.bio,
       required this.phone,
+      required this.isPrivateAccount,
+      required this.fcmToken,
       required this.postCount,
       required this.followersCount,
       required this.followingCount,
-      required this.fcmToken,
-      required this.createdAt});
+      @DateTimeConvertor() required this.createdAt});
 
   factory _$UserResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserResponseDataImplFromJson(json);
@@ -611,19 +626,22 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @override
   final String? phone;
   @override
+  final bool isPrivateAccount;
+  @override
+  final String? fcmToken;
+  @override
   final int postCount;
   @override
   final int followersCount;
   @override
   final int followingCount;
   @override
-  final String? fcmToken;
-  @override
+  @DateTimeConvertor()
   final String createdAt;
 
   @override
   String toString() {
-    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, fcmToken: $fcmToken, createdAt: $createdAt)';
+    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, isPrivateAccount: $isPrivateAccount, fcmToken: $fcmToken, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, createdAt: $createdAt)';
   }
 
   @override
@@ -640,14 +658,16 @@ class _$UserResponseDataImpl implements _UserResponseData {
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.bio, bio) || other.bio == bio) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.isPrivateAccount, isPrivateAccount) ||
+                other.isPrivateAccount == isPrivateAccount) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken) &&
             (identical(other.postCount, postCount) ||
                 other.postCount == postCount) &&
             (identical(other.followersCount, followersCount) ||
                 other.followersCount == followersCount) &&
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
-            (identical(other.fcmToken, fcmToken) ||
-                other.fcmToken == fcmToken) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
@@ -664,10 +684,11 @@ class _$UserResponseDataImpl implements _UserResponseData {
       gender,
       bio,
       phone,
+      isPrivateAccount,
+      fcmToken,
       postCount,
       followersCount,
       followingCount,
-      fcmToken,
       createdAt);
 
   @JsonKey(ignore: true)
@@ -687,19 +708,21 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
 abstract class _UserResponseData implements UserResponseData {
   const factory _UserResponseData(
-      {required final String id,
-      required final String avatar,
-      required final String name,
-      required final String username,
-      required final String email,
-      required final String gender,
-      required final String bio,
-      required final String? phone,
-      required final int postCount,
-      required final int followersCount,
-      required final int followingCount,
-      required final String? fcmToken,
-      required final String createdAt}) = _$UserResponseDataImpl;
+          {required final String id,
+          required final String avatar,
+          required final String name,
+          required final String username,
+          required final String email,
+          required final String gender,
+          required final String bio,
+          required final String? phone,
+          required final bool isPrivateAccount,
+          required final String? fcmToken,
+          required final int postCount,
+          required final int followersCount,
+          required final int followingCount,
+          @DateTimeConvertor() required final String createdAt}) =
+      _$UserResponseDataImpl;
 
   factory _UserResponseData.fromJson(Map<String, dynamic> json) =
       _$UserResponseDataImpl.fromJson;
@@ -721,14 +744,17 @@ abstract class _UserResponseData implements UserResponseData {
   @override
   String? get phone;
   @override
+  bool get isPrivateAccount;
+  @override
+  String? get fcmToken;
+  @override
   int get postCount;
   @override
   int get followersCount;
   @override
   int get followingCount;
   @override
-  String? get fcmToken;
-  @override
+  @DateTimeConvertor()
   String get createdAt;
   @override
   @JsonKey(ignore: true)

@@ -245,7 +245,7 @@ class _PostItemState extends ConsumerState<PostItem>
               body: RiverPagedBuilder.autoDispose(
                 firstPageKey: 1,
                 limit: 20,
-                provider: getCommentsProvider(widget.id),
+                provider: commentsProvider(widget.id),
                 itemBuilder: (context, item, index) {
                   return buildCommentItem(item, setState);
                 },

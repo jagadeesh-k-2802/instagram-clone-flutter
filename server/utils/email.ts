@@ -2,6 +2,9 @@ import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import { htmlToText } from 'html-to-text';
 
+/**
+ * Send emails to users using this class by calling the respective method
+ */
 class Email {
   name: string;
   to: string;

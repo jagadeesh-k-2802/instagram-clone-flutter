@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
@@ -15,7 +16,11 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   void navigateToChangePassword() {
-    context.pushNamed('change-password');
+    context.pushNamed(Routes.changePassword);
+  }
+
+  void navigateToAccountPrivacy() {
+    context.pushNamed(Routes.accountPrivacy);
   }
 
   Future<void> logout() async {
@@ -23,7 +28,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await AuthService.logout();
       ref.read(globalStateProvider.notifier).setUser(null);
       if (!mounted) return;
-      context.goNamed('login');
+      context.goNamed(Routes.login);
     } catch (error) {
       // Do Nothing
     }
@@ -96,6 +101,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ClickableListItem(
               text: 'Change Password',
               onTap: navigateToChangePassword,
+            ),
+            ClickableListItem(
+              text: 'Account Privacy',
+              onTap: navigateToAccountPrivacy,
             ),
             ClickableListItem(
               text: 'Log Out',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/models/auth.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/theme/theme.dart';
@@ -34,7 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final appState = ref.read(globalStateProvider.notifier);
       appState.setUser(userResponse.data);
       if (!mounted) return;
-      context.goNamed('feed');
+      context.goNamed(Routes.feed);
     } catch (error) {
       if (!mounted) return;
 
@@ -68,7 +69,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        context.pushNamed('signup');
+                        context.pushNamed(Routes.signup);
                       },
                   ),
                 ],
@@ -160,7 +161,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        context.pushNamed('forgot-password');
+                        context.pushNamed(Routes.forgotPassword);
                       },
                   ),
                 ],

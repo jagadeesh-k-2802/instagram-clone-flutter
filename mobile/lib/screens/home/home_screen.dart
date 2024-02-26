@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -21,7 +22,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void onNavigate(int index) {
     // PostNew Screen
     if (index == 2) {
-      context.pushNamed('new-post');
+      context.pushNamed(Routes.newPost);
       return;
     }
 

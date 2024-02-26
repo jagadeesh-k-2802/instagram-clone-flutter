@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:instagram_clone/models/converters.dart';
 part 'comment.freezed.dart';
 part 'comment.g.dart';
 
@@ -21,7 +22,7 @@ class GetCommentsResponseData with _$GetCommentsResponseData {
     required int likeCount,
     required bool isLiked,
     required CommentUser user,
-    required String createdAt,
+    @DateTimeConvertor() required String createdAt,
   }) = _GetCommentsResponseData;
 
   factory GetCommentsResponseData.fromJson(Map<String, Object?> json) =>

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:instagram_clone/screens/navigation.dart';
+import 'package:instagram_clone/router/router.dart';
 import 'package:instagram_clone/theme/theme.dart';
 
 void main() {

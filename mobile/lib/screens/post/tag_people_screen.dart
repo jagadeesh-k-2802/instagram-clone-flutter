@@ -27,9 +27,7 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
     super.dispose();
   }
 
-  Widget buildSearchBar(
-    SearchUsersNotifier searchUsersNotifier,
-  ) {
+  Widget buildSearchBar({required void Function(String value) onUpdate}) {
     return SizedBox(
       height: 36,
       child: TextFormField(
@@ -38,7 +36,7 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
           if (debounce?.isActive ?? false) debounce?.cancel();
 
           debounce = Timer(const Duration(milliseconds: 500), () {
-            searchUsersNotifier.updateSearchValue(value);
+            onUpdate(value);
           });
         },
         decoration: const InputDecoration(
@@ -83,8 +81,12 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: buildSearchBar(searchUsersNotifier),
         automaticallyImplyLeading: false,
+        title: buildSearchBar(
+          onUpdate: (String value) {
+            searchUsersNotifier.updateSearchValue(value);
+          },
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       resizeToAvoidBottomInset: false,
@@ -92,7 +94,7 @@ class _TagPeopleScreenState extends ConsumerState<TagPeopleScreen> {
         padding: const EdgeInsets.all(12.0),
         child: ElevatedButton(
           onPressed: onDone,
-          child:  Text('Done (${selectedUsers.length})'),
+          child: Text('Done (${selectedUsers.length})'),
         ),
       ),
       body: RiverPagedBuilder.autoDispose(

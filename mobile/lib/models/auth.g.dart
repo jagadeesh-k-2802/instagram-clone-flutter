@@ -41,10 +41,11 @@ _$UserResponseDataImpl _$$UserResponseDataImplFromJson(
       gender: json['gender'] as String,
       bio: json['bio'] as String,
       phone: json['phone'] as String?,
+      isPrivateAccount: json['isPrivateAccount'] as bool,
+      fcmToken: json['fcmToken'] as String?,
       postCount: json['postCount'] as int,
       followersCount: json['followersCount'] as int,
       followingCount: json['followingCount'] as int,
-      fcmToken: json['fcmToken'] as String?,
       createdAt: json['createdAt'] as String,
     );
 
@@ -59,9 +60,10 @@ Map<String, dynamic> _$$UserResponseDataImplToJson(
       'gender': instance.gender,
       'bio': instance.bio,
       'phone': instance.phone,
+      'isPrivateAccount': instance.isPrivateAccount,
+      'fcmToken': instance.fcmToken,
       'postCount': instance.postCount,
       'followersCount': instance.followersCount,
       'followingCount': instance.followingCount,
-      'fcmToken': instance.fcmToken,
       'createdAt': instance.createdAt,
     };

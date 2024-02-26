@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:instagram_clone/models/converters.dart';
 part 'auth.freezed.dart';
 part 'auth.g.dart';
 
@@ -35,11 +36,12 @@ class UserResponseData with _$UserResponseData {
     required String gender,
     required String bio,
     required String? phone,
+    required bool isPrivateAccount,
+    required String? fcmToken,
     required int postCount,
     required int followersCount,
     required int followingCount,
-    required String? fcmToken,
-    required String createdAt,
+    @DateTimeConvertor() required String createdAt,
   }) = _UserResponseData;
 
   factory UserResponseData.fromJson(Map<String, Object?> json) =>

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:instagram_clone/models/converters.dart';
 part 'post.freezed.dart';
 part 'post.g.dart';
 
@@ -57,7 +58,7 @@ class GetFeedPostsResponseData with _$GetFeedPostsResponseData {
     required PostUser user,
     required bool isLiked,
     required bool isSaved,
-    required DateTime createdAt,
+    @DateTimeConvertor() required DateTime createdAt,
     required DateTime updatedAt,
   }) = _GetFeedPostsResponseData;
 
@@ -76,4 +77,38 @@ class PostUser with _$PostUser {
 
   factory PostUser.fromJson(Map<String, Object?> json) =>
       _$PostUserFromJson(json);
+}
+
+@freezed
+class GetUsersPostResponse with _$GetUsersPostResponse {
+  const factory GetUsersPostResponse({
+    required bool success,
+    required List<GetUsersPostResponseData> data,
+  }) = _GetUsersPostResponse;
+
+  factory GetUsersPostResponse.fromJson(Map<String, Object?> json) =>
+      _$GetUsersPostResponseFromJson(json);
+}
+
+@freezed
+class GetUsersPostResponseData with _$GetUsersPostResponseData {
+  const factory GetUsersPostResponseData({
+    required String id,
+    required UserPostItem post,
+    @DateTimeConvertor() required DateTime createdAt,
+  }) = _GetUsersPostResponseData;
+
+  factory GetUsersPostResponseData.fromJson(Map<String, Object?> json) =>
+      _$GetUsersPostResponseDataFromJson(json);
+}
+
+@freezed
+class UserPostItem with _$UserPostItem {
+  const factory UserPostItem({
+    required String id,
+    required List<PostAssetItem> assets,
+  }) = _UserPostItem;
+
+  factory UserPostItem.fromJson(Map<String, Object?> json) =>
+      _$UserPostItemFromJson(json);
 }

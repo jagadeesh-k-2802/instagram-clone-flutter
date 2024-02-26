@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/photo_grid.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
@@ -45,7 +46,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                 style: bodyLargeBold(context)?.copyWith(color: Colors.black),
               ),
               GestureDetector(
-                onTap: () => context.pushReplacementNamed('new-story'),
+                onTap: () => context.pushReplacementNamed(Routes.newStory),
                 child: Text(
                   'STORY',
                   style: bodyLargeBold(context)?.copyWith(
@@ -142,7 +143,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
       data = selectImages.toList();
     }
 
-    context.pushNamed('post-upload', extra: data);
+    context.pushNamed(Routes.postUpload, extra: data);
   }
 
   Widget buildGalleryItem(AssetEntity item, int index) {

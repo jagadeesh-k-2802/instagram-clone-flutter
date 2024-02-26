@@ -5,11 +5,13 @@ import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/constants/constants.dart';
 import 'package:instagram_clone/models/user.dart';
+import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/services/user.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
-import 'package:instagram_clone/state/public-profile/user_posts_provider.dart';
-import 'package:instagram_clone/state/public-profile/user_provider.dart';
-import 'package:instagram_clone/state/public-profile/user_tagged_provider.dart';
+import 'package:instagram_clone/state/profile/user_posts_provider.dart';
+import 'package:instagram_clone/state/profile/user_provider.dart';
+import 'package:instagram_clone/state/profile/user_tagged_posts_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
 import 'package:instagram_clone/widgets/post_grid_item.dart';
@@ -32,30 +34,34 @@ class PublicProfileScreen extends ConsumerStatefulWidget {
 
 class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
   Future<void> onFollow(String userId) async {
+    if (widget.onFollowChange is Function) {
+      (widget.onFollowChange as Function).call('follow');
+    }
+
     try {
       await UserService.followUser(userId: userId);
-      ref.refresh(getPublicUserProvider(widget.profileId ?? '')).isRefreshing;
+      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
       ref.read(globalStateProvider.notifier).incrementFollowingCount();
-
-      if (widget.onFollowChange is Function) {
-        (widget.onFollowChange as Function).call('follow');
-      }
     } catch (error) {
-      // Do Nothing
+      if (widget.onFollowChange is Function) {
+        (widget.onFollowChange as Function).call('unfollow');
+      }
     }
   }
 
   Future<void> onUnFollow(String userId) async {
+    if (widget.onFollowChange is Function) {
+      (widget.onFollowChange as Function).call('unfollow');
+    }
+
     try {
       await UserService.unFollowUser(userId: userId);
-      ref.refresh(getPublicUserProvider(widget.profileId ?? '')).isRefreshing;
+      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
       ref.read(globalStateProvider.notifier).decrementFollowingCount();
-
-      if (widget.onFollowChange is Function) {
-        (widget.onFollowChange as Function).call('unfollow');
-      }
     } catch (error) {
-      // Do Nothing
+      if (widget.onFollowChange is Function) {
+        (widget.onFollowChange as Function).call('follow');
+      }
     }
   }
 
@@ -68,7 +74,14 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
     String username,
     String initialScreen,
   ) {
-    context.push('/follow-detail/$userId/$username/$initialScreen');
+    context.pushNamed(
+      Routes.followDetail,
+      extra: FollowDetailScreenArgs(
+        userId: userId,
+        username: username,
+        initialScreen: initialScreen,
+      ),
+    );
   }
 
   Widget buildProfileHeader({GetUserResponseData? user}) {
@@ -270,7 +283,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                         RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
-                          provider: getUserPostsProvider(
+                          provider: userPostsProvider(
                             widget.profileId ?? '',
                           ),
                           pullToRefresh: true,
@@ -292,13 +305,13 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                           pagedBuilder: (controller, builder) => PagedGridView(
                             pagingController: controller,
                             builderDelegate: builder,
-                            gridDelegate: photoGrid,
+                            gridDelegate: photoGridDelegate,
                           ),
                         ),
                         RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
-                          provider: getUserTaggedProvider(
+                          provider: userTaggedPostsProvider(
                             widget.profileId ?? '',
                           ),
                           pullToRefresh: true,
@@ -320,7 +333,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                           pagedBuilder: (controller, builder) => PagedGridView(
                             pagingController: controller,
                             builderDelegate: builder,
-                            gridDelegate: photoGrid,
+                            gridDelegate: photoGridDelegate,
                           ),
                         ),
                       ],
@@ -337,7 +350,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = ref.watch(getPublicUserProvider(widget.profileId ?? ''));
+    final provider = ref.watch(publicUserProvider(widget.profileId ?? ''));
 
     return provider.when(
       data: (data) {

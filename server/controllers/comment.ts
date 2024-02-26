@@ -48,13 +48,13 @@ export const getCommentsForPost = catchAsync(async (req, res) => {
     {
       $lookup: {
         from: 'commentlikes',
-        let: { commentId: '$_id' },
+        let: { comment: '$_id' },
         pipeline: [
           {
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ['$commentId', '$$commentId'] },
+                  { $eq: ['$comment', '$$comment'] },
                   { $eq: ['$userId', new mongoose.Types.ObjectId(req.user.id)] }
                 ]
               }
@@ -119,11 +119,13 @@ export const deleteComment = catchAsync(async (req, res, next) => {
   session.startTransaction();
   const comment = await Comment.findById(commentId);
 
+  // Check if comment exists actually
   if (!comment) {
     next(new ErrorResponse('Comment not found', 404));
     return;
   }
 
+  // Check for ownership
   if (comment.user != user.id) {
     next(new ErrorResponse('Unauthorized access', 401));
     return;
@@ -160,7 +162,7 @@ export const likeComment = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await CommentLikes.create({ userId: user.id, commentId });
+    await CommentLikes.create({ user: user.id, comment: commentId });
     await Comment.findByIdAndUpdate(commentId, { $inc: { likeCount: 1 } });
     await session.commitTransaction();
   } catch (error) {
@@ -188,7 +190,7 @@ export const unLikeComment = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await CommentLikes.deleteOne({ userId: user.id, commentId });
+    await CommentLikes.deleteOne({ user: user.id, comment: commentId });
     await Comment.findByIdAndUpdate(commentId, { $inc: { likeCount: -1 } });
     await session.commitTransaction();
   } catch (error) {
