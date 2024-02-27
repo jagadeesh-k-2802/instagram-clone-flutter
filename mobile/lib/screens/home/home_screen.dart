@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/assets.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
@@ -55,23 +56,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         items: [
           BottomNavigationBarItem(
             label: 'Home',
-            activeIcon: SvgPicture.asset('assets/icons/home-filled.svg'),
-            icon: SvgPicture.asset('assets/icons/home-outlined.svg'),
+            activeIcon: SvgPicture.asset(AssetsConstants.homeFilled),
+            icon: SvgPicture.asset(AssetsConstants.homeOutlined),
           ),
           BottomNavigationBarItem(
             label: 'Search',
-            activeIcon: SvgPicture.asset('assets/icons/search-filled.svg'),
-            icon: SvgPicture.asset('assets/icons/search-outlined.svg'),
+            activeIcon: SvgPicture.asset(AssetsConstants.searchFilled),
+            icon: SvgPicture.asset(AssetsConstants.searchOutlined),
           ),
           BottomNavigationBarItem(
             label: 'PostNew',
-            activeIcon: SvgPicture.asset('assets/icons/add-square-filled.svg'),
-            icon: SvgPicture.asset('assets/icons/add-square-outlined.svg'),
+            activeIcon: SvgPicture.asset(AssetsConstants.addSquareFilled),
+            icon: SvgPicture.asset(AssetsConstants.addSquareOutlined),
           ),
           BottomNavigationBarItem(
             label: 'Activity',
-            activeIcon: SvgPicture.asset('assets/icons/activity-filled.svg'),
-            icon: SvgPicture.asset('assets/icons/activity-outlined.svg'),
+            activeIcon: SvgPicture.asset(AssetsConstants.activityFilled),
+            icon: SvgPicture.asset(AssetsConstants.activityOutlined),
           ),
           BottomNavigationBarItem(
             label: 'Profile',

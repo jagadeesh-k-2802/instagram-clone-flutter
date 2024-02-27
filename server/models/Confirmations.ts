@@ -1,15 +1,15 @@
 import mongoose from 'mongoose';
 
-interface IConfirmation {
+interface Confirmation {
   code: string;
   email: string;
   expireAt: Date;
   createdAt: Date;
 }
 
-type ConfirmationModel = mongoose.Model<IConfirmation, object, object>;
+type ConfirmationModel = mongoose.Model<Confirmation, object, object>;
 
-const schema = new mongoose.Schema<IConfirmation, ConfirmationModel, object>(
+const schema = new mongoose.Schema<Confirmation, ConfirmationModel, object>(
   {
     code: String,
     email: String,
@@ -19,10 +19,10 @@ const schema = new mongoose.Schema<IConfirmation, ConfirmationModel, object>(
   { toJSON: { virtuals: true } }
 );
 
-const Confirmation = mongoose.model<IConfirmation, ConfirmationModel>(
+const Confirmation = mongoose.model<Confirmation, ConfirmationModel>(
   'Confirmation',
   schema
 );
 
-type ConfirmationType = mongoose.HydratedDocument<IConfirmation, object>;
+type ConfirmationType = mongoose.HydratedDocument<Confirmation, object>;
 export { ConfirmationType, Confirmation };

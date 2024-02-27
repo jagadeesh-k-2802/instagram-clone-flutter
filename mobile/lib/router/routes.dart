@@ -2,27 +2,28 @@
 /// by default it is name of route
 /// if ends with 'Path' it is a path not a name
 class Routes {
-  static get splash => "splash";
-  static get login => "login";
-  static get signup => "signup";
-  static get forgotPassword => "forgot-password";
-  static get changePassword => "change-password";
-  static get feed => "feed";
-  static get search => "search";
-  static get searchDetail => "search-detail";
+  static const splash = "splash";
+  static const login = "login";
+  static const signup = "signup";
+  static const forgotPassword = "forgot-password";
+  static const changePassword = "change-password";
+  static const feed = "feed";
+  static const search = "search";
+  static const searchDetail = "search-detail";
   static publicProfilePath(String id) => "/profile/$id";
-  static get followDetail => "follow-detail";
-  static get notifications => "notifications";
-  static get profile => "profile";
-  static get message => "message";
-  static get newPost => "new-post";
-  static get postUpload => "post-upload";
-  static get tagPeople => "tag-people";
-  static get newStory => "new-story";
-  static get storyCapture => "story-capture";
-  static get profileEdit => "profile-edit";
-  static get likedPosts => "liked-posts";
-  static get savedPosts => "saved-posts";
-  static get accountPrivacy => "account-privacy";
-  static get settings => "settings";
+  static postDetailPath(String id) => "/post/$id";
+  static const followDetail = "follow-detail";
+  static const notifications = "notifications";
+  static const profile = "profile";
+  static const message = "message";
+  static const newPost = "new-post";
+  static const postUpload = "post-upload";
+  static const tagPeople = "tag-people";
+  static const newStory = "new-story";
+  static const storyCapture = "story-capture";
+  static const profileEdit = "profile-edit";
+  static const likedPosts = "liked-posts";
+  static const savedPosts = "saved-posts";
+  static const accountPrivacy = "account-privacy";
+  static const settings = "settings";
 }

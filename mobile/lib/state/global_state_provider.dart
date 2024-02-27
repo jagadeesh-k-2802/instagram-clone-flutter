@@ -36,6 +36,14 @@ class Notifier extends StateNotifier<Data> {
       ),
     );
   }
+
+  void decrementPostCount() {
+    state = State(
+      state.user?.copyWith(
+        followingCount: (state.user?.postCount ?? 0) - 1,
+      ),
+    );
+  }
 }
 
 final _initialState = State(null);

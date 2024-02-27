@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Sorted by alphabetical order
   cupertino_icons: ^1.0.2
   cached_network_image: ^3.3.1
   camerawesome: ^2.0.0+1
@@ -30,10 +29,14 @@ dependencies:
   photo_manager_image_provider: ^2.1.0
   riverpod_annotation: ^2.3.4
   riverpod_infinite_scroll: ^1.0.9
+  video_player: ^2.8.2
+  visibility_detector: ^0.4.0+2
   wechat_assets_picker: ^8.9.0-dev.1
 
 dependency_overrides:
   photo_manager: ^3.0.0-dev.2
+  image_cropper_platform_interface: any
+  http: any
 
 dev_dependencies:
   flutter_test:

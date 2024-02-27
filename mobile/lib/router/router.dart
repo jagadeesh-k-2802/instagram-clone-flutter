@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/router/routes.dart';
-import 'package:instagram_clone/router/transitions.dart';
-import 'package:instagram_clone/screens/auth/change_password.dart';
-import 'package:instagram_clone/screens/profile/account_privacy_screen.dart';
+import 'package:instagram_clone/screens/auth/change_password_screen.dart';
+import 'package:instagram_clone/screens/post/post_detail_screen.dart';
+import 'package:instagram_clone/screens/settings/account_privacy_screen.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/screens/profile/liked_posts_screen.dart';
 import 'package:instagram_clone/screens/profile/saved_posts_screen.dart';
 import 'package:instagram_clone/screens/profile/public_profile_screen.dart';
+import 'package:instagram_clone/router/transitions.dart';
 import 'package:instagram_clone/screens/search/search_detail_screen.dart';
 import 'package:instagram_clone/screens/story/new_story_screen.dart';
 import 'package:instagram_clone/screens/home/notifications_screen.dart';
@@ -18,7 +19,7 @@ import 'package:instagram_clone/screens/post/post_upload_screen.dart';
 import 'package:instagram_clone/screens/profile/profile_edit_screen.dart';
 import 'package:instagram_clone/screens/profile/profile_screen.dart';
 import 'package:instagram_clone/screens/search/search_screen.dart';
-import 'package:instagram_clone/screens/home/settings_screen.dart';
+import 'package:instagram_clone/screens/settings/settings_screen.dart';
 import 'package:instagram_clone/screens/story/story_capture_screen.dart';
 import 'package:instagram_clone/screens/post/tag_people_screen.dart';
 import 'package:instagram_clone/screens/splash_screen.dart';
@@ -33,27 +34,35 @@ final List<RouteBase> _routes = [
   GoRoute(
     name: Routes.splash,
     path: '/${Routes.splash}',
-    builder: (context, state) => const SplashScreen(),
+    pageBuilder: (context, state) => const NoTransitionPage(
+      child: SplashScreen(),
+    ),
   ),
   GoRoute(
     name: Routes.login,
     path: '/${Routes.login}',
-    builder: (context, state) => const LoginScreen(),
+    pageBuilder: (context, state) => const NoTransitionPage(
+      child: LoginScreen(),
+    ),
   ),
   GoRoute(
     name: Routes.signup,
     path: '/${Routes.signup}',
-    builder: (context, state) => const SignupScreen(),
+    pageBuilder: (context, state) => const NoTransitionPage(
+      child: SignupScreen(),
+    ),
   ),
   GoRoute(
     name: Routes.forgotPassword,
     path: '/${Routes.forgotPassword}',
-    builder: (context, state) => const ForgotPasswordScreen(),
+    pageBuilder: (context, state) => const NoTransitionPage(
+      child: ForgotPasswordScreen(),
+    ),
   ),
   GoRoute(
     name: Routes.changePassword,
     path: '/${Routes.changePassword}',
-    pageBuilder: (context, state) => const NoTransitionPage<void>(
+    pageBuilder: (context, state) => const NoTransitionPage(
       child: ChangePasswordScreen(),
     ),
   ),
@@ -69,6 +78,15 @@ final List<RouteBase> _routes = [
             path: '/feed',
             pageBuilder: (context, state) => const NoTransitionPage(
               child: FeedScreen(),
+            ),
+          ),
+          GoRoute(
+            name: Routes.postDetailPath(''),
+            path: Routes.postDetailPath(':id'),
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: PostDetailScreen(
+                postId: state.pathParameters['id'],
+              ),
             ),
           ),
         ],
@@ -131,14 +149,14 @@ final List<RouteBase> _routes = [
           GoRoute(
             name: Routes.likedPosts,
             path: '/${Routes.likedPosts}',
-            pageBuilder: (context, state) => const NoTransitionPage<void>(
+            pageBuilder: (context, state) => const NoTransitionPage(
               child: LikedPostsScreen(),
             ),
           ),
           GoRoute(
             name: Routes.savedPosts,
             path: '/${Routes.savedPosts}',
-            pageBuilder: (context, state) => const NoTransitionPage<void>(
+            pageBuilder: (context, state) => const NoTransitionPage(
               child: SavedPostsScreen(),
             ),
           ),
@@ -149,12 +167,12 @@ final List<RouteBase> _routes = [
   GoRoute(
     name: Routes.message,
     path: '/${Routes.message}',
-    pageBuilder: (context, state) => CustomTransitionPage<void>(
+    pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
+      child: const MessageScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return LeftSlideTransition(animation: animation, child: child);
       },
-      child: const MessageScreen(),
     ),
   ),
   GoRoute(
@@ -195,21 +213,21 @@ final List<RouteBase> _routes = [
   GoRoute(
     name: Routes.profileEdit,
     path: '/${Routes.profileEdit}',
-    pageBuilder: (context, state) => const NoTransitionPage<void>(
+    pageBuilder: (context, state) => const NoTransitionPage(
       child: ProfileEditScreen(),
     ),
   ),
   GoRoute(
     name: Routes.settings,
     path: '/${Routes.settings}',
-    pageBuilder: (context, state) => const NoTransitionPage<void>(
+    pageBuilder: (context, state) => const NoTransitionPage(
       child: SettingsScreen(),
     ),
   ),
   GoRoute(
     name: Routes.accountPrivacy,
     path: '/${Routes.accountPrivacy}',
-    pageBuilder: (context, state) => const NoTransitionPage<void>(
+    pageBuilder: (context, state) => const NoTransitionPage(
       child: AccountPrivacyScreen(),
     ),
   ),

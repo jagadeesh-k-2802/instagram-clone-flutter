@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/theme/theme.dart';
-import 'package:instagram_clone/widgets/post_grid_item.dart';
+import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 
 /// [PhotoGrid] creates instagram like 3 column grid to show
 /// photos using [PostGridItem] most probably

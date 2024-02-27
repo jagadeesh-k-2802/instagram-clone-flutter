@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/search/search_users_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
@@ -53,8 +53,8 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
     );
   }
 
-  void openUserProfile(UserData item) {
-    context.push(Routes.publicProfilePath(item.id));
+  void openUserProfile(String userId) {
+    context.push(Routes.publicProfilePath(userId));
   }
 
   @override
@@ -76,7 +76,7 @@ class _TagPeopleScreenState extends ConsumerState<SearchDetailScreen> {
         provider: searchUsersProvider,
         itemBuilder: (context, item, index) {
           return InkWell(
-            onTap: () => openUserProfile(item),
+            onTap: () => openUserProfile(item.id),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: defaultPagePadding,

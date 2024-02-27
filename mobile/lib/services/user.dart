@@ -1,4 +1,4 @@
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/services/dio.dart';
 import 'package:instagram_clone/models/common.dart';

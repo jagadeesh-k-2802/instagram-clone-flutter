@@ -55,6 +55,7 @@ class GetFeedPostsResponseData with _$GetFeedPostsResponseData {
     required String caption,
     required List<PostAssetItem> assets,
     required int likeCount,
+    required int commentCount,
     required PostUser user,
     required bool isLiked,
     required bool isSaved,
@@ -111,4 +112,37 @@ class UserPostItem with _$UserPostItem {
 
   factory UserPostItem.fromJson(Map<String, Object?> json) =>
       _$UserPostItemFromJson(json);
+}
+
+@freezed
+class GetPostResponse with _$GetPostResponse {
+  const factory GetPostResponse({
+    required bool success,
+    required GetFeedPostsResponseData data,
+  }) = _GetPostResponse;
+
+  factory GetPostResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetPostResponseFromJson(json);
+}
+
+@freezed
+class GetExplorePostsResponse with _$GetExplorePostsResponse {
+  const factory GetExplorePostsResponse({
+    required bool success,
+    required List<GetExplorePostsResponseData> data,
+  }) = _GetExplorePostsResponse;
+
+  factory GetExplorePostsResponse.fromJson(Map<String, Object?> json) =>
+      _$GetExplorePostsResponseFromJson(json);
+}
+
+@freezed
+class GetExplorePostsResponseData with _$GetExplorePostsResponseData {
+  const factory GetExplorePostsResponseData({
+    @JsonKey(name: '_id') required String id,
+    required List<PostAssetItem> assets,
+  }) = _GetExplorePostsResponseData;
+
+  factory GetExplorePostsResponseData.fromJson(Map<String, Object?> json) =>
+      _$GetExplorePostsResponseDataFromJson(json);
 }

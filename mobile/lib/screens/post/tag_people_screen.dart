@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/state/search/search_users_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';

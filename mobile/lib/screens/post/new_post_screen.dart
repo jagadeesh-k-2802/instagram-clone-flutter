@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/state/post/local_gallery_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
-import 'package:instagram_clone/widgets/photo_grid.dart';
+import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class NewPostScreen extends StatefulWidget {
+class NewPostScreen extends ConsumerStatefulWidget {
   const NewPostScreen({super.key});
 
   @override
-  State<NewPostScreen> createState() => _NewPostScreenState();
+  ConsumerState<NewPostScreen> createState() => _NewPostScreenState();
 }
 
-class _NewPostScreenState extends State<NewPostScreen> {
-  List<AssetEntity> localImages = [];
+class _NewPostScreenState extends ConsumerState<NewPostScreen> {
   AssetEntity? selectedImage;
+  List<AssetEntity> selectImages = [];
   PermissionState permissionState = PermissionState.authorized;
   ScrollController outerController = ScrollController();
-  List<AssetEntity> selectImages = [];
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await fetchPhotos();
+      await checkPermissions();
     });
   }
 
@@ -61,47 +63,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
     );
   }
 
-  Future<void> fetchPhotos() async {
+  Future<void> checkPermissions() async {
     await PhotoManager.clearFileCache();
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
-    Set<AssetEntity> results = {};
-
-    final filter = AdvancedCustomFilter()
-        .addOrderBy(column: CustomColumns.base.createDate, isAsc: false);
-
-    if (ps.isAuth || ps.hasAccess) {
-      final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-        filterOption: filter,
-      );
-
-      for (AssetPathEntity path in paths.reversed) {
-        List<AssetEntity> assets = await path.getAssetListPaged(
-          page: 0,
-          size: 500,
-        );
-
-        for (AssetEntity asset in assets) {
-          results.add(asset);
-        }
-      }
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enable photos permission')),
-      );
-    }
-
-    if (results.isNotEmpty) {
-      setState(() {
-        localImages = results.toList();
-        selectedImage = localImages[0];
-        permissionState = ps;
-      });
-    }
+    await PhotoManager.requestPermissionExtend();
   }
 
-  void selectImage(int index) {
-    setState(() => selectedImage = localImages[index]);
+  void selectImage(AssetEntity item) {
+    setState(() => selectedImage = item);
 
     outerController.animateTo(
       0,
@@ -110,10 +78,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
     );
   }
 
-  void addToSelectedPhotos(int index) {
+  void addToSelectedPhotos(AssetEntity item) {
     setState(() {
-      if (selectImages.contains(localImages[index])) {
-        selectImages.remove(localImages[index]);
+      if (selectImages.contains(item)) {
+        selectImages.remove(item);
       } else {
         if (selectImages.length >= 5) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -122,19 +90,14 @@ class _NewPostScreenState extends State<NewPostScreen> {
           return;
         }
 
-        selectImages.add(localImages[index]);
+        selectImages.add(item);
       }
     });
   }
 
-  Future<void> showPhotoSelector() async {
-    await PhotoManager.presentLimited();
-    await fetchPhotos();
-  }
-
   Future<void> onPostUpload() async {
-    if (selectedImage == null) return;
-
+    final gallery = ref.read(localGalleryProvider);
+    selectedImage ??= gallery.records?[0];
     List<AssetEntity> data = [];
 
     if (selectImages.isEmpty) {
@@ -151,10 +114,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
       children: [
         Positioned.fill(
           child: GestureDetector(
-            onTap: () => selectImage(index),
-            onLongPress: () => addToSelectedPhotos(index),
+            onTap: () => selectImage(item),
+            onLongPress: () => addToSelectedPhotos(item),
             child: AssetEntityImage(
-              key: Key(localImages[index].id),
+              key: Key(item.id),
               item,
               isOriginal: false,
               thumbnailFormat: ThumbnailFormat.jpeg,
@@ -179,7 +142,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
         ),
         Positioned.fill(
           child: GestureDetector(
-            onTap: () => addToSelectedPhotos(index),
+            onTap: () => addToSelectedPhotos(item),
             child: Align(
               alignment: Alignment.topRight,
               child: Padding(
@@ -203,6 +166,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+    final gallery = ref.watch(localGalleryProvider);
 
     return Scaffold(
       floatingActionButton: buildBottomBar(),
@@ -231,55 +195,57 @@ class _NewPostScreenState extends State<NewPostScreen> {
               ],
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(250),
-                child: selectedImage != null
+                child: gallery.records?[0] != null
                     ? SizedBox(
                         height: 250,
                         child: AssetEntityImage(
-                          selectedImage!,
+                          selectedImage != null
+                              ? selectedImage!
+                              : gallery.records![0],
                           isOriginal: false,
                           thumbnailFormat: ThumbnailFormat.jpeg,
                           fit: BoxFit.cover,
                         ),
                       )
-                    : Container(),
+                    : const CircularProgressIndicator(),
               ),
             )
           ];
         },
-        body: ListView(
-          shrinkWrap: true,
-          children: [
-            Visibility(
-              visible: permissionState == PermissionState.limited,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10.0,
-                  bottom: 10.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'You\'ve given Instagram access to a\nselect number of photos and videos',
-                      style: textTheme.labelLarge,
-                    ),
-                    TextButton(
-                      onPressed: showPhotoSelector,
-                      child: const Text('Manage'),
-                    ),
-                  ],
+        body: RiverPagedBuilder.autoDispose(
+          firstPageKey: 0,
+          limit: 50,
+          provider: localGalleryProvider,
+          pullToRefresh: true,
+          newPageProgressIndicatorBuilder: (
+            context,
+            controller,
+          ) {
+            return Container();
+          },
+          itemBuilder: (context, item, index) {
+            return buildGalleryItem(item, index);
+          },
+          noItemsFoundIndicatorBuilder: (context, controller) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 150,
+                horizontal: 32,
+              ),
+              child: Center(
+                child: Text(
+                  'No photos/videos available',
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyLarge,
                 ),
               ),
-            ),
-            PhotoGrid(
-              itemCount: localImages.length,
-              itemBuilder: (BuildContext context, int index) {
-                AssetEntity item = localImages[index];
-                return buildGalleryItem(item, index);
-              },
-            )
-          ],
+            );
+          },
+          pagedBuilder: (controller, builder) => PagedGridView(
+            pagingController: controller,
+            builderDelegate: builder,
+            gridDelegate: photoGridDelegate,
+          ),
         ),
       ),
     );

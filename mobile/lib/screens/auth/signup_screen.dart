@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:instagram_clone/config/assets.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
@@ -552,7 +553,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 radius: 100,
                 child: ClipOval(
                   child: imageBytes == null
-                      ? Image.asset('assets/images/default-profile.png')
+                      ? Image.asset(AssetsConstants.defaultProfile)
                       : Image.memory(imageBytes!),
                 ),
               ),

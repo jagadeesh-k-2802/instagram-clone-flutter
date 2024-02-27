@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/services/dio.dart';
 import 'package:instagram_clone/models/common.dart';
@@ -24,6 +24,30 @@ class PostService {
       }
 
       return GetFeedPostsResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetExplorePostsResponse> getExplorePosts({
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      const url = '$apiUrl/api/v1/post/explore-posts';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetExplorePostsResponse.fromJson(response.data);
     } catch (error) {
       rethrow;
     }
@@ -105,6 +129,25 @@ class PostService {
     }
   }
 
+  static Future<MessageResponse> deletePost({
+    required String postId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/post/delete/$postId';
+      final response = await dio.post(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   static Future<GetUsersPostResponse> getLikedPosts({
     required int page,
     required int limit,
@@ -148,6 +191,26 @@ class PostService {
       }
 
       return GetUsersPostResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetPostResponse> getPost({
+    required String id,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/post/$id';
+
+      final response = await dio.get(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetPostResponse.fromJson(response.data);
     } catch (error) {
       rethrow;
     }

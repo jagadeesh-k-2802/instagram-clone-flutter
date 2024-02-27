@@ -32,20 +32,6 @@ export const getCommentsForPost = catchAsync(async (req, res) => {
     },
     { $unwind: '$user' },
     {
-      $project: {
-        _id: 1,
-        comment: 1,
-        'user._id': 1,
-        'user.name': 1,
-        'user.avatar': 1,
-        'user.username': 1,
-        likeCount: 1,
-        isLiked: 1,
-        createdAt: 1,
-        updatedAt: 1
-      }
-    },
-    {
       $lookup: {
         from: 'commentlikes',
         let: { comment: '$_id' },
@@ -55,7 +41,7 @@ export const getCommentsForPost = catchAsync(async (req, res) => {
               $expr: {
                 $and: [
                   { $eq: ['$comment', '$$comment'] },
-                  { $eq: ['$userId', new mongoose.Types.ObjectId(req.user.id)] }
+                  { $eq: ['$user', new mongoose.Types.ObjectId(req.user.id)] }
                 ]
               }
             }
@@ -69,7 +55,20 @@ export const getCommentsForPost = catchAsync(async (req, res) => {
         isLiked: { $gt: [{ $size: '$likedByCurrentUser' }, 0] }
       }
     },
-
+    {
+      $project: {
+        _id: 1,
+        comment: 1,
+        'user._id': 1,
+        'user.name': 1,
+        'user.avatar': 1,
+        'user.username': 1,
+        likeCount: 1,
+        isLiked: 1,
+        createdAt: 1,
+        updatedAt: 1
+      }
+    },
     { $skip: skip },
     { $limit: limit },
     { $sort: { createdAt: -1 } }

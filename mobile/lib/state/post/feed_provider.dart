@@ -54,6 +54,23 @@ class Notifier extends PagedNotifier<int, Data> {
       }).toList(),
     );
   }
+
+  void deletePost(String postId) {
+    final newRecords = state.copyWith().records;
+    newRecords?.removeWhere((post) => post.id == postId);
+    state = state.copyWith(records: newRecords);
+  }
+
+  void invalidate() {
+    state = state.copyWith(
+      records: [],
+      error: null,
+      previousPageKeys: [],
+      nextPageKey: 1,
+    );
+
+    load(1, 20);
+  }
 }
 
 final feedProvider =

@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/config/assets.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
@@ -88,7 +90,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               heightFactor: 0,
               child: SizedBox(
                 width: 200,
-                child: Image.asset('assets/icons/logo-black.png'),
+                child: SvgPicture.asset(AssetsConstants.logo, height: 200)
               ),
             ),
             const SizedBox(height: 60),

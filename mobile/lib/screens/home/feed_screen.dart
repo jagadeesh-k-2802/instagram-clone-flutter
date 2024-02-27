@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:instagram_clone/config/assets.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/comment.dart';
 import 'package:instagram_clone/services/post.dart';
-import 'package:instagram_clone/state/feed/comments_provider.dart';
-import 'package:instagram_clone/state/feed/feed_provider.dart';
-import 'package:instagram_clone/widgets/post_item.dart';
+import 'package:instagram_clone/state/global_state_provider.dart';
+import 'package:instagram_clone/state/post/comments_provider.dart';
+import 'package:instagram_clone/state/post/feed_provider.dart';
+import 'package:instagram_clone/widgets/post/post_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
@@ -104,6 +106,22 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     }
   }
 
+  Future<void> onDelete(String postId) async {
+    try {
+      setState(() {}); // to Update Changes
+      ref.read(feedProvider.notifier).deletePost(postId);
+      ref.read(globalStateProvider.notifier).decrementPostCount();
+      await PostService.deletePost(postId: postId);
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your post has been deleted')),
+      );
+    } catch (error) {
+      // Do Nothing
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -118,11 +136,11 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SvgPicture.asset('assets/icons/logo.svg'),
+                  SvgPicture.asset(AssetsConstants.logo),
                   GestureDetector(
                     onTap: () => context.pushNamed(Routes.message),
                     child: SvgPicture.asset(
-                      'assets/icons/message.svg',
+                      AssetsConstants.message,
                       height: 26,
                       width: 26,
                     ),
@@ -150,12 +168,14 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 isLiked: item.isLiked,
                 isSaved: item.isSaved,
                 likeCount: item.likeCount,
+                commentCount: item.commentCount,
                 onLike: () => onLike(item.id),
                 onUnLike: () => onUnLike(item.id),
                 onComment: (comment) => onComment(item.id, comment),
                 onShare: onShare,
                 onSave: () => onSave(item.id),
                 onUnsave: () => onUnsave(item.id),
+                onDelete: () => onDelete(item.id),
                 onCommentLike: (String commentId) => onCommentLike(
                   item.id,
                   commentId,

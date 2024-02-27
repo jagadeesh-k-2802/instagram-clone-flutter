@@ -5,7 +5,7 @@ import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
-import 'package:instagram_clone/widgets/clickable_list_item.dart';
+import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});

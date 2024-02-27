@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,9 +6,12 @@ import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
-import 'package:instagram_clone/state/profile/user_posts_provider.dart';
-import 'package:instagram_clone/widgets/clickable_list_item.dart';
-import 'package:instagram_clone/widgets/progress_button.dart';
+import 'package:instagram_clone/state/post/feed_provider.dart';
+import 'package:instagram_clone/state/post/user_posts_provider.dart';
+import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
+import 'package:instagram_clone/widgets/core/progress_button.dart';
+import 'package:instagram_clone/widgets/post/video_item.dart';
+import 'package:video_player/video_player.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class PostUploadScreen extends ConsumerStatefulWidget {
@@ -28,6 +32,7 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
   List<SearchUsersResponseData> selectedUsers = [];
   bool submitting = false;
   TextEditingController captionController = TextEditingController();
+  VideoPlayerController? controller;
 
   @override
   void initState() {
@@ -36,12 +41,29 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.data is List<AssetEntity>) {
         setState(() => assets = widget.data as List<AssetEntity>);
+
+        AssetEntity item = assets[0];
+        File? file = await item.file;
+
+        if (file != null && item.type == AssetType.video) {
+          controller = VideoPlayerController.file(file)
+            ..setLooping(true)
+            ..initialize().then((_) => setState(() {}));
+
+          controller?.play();
+        }
       } else {
         throw Exception(
           'PostUploadScreen: takes only List<AssetEntity> as param',
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller?.dispose();
   }
 
   void navigateToTagPeople() async {
@@ -71,6 +93,7 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
       context.goNamed(Routes.feed);
 
       ref.read(globalStateProvider.notifier).incrementPostCount();
+      ref.read(feedProvider.notifier).invalidate();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your post has been uploaded')),
@@ -110,8 +133,30 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
               width: double.maxFinite,
               child: PageView.builder(
                 itemCount: assets.length,
+                onPageChanged: (int index) async {
+                  AssetEntity item = assets[index];
+                  File? file = await item.file;
+
+                  if (file != null && item.type == AssetType.video) {
+                    controller = VideoPlayerController.file(file)
+                      ..setLooping(true)
+                      ..initialize().then((_) => setState(() {}));
+
+                    controller?.play();
+                  } else {
+                    controller?.pause();
+                  }
+                },
                 itemBuilder: (BuildContext context, int index) {
                   AssetEntity item = assets[index];
+
+                  if (item.type == AssetType.video && controller != null) {
+                    return VideoItem(
+                      isLocal: true,
+                      file: item.file,
+                    );
+                  }
+
                   return AssetEntityImage(item, fit: BoxFit.fitHeight);
                 },
               ),

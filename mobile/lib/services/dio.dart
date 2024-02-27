@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 
 Future<Dio> getDioClient() async {
   final dio = Dio();

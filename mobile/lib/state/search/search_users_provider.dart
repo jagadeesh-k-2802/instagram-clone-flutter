@@ -3,9 +3,9 @@ import 'package:instagram_clone/services/user.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 import 'package:instagram_clone/models/user.dart';
 
-typedef UserData = SearchUsersResponseData;
+typedef Data = SearchUsersResponseData;
 
-class State extends PagedState<int, UserData> {
+class State extends PagedState<int, Data> {
   final String search;
 
   const State({
@@ -19,7 +19,7 @@ class State extends PagedState<int, UserData> {
   @override
   State copyWith({
     String? search,
-    List<UserData>? records,
+    List<Data>? records,
     bool isEnd = false,
     dynamic error,
     dynamic nextPageKey,
@@ -43,11 +43,11 @@ class State extends PagedState<int, UserData> {
 }
 
 class Notifier extends StateNotifier<State>
-    with PagedNotifierMixin<int, UserData, State> {
+    with PagedNotifierMixin<int, Data, State> {
   Notifier() : super(const State());
 
   @override
-  Future<List<UserData>?> load(int page, int limit) async {
+  Future<List<Data>?> load(int page, int limit) async {
     try {
       if (state.previousPageKeys.contains(page)) {
         await Future.delayed(
@@ -77,7 +77,13 @@ class Notifier extends StateNotifier<State>
   }
 
   void updateSearchValue(String search) {
-    state = state.copyWith(search: search, records: [], nextPageKey: 0);
+    state = state.copyWith(
+      search: search,
+      records: [],
+      nextPageKey: 0,
+      previousPageKeys: [],
+    );
+
     load(1, 20);
   }
 }

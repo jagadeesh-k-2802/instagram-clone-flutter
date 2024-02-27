@@ -44,12 +44,10 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 400);
   }
 
-  // If ErrorResponse was passed in directly to next() also this would work
-  if (error instanceof ErrorResponse) {
-    res.status(error.statusCode).json({ success: false, error: error.message });
-  } else {
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
+  res.status(error.statusCode ?? 500).json({
+    success: false,
+    error: error.message ?? 'Internal Server Error'
+  });
 };
 
 export default errorHandler;

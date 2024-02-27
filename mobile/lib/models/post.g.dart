@@ -78,6 +78,7 @@ _$GetFeedPostsResponseDataImpl _$$GetFeedPostsResponseDataImplFromJson(
           .map((e) => PostAssetItem.fromJson(e as Map<String, dynamic>))
           .toList(),
       likeCount: json['likeCount'] as int,
+      commentCount: json['commentCount'] as int,
       user: PostUser.fromJson(json['user'] as Map<String, dynamic>),
       isLiked: json['isLiked'] as bool,
       isSaved: json['isSaved'] as bool,
@@ -93,6 +94,7 @@ Map<String, dynamic> _$$GetFeedPostsResponseDataImplToJson(
       'caption': instance.caption,
       'assets': instance.assets,
       'likeCount': instance.likeCount,
+      'commentCount': instance.commentCount,
       'user': instance.user,
       'isLiked': instance.isLiked,
       'isSaved': instance.isSaved,
@@ -161,5 +163,53 @@ _$UserPostItemImpl _$$UserPostItemImplFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$$UserPostItemImplToJson(_$UserPostItemImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'assets': instance.assets,
+    };
+
+_$GetPostResponseImpl _$$GetPostResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetPostResponseImpl(
+      success: json['success'] as bool,
+      data: GetFeedPostsResponseData.fromJson(
+          json['data'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$GetPostResponseImplToJson(
+        _$GetPostResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'data': instance.data,
+    };
+
+_$GetExplorePostsResponseImpl _$$GetExplorePostsResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetExplorePostsResponseImpl(
+      success: json['success'] as bool,
+      data: (json['data'] as List<dynamic>)
+          .map((e) =>
+              GetExplorePostsResponseData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$GetExplorePostsResponseImplToJson(
+        _$GetExplorePostsResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'data': instance.data,
+    };
+
+_$GetExplorePostsResponseDataImpl _$$GetExplorePostsResponseDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetExplorePostsResponseDataImpl(
+      id: json['_id'] as String,
+      assets: (json['assets'] as List<dynamic>)
+          .map((e) => PostAssetItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$GetExplorePostsResponseDataImplToJson(
+        _$GetExplorePostsResponseDataImpl instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
       'assets': instance.assets,
     };

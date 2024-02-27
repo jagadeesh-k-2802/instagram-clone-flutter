@@ -3,18 +3,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/services/user.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
-import 'package:instagram_clone/state/profile/user_posts_provider.dart';
+import 'package:instagram_clone/state/post/user_posts_provider.dart';
 import 'package:instagram_clone/state/profile/user_provider.dart';
-import 'package:instagram_clone/state/profile/user_tagged_posts_provider.dart';
+import 'package:instagram_clone/state/post/user_tagged_posts_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
-import 'package:instagram_clone/widgets/post_grid_item.dart';
+import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 class PublicProfileScreen extends ConsumerStatefulWidget {
@@ -206,7 +206,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
   }
 
   void showPostItem(GetUserPostsResponseData item) {
-    // TODO: Show Post Item
+    context.push(Routes.postDetailPath(item.id));
   }
 
   Widget buildNoItems() {
@@ -283,9 +283,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                         RiverPagedBuilder(
                           firstPageKey: 1,
                           limit: 20,
-                          provider: userPostsProvider(
-                            widget.profileId ?? '',
-                          ),
+                          provider: userPostsProvider(widget.profileId ?? ''),
                           pullToRefresh: true,
                           newPageProgressIndicatorBuilder: (
                             context,
@@ -295,7 +293,8 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                           },
                           itemBuilder: (context, item, index) {
                             return PostGridItem(
-                              imageUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetsCount: item.assets.length,
                               onTap: () => showPostItem(item),
                             );
                           },
@@ -323,7 +322,8 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                           },
                           itemBuilder: (context, item, index) {
                             return PostGridItem(
-                              imageUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetsCount: item.assets.length,
                               onTap: () => showPostItem(item),
                             );
                           },
@@ -365,9 +365,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
       loading: () {
         return Scaffold(
           appBar: AppBar(),
-          body: const Center(
-            child: CircularProgressIndicator(),
-          ),
+          body: const Center(child: CircularProgressIndicator()),
         );
       },
     );

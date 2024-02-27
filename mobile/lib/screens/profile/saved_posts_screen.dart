@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/post.dart';
-import 'package:instagram_clone/state/profile/user_saved_posts_provider.dart';
+import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/state/post/user_saved_posts_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
-import 'package:instagram_clone/widgets/post_grid_item.dart';
+import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
-class SavedPostsScreen extends StatelessWidget {
+class SavedPostsScreen extends StatefulWidget {
   const SavedPostsScreen({super.key});
 
+  @override
+  State<SavedPostsScreen> createState() => _SavedPostsScreenState();
+}
+
+class _SavedPostsScreenState extends State<SavedPostsScreen> {
   void showPostItem(GetUsersPostResponseData item) {
-    // TODO: Open Post in Post Detail Screen
+    context.push(Routes.postDetailPath(item.post.id));
   }
 
   @override
@@ -31,7 +38,8 @@ class SavedPostsScreen extends StatelessWidget {
         },
         itemBuilder: (context, item, index) {
           return PostGridItem(
-            imageUrl: '$apiUrl/posts/${item.post.assets[0].url}',
+            assetUrl: '$apiUrl/posts/${item.post.assets[0].url}',
+            assetsCount: item.post.assets.length,
             onTap: () => showPostItem(item),
           );
         },

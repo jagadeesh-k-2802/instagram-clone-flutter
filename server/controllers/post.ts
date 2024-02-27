@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import path from 'path';
+import ffmpeg from 'fluent-ffmpeg';
 import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
 import { AssetType, Post } from '@models/Post';
@@ -50,6 +52,7 @@ export const getFeedPosts = catchAsync(async (req, res) => {
         'user.avatar': 1,
         'user.username': 1,
         likeCount: 1,
+        commentCount: 1,
         isLiked: 1,
         isSaved: 1,
         createdAt: 1,
@@ -102,6 +105,43 @@ export const getFeedPosts = catchAsync(async (req, res) => {
     {
       $addFields: {
         isSaved: { $gt: [{ $size: '$isSaved' }, 0] }
+      }
+    },
+    { $skip: skip },
+    { $limit: limit },
+    { $sort: { createdAt: -1 } }
+  ]);
+
+  res.status(200).json({ success: true, data: posts });
+});
+
+/**
+ * @route POST /api/post/explore-posts
+ * @desc Fetch explore posts
+ * @secure true
+ */
+export const getExplorePosts = catchAsync(async (req, res) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const skip = (page - 1) * limit;
+
+  const posts = await Post.aggregate([
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user'
+      }
+    },
+    { $unwind: '$user' },
+    { $match: { 'user.isPrivateAccount': false } },
+    {
+      $project: {
+        _id: 1,
+        'assets.assetType': 1,
+        'assets.url': 1,
+        createdAt: 1
       }
     },
     { $skip: skip },
@@ -181,7 +221,7 @@ export const savePost = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await PostSaves.create({ userId: user.id, postId });
+    await PostSaves.create({ user: user.id, post: postId });
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -208,7 +248,7 @@ export const unSavePost = catchAsync(async (req, res, next) => {
   // TODO: Send Push Notification
 
   try {
-    await PostSaves.deleteOne({ userId: user.id, postId });
+    await PostSaves.deleteOne({ user: user.id, post: postId });
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -218,6 +258,44 @@ export const unSavePost = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, message: 'Unlike succesful' });
+});
+
+/**
+ * @route POST /api/post/delete/:id
+ * @desc let a user delete a post
+ * @secure true
+ */
+export const deletePost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+  const post = await Post.findById(postId);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // Check if post exists
+  if (!post) {
+    new ErrorResponse('Post not found', 404);
+    return;
+  }
+
+  // Check for ownership
+  if (!post.user === user.id) {
+    new ErrorResponse('Unauthorized access', 401);
+    return;
+  }
+
+  try {
+    await Post.findByIdAndDelete(postId);
+    await User.findByIdAndUpdate(user.id, { $inc: { postCount: -1 } });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({ success: true, message: 'Post delete succesful' });
 });
 
 /**
@@ -260,6 +338,102 @@ export const getSavedPosts = catchAsync(async (req, res) => {
     .sort({ createdAt: -1 });
 
   res.status(200).json({ success: true, data: posts });
+});
+
+/**
+ * @route POST /api/post/:id
+ * @desc Fetch a single post
+ * @secure true
+ */
+export const getPost = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const postId = req.params.id;
+
+  const post = await Post.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(postId) } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user',
+        foreignField: '_id',
+        as: 'user'
+      }
+    },
+    { $unwind: '$user' },
+    {
+      $project: {
+        _id: 1,
+        caption: 1,
+        'assets.assetType': 1,
+        'assets.url': 1,
+        'user._id': 1,
+        'user.name': 1,
+        'user.avatar': 1,
+        'user.username': 1,
+        commentCount: 1,
+        likeCount: 1,
+        isLiked: 1,
+        isSaved: 1,
+        createdAt: 1,
+        updatedAt: 1
+      }
+    },
+    {
+      $lookup: {
+        from: 'postlikes',
+        let: { post: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$post', '$$post'] },
+                  { $eq: ['$user', new mongoose.Types.ObjectId(user.id)] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'isLiked'
+      }
+    },
+    {
+      $addFields: {
+        isLiked: { $gt: [{ $size: '$isLiked' }, 0] }
+      }
+    },
+    {
+      $lookup: {
+        from: 'postsaves',
+        let: { post: '$_id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$post', '$$post'] },
+                  { $eq: ['$user', new mongoose.Types.ObjectId(user.id)] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'isSaved'
+      }
+    },
+    {
+      $addFields: {
+        isSaved: { $gt: [{ $size: '$isSaved' }, 0] }
+      }
+    }
+  ]);
+
+  if (!post[0]) {
+    next(new ErrorResponse('No post found', 404));
+    return;
+  }
+
+  res.status(200).json({ success: true, data: post[0] });
 });
 
 /**
@@ -322,6 +496,31 @@ export const createPost = catchAsync(async (req, res, next) => {
     );
 
     assets.push({ assetType, url: `${uniqueId}/${newFilename}` });
+  }
+
+  // Generate Thumbnails
+  for await (const file of files.files) {
+    const regex = file.originalFilename?.match(/\.[^/]+$/);
+    const ext = regex != null ? regex[0] : '';
+    const assetType = ['.jpg', '.jpeg'].includes(ext) ? 'image' : 'video';
+    const newFilename = `${file.newFilename}${ext}`;
+
+    if (assetType === 'video') {
+      await ffmpeg(
+        path.join(
+          __dirname,
+          '../',
+          'public/posts',
+          `${uniqueId}/${newFilename}`
+        )
+      ).thumbnail({
+        timestamps: ['50%'],
+        filename: path
+          .join(__dirname, '../', 'public/posts', `${uniqueId}/${newFilename}`)
+          .replace('.mp4', '.jpg'),
+        size: '500x500'
+      });
+    }
   }
 
   const session = await mongoose.startSession();

@@ -695,6 +695,7 @@ mixin _$GetFeedPostsResponseData {
   String get caption => throw _privateConstructorUsedError;
   List<PostAssetItem> get assets => throw _privateConstructorUsedError;
   int get likeCount => throw _privateConstructorUsedError;
+  int get commentCount => throw _privateConstructorUsedError;
   PostUser get user => throw _privateConstructorUsedError;
   bool get isLiked => throw _privateConstructorUsedError;
   bool get isSaved => throw _privateConstructorUsedError;
@@ -719,6 +720,7 @@ abstract class $GetFeedPostsResponseDataCopyWith<$Res> {
       String caption,
       List<PostAssetItem> assets,
       int likeCount,
+      int commentCount,
       PostUser user,
       bool isLiked,
       bool isSaved,
@@ -746,6 +748,7 @@ class _$GetFeedPostsResponseDataCopyWithImpl<$Res,
     Object? caption = null,
     Object? assets = null,
     Object? likeCount = null,
+    Object? commentCount = null,
     Object? user = null,
     Object? isLiked = null,
     Object? isSaved = null,
@@ -768,6 +771,10 @@ class _$GetFeedPostsResponseDataCopyWithImpl<$Res,
       likeCount: null == likeCount
           ? _value.likeCount
           : likeCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      commentCount: null == commentCount
+          ? _value.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
       user: null == user
           ? _value.user
@@ -815,6 +822,7 @@ abstract class _$$GetFeedPostsResponseDataImplCopyWith<$Res>
       String caption,
       List<PostAssetItem> assets,
       int likeCount,
+      int commentCount,
       PostUser user,
       bool isLiked,
       bool isSaved,
@@ -842,6 +850,7 @@ class __$$GetFeedPostsResponseDataImplCopyWithImpl<$Res>
     Object? caption = null,
     Object? assets = null,
     Object? likeCount = null,
+    Object? commentCount = null,
     Object? user = null,
     Object? isLiked = null,
     Object? isSaved = null,
@@ -864,6 +873,10 @@ class __$$GetFeedPostsResponseDataImplCopyWithImpl<$Res>
       likeCount: null == likeCount
           ? _value.likeCount
           : likeCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      commentCount: null == commentCount
+          ? _value.commentCount
+          : commentCount // ignore: cast_nullable_to_non_nullable
               as int,
       user: null == user
           ? _value.user
@@ -897,6 +910,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
       required this.caption,
       required final List<PostAssetItem> assets,
       required this.likeCount,
+      required this.commentCount,
       required this.user,
       required this.isLiked,
       required this.isSaved,
@@ -923,6 +937,8 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
   @override
   final int likeCount;
   @override
+  final int commentCount;
+  @override
   final PostUser user;
   @override
   final bool isLiked;
@@ -936,7 +952,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
 
   @override
   String toString() {
-    return 'GetFeedPostsResponseData(id: $id, caption: $caption, assets: $assets, likeCount: $likeCount, user: $user, isLiked: $isLiked, isSaved: $isSaved, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'GetFeedPostsResponseData(id: $id, caption: $caption, assets: $assets, likeCount: $likeCount, commentCount: $commentCount, user: $user, isLiked: $isLiked, isSaved: $isSaved, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -949,6 +965,8 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
             const DeepCollectionEquality().equals(other._assets, _assets) &&
             (identical(other.likeCount, likeCount) ||
                 other.likeCount == likeCount) &&
+            (identical(other.commentCount, commentCount) ||
+                other.commentCount == commentCount) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
@@ -966,6 +984,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
       caption,
       const DeepCollectionEquality().hash(_assets),
       likeCount,
+      commentCount,
       user,
       isLiked,
       isSaved,
@@ -993,6 +1012,7 @@ abstract class _GetFeedPostsResponseData implements GetFeedPostsResponseData {
       required final String caption,
       required final List<PostAssetItem> assets,
       required final int likeCount,
+      required final int commentCount,
       required final PostUser user,
       required final bool isLiked,
       required final bool isSaved,
@@ -1011,6 +1031,8 @@ abstract class _GetFeedPostsResponseData implements GetFeedPostsResponseData {
   List<PostAssetItem> get assets;
   @override
   int get likeCount;
+  @override
+  int get commentCount;
   @override
   PostUser get user;
   @override
@@ -1758,4 +1780,521 @@ abstract class _UserPostItem implements UserPostItem {
   @JsonKey(ignore: true)
   _$$UserPostItemImplCopyWith<_$UserPostItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+GetPostResponse _$GetPostResponseFromJson(Map<String, dynamic> json) {
+  return _GetPostResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetPostResponse {
+  bool get success => throw _privateConstructorUsedError;
+  GetFeedPostsResponseData get data => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetPostResponseCopyWith<GetPostResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetPostResponseCopyWith<$Res> {
+  factory $GetPostResponseCopyWith(
+          GetPostResponse value, $Res Function(GetPostResponse) then) =
+      _$GetPostResponseCopyWithImpl<$Res, GetPostResponse>;
+  @useResult
+  $Res call({bool success, GetFeedPostsResponseData data});
+
+  $GetFeedPostsResponseDataCopyWith<$Res> get data;
+}
+
+/// @nodoc
+class _$GetPostResponseCopyWithImpl<$Res, $Val extends GetPostResponse>
+    implements $GetPostResponseCopyWith<$Res> {
+  _$GetPostResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as GetFeedPostsResponseData,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $GetFeedPostsResponseDataCopyWith<$Res> get data {
+    return $GetFeedPostsResponseDataCopyWith<$Res>(_value.data, (value) {
+      return _then(_value.copyWith(data: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$GetPostResponseImplCopyWith<$Res>
+    implements $GetPostResponseCopyWith<$Res> {
+  factory _$$GetPostResponseImplCopyWith(_$GetPostResponseImpl value,
+          $Res Function(_$GetPostResponseImpl) then) =
+      __$$GetPostResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, GetFeedPostsResponseData data});
+
+  @override
+  $GetFeedPostsResponseDataCopyWith<$Res> get data;
+}
+
+/// @nodoc
+class __$$GetPostResponseImplCopyWithImpl<$Res>
+    extends _$GetPostResponseCopyWithImpl<$Res, _$GetPostResponseImpl>
+    implements _$$GetPostResponseImplCopyWith<$Res> {
+  __$$GetPostResponseImplCopyWithImpl(
+      _$GetPostResponseImpl _value, $Res Function(_$GetPostResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_$GetPostResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as GetFeedPostsResponseData,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetPostResponseImpl implements _GetPostResponse {
+  const _$GetPostResponseImpl({required this.success, required this.data});
+
+  factory _$GetPostResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetPostResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  @override
+  final GetFeedPostsResponseData data;
+
+  @override
+  String toString() {
+    return 'GetPostResponse(success: $success, data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetPostResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.data, data) || other.data == data));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, success, data);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetPostResponseImplCopyWith<_$GetPostResponseImpl> get copyWith =>
+      __$$GetPostResponseImplCopyWithImpl<_$GetPostResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetPostResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetPostResponse implements GetPostResponse {
+  const factory _GetPostResponse(
+      {required final bool success,
+      required final GetFeedPostsResponseData data}) = _$GetPostResponseImpl;
+
+  factory _GetPostResponse.fromJson(Map<String, dynamic> json) =
+      _$GetPostResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  GetFeedPostsResponseData get data;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetPostResponseImplCopyWith<_$GetPostResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GetExplorePostsResponse _$GetExplorePostsResponseFromJson(
+    Map<String, dynamic> json) {
+  return _GetExplorePostsResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetExplorePostsResponse {
+  bool get success => throw _privateConstructorUsedError;
+  List<GetExplorePostsResponseData> get data =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetExplorePostsResponseCopyWith<GetExplorePostsResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetExplorePostsResponseCopyWith<$Res> {
+  factory $GetExplorePostsResponseCopyWith(GetExplorePostsResponse value,
+          $Res Function(GetExplorePostsResponse) then) =
+      _$GetExplorePostsResponseCopyWithImpl<$Res, GetExplorePostsResponse>;
+  @useResult
+  $Res call({bool success, List<GetExplorePostsResponseData> data});
+}
+
+/// @nodoc
+class _$GetExplorePostsResponseCopyWithImpl<$Res,
+        $Val extends GetExplorePostsResponse>
+    implements $GetExplorePostsResponseCopyWith<$Res> {
+  _$GetExplorePostsResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetExplorePostsResponseData>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetExplorePostsResponseImplCopyWith<$Res>
+    implements $GetExplorePostsResponseCopyWith<$Res> {
+  factory _$$GetExplorePostsResponseImplCopyWith(
+          _$GetExplorePostsResponseImpl value,
+          $Res Function(_$GetExplorePostsResponseImpl) then) =
+      __$$GetExplorePostsResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, List<GetExplorePostsResponseData> data});
+}
+
+/// @nodoc
+class __$$GetExplorePostsResponseImplCopyWithImpl<$Res>
+    extends _$GetExplorePostsResponseCopyWithImpl<$Res,
+        _$GetExplorePostsResponseImpl>
+    implements _$$GetExplorePostsResponseImplCopyWith<$Res> {
+  __$$GetExplorePostsResponseImplCopyWithImpl(
+      _$GetExplorePostsResponseImpl _value,
+      $Res Function(_$GetExplorePostsResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_$GetExplorePostsResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetExplorePostsResponseData>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetExplorePostsResponseImpl implements _GetExplorePostsResponse {
+  const _$GetExplorePostsResponseImpl(
+      {required this.success,
+      required final List<GetExplorePostsResponseData> data})
+      : _data = data;
+
+  factory _$GetExplorePostsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetExplorePostsResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  final List<GetExplorePostsResponseData> _data;
+  @override
+  List<GetExplorePostsResponseData> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  @override
+  String toString() {
+    return 'GetExplorePostsResponse(success: $success, data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetExplorePostsResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            const DeepCollectionEquality().equals(other._data, _data));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, success, const DeepCollectionEquality().hash(_data));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetExplorePostsResponseImplCopyWith<_$GetExplorePostsResponseImpl>
+      get copyWith => __$$GetExplorePostsResponseImplCopyWithImpl<
+          _$GetExplorePostsResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetExplorePostsResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetExplorePostsResponse implements GetExplorePostsResponse {
+  const factory _GetExplorePostsResponse(
+          {required final bool success,
+          required final List<GetExplorePostsResponseData> data}) =
+      _$GetExplorePostsResponseImpl;
+
+  factory _GetExplorePostsResponse.fromJson(Map<String, dynamic> json) =
+      _$GetExplorePostsResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  List<GetExplorePostsResponseData> get data;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetExplorePostsResponseImplCopyWith<_$GetExplorePostsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetExplorePostsResponseData _$GetExplorePostsResponseDataFromJson(
+    Map<String, dynamic> json) {
+  return _GetExplorePostsResponseData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetExplorePostsResponseData {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  List<PostAssetItem> get assets => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetExplorePostsResponseDataCopyWith<GetExplorePostsResponseData>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetExplorePostsResponseDataCopyWith<$Res> {
+  factory $GetExplorePostsResponseDataCopyWith(
+          GetExplorePostsResponseData value,
+          $Res Function(GetExplorePostsResponseData) then) =
+      _$GetExplorePostsResponseDataCopyWithImpl<$Res,
+          GetExplorePostsResponseData>;
+  @useResult
+  $Res call({@JsonKey(name: '_id') String id, List<PostAssetItem> assets});
+}
+
+/// @nodoc
+class _$GetExplorePostsResponseDataCopyWithImpl<$Res,
+        $Val extends GetExplorePostsResponseData>
+    implements $GetExplorePostsResponseDataCopyWith<$Res> {
+  _$GetExplorePostsResponseDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? assets = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      assets: null == assets
+          ? _value.assets
+          : assets // ignore: cast_nullable_to_non_nullable
+              as List<PostAssetItem>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetExplorePostsResponseDataImplCopyWith<$Res>
+    implements $GetExplorePostsResponseDataCopyWith<$Res> {
+  factory _$$GetExplorePostsResponseDataImplCopyWith(
+          _$GetExplorePostsResponseDataImpl value,
+          $Res Function(_$GetExplorePostsResponseDataImpl) then) =
+      __$$GetExplorePostsResponseDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@JsonKey(name: '_id') String id, List<PostAssetItem> assets});
+}
+
+/// @nodoc
+class __$$GetExplorePostsResponseDataImplCopyWithImpl<$Res>
+    extends _$GetExplorePostsResponseDataCopyWithImpl<$Res,
+        _$GetExplorePostsResponseDataImpl>
+    implements _$$GetExplorePostsResponseDataImplCopyWith<$Res> {
+  __$$GetExplorePostsResponseDataImplCopyWithImpl(
+      _$GetExplorePostsResponseDataImpl _value,
+      $Res Function(_$GetExplorePostsResponseDataImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? assets = null,
+  }) {
+    return _then(_$GetExplorePostsResponseDataImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      assets: null == assets
+          ? _value._assets
+          : assets // ignore: cast_nullable_to_non_nullable
+              as List<PostAssetItem>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetExplorePostsResponseDataImpl
+    implements _GetExplorePostsResponseData {
+  const _$GetExplorePostsResponseDataImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required final List<PostAssetItem> assets})
+      : _assets = assets;
+
+  factory _$GetExplorePostsResponseDataImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$GetExplorePostsResponseDataImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  final List<PostAssetItem> _assets;
+  @override
+  List<PostAssetItem> get assets {
+    if (_assets is EqualUnmodifiableListView) return _assets;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_assets);
+  }
+
+  @override
+  String toString() {
+    return 'GetExplorePostsResponseData(id: $id, assets: $assets)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetExplorePostsResponseDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            const DeepCollectionEquality().equals(other._assets, _assets));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, id, const DeepCollectionEquality().hash(_assets));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetExplorePostsResponseDataImplCopyWith<_$GetExplorePostsResponseDataImpl>
+      get copyWith => __$$GetExplorePostsResponseDataImplCopyWithImpl<
+          _$GetExplorePostsResponseDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetExplorePostsResponseDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetExplorePostsResponseData
+    implements GetExplorePostsResponseData {
+  const factory _GetExplorePostsResponseData(
+          {@JsonKey(name: '_id') required final String id,
+          required final List<PostAssetItem> assets}) =
+      _$GetExplorePostsResponseDataImpl;
+
+  factory _GetExplorePostsResponseData.fromJson(Map<String, dynamic> json) =
+      _$GetExplorePostsResponseDataImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  List<PostAssetItem> get assets;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetExplorePostsResponseDataImplCopyWith<_$GetExplorePostsResponseDataImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }

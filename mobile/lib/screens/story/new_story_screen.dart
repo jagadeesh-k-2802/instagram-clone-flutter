@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/state/post/local_gallery_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
-import 'package:instagram_clone/widgets/photo_grid.dart';
+import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-class NewStoryScreen extends StatefulWidget {
+class NewStoryScreen extends ConsumerStatefulWidget {
   const NewStoryScreen({super.key});
 
   @override
-  State<NewStoryScreen> createState() => _NewStoryScreenState();
+  ConsumerState<NewStoryScreen> createState() => _NewStoryScreenState();
 }
 
-class _NewStoryScreenState extends State<NewStoryScreen> {
+class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
   List<AssetEntity> localImages = [];
   AssetEntity? selectedImage;
   PermissionState permissionState = PermissionState.authorized;
@@ -23,7 +26,7 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await fetchAssets();
+      await checkPermissions();
     });
   }
 
@@ -60,55 +63,13 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
     );
   }
 
-  Future<void> fetchAssets({
-    RequestType type = RequestType.image,
-  }) async {
+  Future<void> checkPermissions() async {
     await PhotoManager.clearFileCache();
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
-    Set<AssetEntity> results = {};
-
-    final filter = AdvancedCustomFilter()
-        .addOrderBy(column: CustomColumns.base.createDate, isAsc: false);
-
-    if (ps.isAuth || ps.hasAccess) {
-      final List<AssetPathEntity> paths = await PhotoManager.getAssetPathList(
-        filterOption: filter,
-        type: type,
-      );
-
-      for (AssetPathEntity path in paths.reversed) {
-        List<AssetEntity> assets = await path.getAssetListPaged(
-          page: 0,
-          size: 500,
-        );
-
-        for (AssetEntity asset in assets) {
-          results.add(asset);
-        }
-      }
-    } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enable photos permission')),
-      );
-    }
-
-    if (results.isNotEmpty) {
-      setState(() {
-        localImages = results.toList();
-        selectedImage = localImages[0];
-        permissionState = ps;
-      });
-    }
+    await PhotoManager.requestPermissionExtend();
   }
 
-  void selectImage(int index) {
+  void selectImage(AssetEntity index) {
     // TODO: Upload Story Image/Video
-  }
-
-  Future<void> showPhotoSelector() async {
-    await PhotoManager.presentLimited();
-    await fetchAssets();
   }
 
   Widget buildTopBarItem({
@@ -155,16 +116,54 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
           buildTopBarItem(
             text: 'Photos',
             icon: Icons.photo,
-            onTap: () => fetchAssets(),
+            onTap: () => ref
+                .read(localGalleryProvider.notifier)
+                .updateRequestType(RequestType.image),
           ),
           const SizedBox(width: 12.0),
           buildTopBarItem(
             text: 'Videos',
             icon: Icons.play_circle_filled_rounded,
-            onTap: () => fetchAssets(type: RequestType.video),
+            onTap: () => ref
+                .read(localGalleryProvider.notifier)
+                .updateRequestType(RequestType.video),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildGalleryItem(AssetEntity item, int index) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () => selectImage(item),
+            child: AssetEntityImage(
+              key: Key(item.id),
+              item,
+              isOriginal: false,
+              thumbnailFormat: ThumbnailFormat.jpeg,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: item.type == AssetType.video,
+          child: const Positioned.fill(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: EdgeInsets.all(6.0),
+                child: Icon(
+                  Icons.videocam_sharp,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -193,53 +192,40 @@ class _NewStoryScreenState extends State<NewStoryScreen> {
             )
           ];
         },
-        body: ListView(
-          shrinkWrap: true,
-          children: [
-            Visibility(
-              visible: permissionState == PermissionState.limited,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 10.0,
-                  right: 10.0,
-                  bottom: 10.0,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'You\'ve given Instagram access to a\nselect number of photos and videos',
-                      style: textTheme.labelLarge,
-                    ),
-                    TextButton(
-                      onPressed: showPhotoSelector,
-                      child: const Text('Manage'),
-                    ),
-                  ],
+        body: RiverPagedBuilder.autoDispose(
+          firstPageKey: 0,
+          limit: 50,
+          provider: localGalleryProvider,
+          pullToRefresh: true,
+          newPageProgressIndicatorBuilder: (
+            context,
+            controller,
+          ) {
+            return Container();
+          },
+          itemBuilder: (context, item, index) {
+            return buildGalleryItem(item, index);
+          },
+          noItemsFoundIndicatorBuilder: (context, controller) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 150,
+                horizontal: 32,
+              ),
+              child: Center(
+                child: Text(
+                  'No photos/videos available',
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyLarge,
                 ),
               ),
-            ),
-            PhotoGrid(
-              itemCount: localImages.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Stack(
-                  children: [
-                    Positioned.fill(
-                      child: GestureDetector(
-                        onTap: () => selectImage(index),
-                        child: AssetEntityImage(
-                          key: Key(localImages[index].id),
-                          localImages[index],
-                          thumbnailFormat: ThumbnailFormat.jpeg,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    )
-                  ],
-                );
-              },
-            )
-          ],
+            );
+          },
+          pagedBuilder: (controller, builder) => PagedGridView(
+            pagingController: controller,
+            builderDelegate: builder,
+            gridDelegate: photoGridDelegate,
+          ),
         ),
       ),
     );

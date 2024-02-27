@@ -4,18 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:instagram_clone/config/assets.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
-import 'package:instagram_clone/state/profile/user_posts_provider.dart';
-import 'package:instagram_clone/state/profile/user_tagged_posts_provider.dart';
+import 'package:instagram_clone/state/post/user_posts_provider.dart';
+import 'package:instagram_clone/state/post/user_tagged_posts_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
-import 'package:instagram_clone/widgets/clickable_list_item.dart';
-import 'package:instagram_clone/widgets/post_grid_item.dart';
+import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
+import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -178,7 +179,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   void showPostItem(GetUserPostsResponseData item) {
-    // TODO: Open Post in Post Detail Screen
+    context.push(Routes.postDetailPath(item.id));
   }
 
   void navigateToFollowDetail(
@@ -217,7 +218,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   GestureDetector(
                     onTap: showMenuModal,
                     child: SvgPicture.asset(
-                      'assets/icons/menu.svg',
+                      AssetsConstants.menu,
                       height: 26,
                       width: 26,
                     ),
@@ -274,7 +275,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           },
                           itemBuilder: (context, item, index) {
                             return PostGridItem(
-                              imageUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetsCount: item.assets.length,
                               onTap: () => showPostItem(item),
                             );
                           },
@@ -324,7 +326,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           },
                           itemBuilder: (context, item, index) {
                             return PostGridItem(
-                              imageUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                              assetsCount: item.assets.length,
                               onTap: () => showPostItem(item),
                             );
                           },

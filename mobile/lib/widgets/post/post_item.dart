@@ -3,17 +3,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:instagram_clone/constants/constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/config/assets.dart';
+import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
-import 'package:instagram_clone/models/comment.dart';
 import 'package:instagram_clone/models/post.dart';
-import 'package:instagram_clone/state/feed/comments_provider.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/extensions.dart';
-import 'package:instagram_clone/widgets/clickable_list_item.dart';
-import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
+import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
+import 'package:instagram_clone/widgets/post/comments_modal.dart';
+import 'package:instagram_clone/widgets/post/video_item.dart';
 
 class PostItem extends ConsumerStatefulWidget {
   final String id;
@@ -23,6 +24,7 @@ class PostItem extends ConsumerStatefulWidget {
   final bool isLiked;
   final bool isSaved;
   final int likeCount;
+  final int commentCount;
 
   final void Function() onLike;
   final void Function() onUnLike;
@@ -30,6 +32,7 @@ class PostItem extends ConsumerStatefulWidget {
   final void Function() onShare;
   final void Function() onSave;
   final void Function() onUnsave;
+  final void Function() onDelete;
   final void Function(String commentId) onCommentLike;
   final void Function(String commentId) onCommentUnLike;
   final void Function(String commentId) onCommentDelete;
@@ -43,12 +46,14 @@ class PostItem extends ConsumerStatefulWidget {
     required this.isLiked,
     required this.isSaved,
     required this.likeCount,
+    required this.commentCount,
     required this.onLike,
     required this.onUnLike,
     required this.onComment,
     required this.onShare,
     required this.onSave,
     required this.onUnsave,
+    required this.onDelete,
     required this.onCommentLike,
     required this.onCommentUnLike,
     required this.onCommentDelete,
@@ -60,120 +65,47 @@ class PostItem extends ConsumerStatefulWidget {
 
 class _PostItemState extends ConsumerState<PostItem>
     with TickerProviderStateMixin {
-  final formKey = GlobalKey<FormState>();
-  TextEditingController commentController = TextEditingController();
   bool showFullCaption = false;
   int selectedIndex = 0;
   bool isHeartVisible = false;
   Animation<double>? scale;
 
-  void sendComment() {
-    if (formKey.currentState?.validate() == true) {
-      widget.onComment(commentController.text);
-      commentController.text = '';
-      setState(() {});
-    }
-  }
-
-  Widget buildCommentItem(
-    GetCommentsResponseData item,
-    void Function(void Function()) localStateSetter,
-  ) {
-    final textTheme = Theme.of(context).textTheme;
-    UserResponseData? user = ref.read(globalStateProvider).user;
-
-    return GestureDetector(
-      key: Key(item.id),
-      onDoubleTap: () {
-        if (!item.isLiked) {
-          widget.onCommentLike(item.id);
-        }
-      },
-      onLongPress: () {
-        if (item.user.id == user?.id) {
-          showModalBottomSheet(
-            context: context,
-            builder: (context) {
-              return SizedBox(
-                height: 80,
-                width: double.maxFinite,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    ClickableListItem(
-                      text: 'Delete Comment',
-                      prefixIcon: Icons.delete,
-                      textColor: Colors.red,
-                      onTap: () {
-                        localStateSetter(() {}); // To update the changes
-                        widget.onCommentDelete(item.id);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 4.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 20.0,
-              child: ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: '$apiUrl/avatar/${item.user.avatar}',
-                ),
+  void showPostActionsModal() {
+    showModalBottomSheet(
+      showDragHandle: true,
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return SizedBox(
+              height: 80,
+              width: double.maxFinite,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  ClickableListItem(
+                    text: 'Delete Post',
+                    prefixIcon: Icons.delete,
+                    textColor: Colors.red,
+                    onTap: () {
+                      widget.onDelete();
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(width: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.user.username,
-                  style: bodyLargeBold(context),
-                ),
-                Text(
-                  item.comment,
-                  style: textTheme.bodyMedium,
-                ),
-              ],
-            ),
-            const Spacer(),
-            Column(
-              children: [
-                GestureDetector(
-                  onTap: item.isLiked
-                      ? () => widget.onCommentUnLike(item.id)
-                      : () => widget.onCommentLike(item.id),
-                  child: item.isLiked
-                      ? SvgPicture.asset(
-                          'assets/icons/unlike.svg',
-                          height: 18,
-                          width: 18,
-                        )
-                      : SvgPicture.asset(
-                          'assets/icons/like.svg',
-                          height: 18,
-                          width: 18,
-                        ),
-                ),
-                Text(item.likeCount.toString()),
-              ],
-            )
-          ],
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 
-  void showCommentsModal() {
-    UserResponseData? user = ref.read(globalStateProvider).user;
+  void openUserProfile(String userId) {
+    context.push(Routes.publicProfilePath(userId));
+  }
 
+  void showCommentsModal() {
     showModalBottomSheet(
       isScrollControlled: true,
       showDragHandle: true,
@@ -181,87 +113,13 @@ class _PostItemState extends ConsumerState<PostItem>
       context: context,
       constraints: const BoxConstraints(maxHeight: double.infinity),
       builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                title: const Text('Comments'),
-                automaticallyImplyLeading: false,
-              ),
-              bottomNavigationBar: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20.0,
-                      child: ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: '$apiUrl/avatar/${user?.avatar}',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          keyboardType: TextInputType.multiline,
-                          controller: commentController,
-                          textInputAction: TextInputAction.send,
-                          onFieldSubmitted: (_) => sendComment,
-                          onChanged: (_) => setState(() => {}),
-                          decoration: InputDecoration(
-                            hintText: 'comment for @${widget.user.username}',
-                            filled: false,
-                            border: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: commentController.text.isNotEmpty,
-                      child: GestureDetector(
-                        onTap: sendComment,
-                        child: Container(
-                          height: 30,
-                          width: 40,
-                          decoration: const BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.arrow_upward,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              body: RiverPagedBuilder.autoDispose(
-                firstPageKey: 1,
-                limit: 20,
-                provider: commentsProvider(widget.id),
-                itemBuilder: (context, item, index) {
-                  return buildCommentItem(item, setState);
-                },
-                noItemsFoundIndicatorBuilder: (context, controller) {
-                  return const Center(
-                    child: Text('No Comments'),
-                  );
-                },
-                pagedBuilder: (controller, builder) => PagedListView.separated(
-                  pagingController: controller,
-                  builderDelegate: builder,
-                  separatorBuilder: (context, index) => const Divider(),
-                ),
-              ),
-            );
-          },
+        return CommentsModal(
+          id: widget.id,
+          user: widget.user,
+          onComment: widget.onComment,
+          onCommentLike: widget.onCommentLike,
+          onCommentUnLike: widget.onCommentUnLike,
+          onCommentDelete: widget.onCommentDelete,
         );
       },
     );
@@ -276,11 +134,7 @@ class _PostItemState extends ConsumerState<PostItem>
     scale = Tween<double>(begin: 1, end: 1.2).animate(controller);
     if (isHeartVisible || !mounted) return;
     setState(() => isHeartVisible = true);
-
-    if (!widget.isLiked) {
-      widget.onLike();
-    }
-
+    if (!widget.isLiked) widget.onLike();
     await controller.forward();
     await controller.reverse();
 
@@ -325,28 +179,39 @@ class _PostItemState extends ConsumerState<PostItem>
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    UserResponseData? user = ref.read(globalStateProvider).user;
+    bool isOwner = user?.id == widget.user.id;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const SizedBox(width: 12.0),
-              CircleAvatar(
-                radius: 22.0,
-                child: ClipOval(
-                  child: CachedNetworkImage(
-                    imageUrl: '$apiUrl/avatar/${widget.user.avatar}',
+          GestureDetector(
+            onTap: () => openUserProfile(widget.user.id),
+            child: Row(
+              children: [
+                const SizedBox(width: 12.0),
+                CircleAvatar(
+                  radius: 22.0,
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: '$apiUrl/avatar/${widget.user.avatar}',
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12.0),
-              Text(widget.user.username, style: bodyLargeBold(context)),
-              const Spacer(),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
-            ],
+                const SizedBox(width: 12.0),
+                Text(widget.user.username, style: bodyLargeBold(context)),
+                const Spacer(),
+                Visibility(
+                  visible: isOwner,
+                  child: IconButton(
+                    onPressed: showPostActionsModal,
+                    icon: const Icon(Icons.more_vert),
+                  ),
+                )
+              ],
+            ),
           ),
           Stack(
             alignment: Alignment.center,
@@ -359,14 +224,22 @@ class _PostItemState extends ConsumerState<PostItem>
                     width: double.maxFinite,
                     child: PageView.builder(
                       itemCount: widget.assets.length,
+                      restorationId: widget.id + widget.user.id,
                       onPageChanged: (int page) {
-                        setState(() {
-                          selectedIndex = page;
-                        });
+                        setState(() => selectedIndex = page);
                       },
                       itemBuilder: (context, index) {
+                        PostAssetItem item = widget.assets[index];
+
+                        if (item.assetType == 'video') {
+                          return VideoItem(
+                            isLocal: false,
+                            networkUrl: '$apiUrl/posts/${item.url}',
+                          );
+                        }
+
                         return CachedNetworkImage(
-                          imageUrl: '$apiUrl/posts/${widget.assets[index].url}',
+                          imageUrl: '$apiUrl/posts/${item.url}',
                           fit: BoxFit.contain,
                         );
                       },
@@ -377,7 +250,7 @@ class _PostItemState extends ConsumerState<PostItem>
               scale != null
                   ? AnimatedOpacity(
                       opacity: isHeartVisible ? 1 : 0,
-                      duration: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 500),
                       child: ScaleTransition(
                         scale: scale!,
                         child: const Icon(
@@ -399,12 +272,12 @@ class _PostItemState extends ConsumerState<PostItem>
                   onTap: widget.isLiked ? widget.onUnLike : widget.onLike,
                   child: widget.isLiked
                       ? SvgPicture.asset(
-                          'assets/icons/unlike.svg',
+                          AssetsConstants.unlike,
                           height: 28,
                           width: 28,
                         )
                       : SvgPicture.asset(
-                          'assets/icons/like.svg',
+                          AssetsConstants.like,
                           height: 28,
                           width: 28,
                         ),
@@ -413,7 +286,7 @@ class _PostItemState extends ConsumerState<PostItem>
                 GestureDetector(
                   onTap: showCommentsModal,
                   child: SvgPicture.asset(
-                    'assets/icons/comment.svg',
+                    AssetsConstants.comment,
                     height: 28,
                     width: 28,
                   ),
@@ -422,7 +295,7 @@ class _PostItemState extends ConsumerState<PostItem>
                 GestureDetector(
                   onTap: widget.onShare,
                   child: SvgPicture.asset(
-                    'assets/icons/share.svg',
+                    AssetsConstants.share,
                     height: 28,
                     width: 28,
                   ),
@@ -444,12 +317,12 @@ class _PostItemState extends ConsumerState<PostItem>
                   onTap: widget.isSaved ? widget.onUnsave : widget.onSave,
                   child: widget.isSaved
                       ? SvgPicture.asset(
-                          'assets/icons/unsave.svg',
+                          AssetsConstants.unsave,
                           height: 28,
                           width: 28,
                         )
                       : SvgPicture.asset(
-                          'assets/icons/save.svg',
+                          AssetsConstants.save,
                           height: 28,
                           width: 28,
                         ),
@@ -460,10 +333,10 @@ class _PostItemState extends ConsumerState<PostItem>
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 8.0,
-              vertical: 10.0,
+              vertical: 4.0,
             ),
             child: Text(
-              '${widget.likeCount} likes',
+              '${widget.likeCount} like${widget.likeCount > 1 ? 's' : ''}',
               style: bodyLargeBold(context),
             ),
           ),
@@ -514,6 +387,22 @@ class _PostItemState extends ConsumerState<PostItem>
                         ),
                       ],
                     ),
+            ),
+          ),
+          GestureDetector(
+            onTap: showCommentsModal,
+            child: Visibility(
+              visible: widget.commentCount > 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 2.0,
+                ),
+                child: Text(
+                  'View all ${widget.commentCount} comment${widget.commentCount > 1 ? 's' : ''}',
+                  style: textTheme.labelLarge?.copyWith(color: Colors.black45),
+                ),
+              ),
             ),
           ),
         ],
