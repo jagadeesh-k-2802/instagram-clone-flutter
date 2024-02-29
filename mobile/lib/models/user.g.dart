@@ -32,6 +32,7 @@ _$GetUserResponseDataImpl _$$GetUserResponseDataImplFromJson(
       followersCount: json['followersCount'] as int,
       followingCount: json['followingCount'] as int,
       isFollowed: json['isFollowed'] as bool,
+      isPrivateAccount: json['isPrivateAccount'] as bool,
     );
 
 Map<String, dynamic> _$$GetUserResponseDataImplToJson(
@@ -46,6 +47,7 @@ Map<String, dynamic> _$$GetUserResponseDataImplToJson(
       'followersCount': instance.followersCount,
       'followingCount': instance.followingCount,
       'isFollowed': instance.isFollowed,
+      'isPrivateAccount': instance.isPrivateAccount,
     };
 
 _$GetUserPostsResponseImpl _$$GetUserPostsResponseImplFromJson(

@@ -29,6 +29,16 @@ class Notifier extends PagedNotifier<int, Data> {
       }).toList(),
     );
   }
+
+  void removeFollower(String userId) {
+    final newRecords = state.copyWith().records;
+    newRecords?.removeWhere((user) => user.id == userId);
+    state = state.copyWith(records: newRecords);
+  }
+
+  void addFollower(GetFollowOfUserResponseData user) {
+    state = state.copyWith(records: [...(state.records ?? []), user]);
+  }
 }
 
 final userFollowersProvider = StateNotifierProvider.family

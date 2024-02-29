@@ -84,7 +84,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
     );
   }
 
-  Widget buildProfileHeader({GetUserResponseData? user}) {
+  Widget buildProfileHeader({required GetUserResponseData user}) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
     return Padding(
@@ -99,7 +99,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 radius: 48.0,
                 child: ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl: '$apiUrl/avatar/${user?.avatar}',
+                    imageUrl: '$apiUrl/avatar/${user.avatar}',
                   ),
                 ),
               ),
@@ -108,7 +108,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 child: Column(
                   children: [
                     Text(
-                      instagramNumberFormatter(user?.postCount ?? 0),
+                      instagramNumberFormatter(user.postCount),
                       style: titleLargeBold(context),
                     ),
                     Text('Posts', style: textTheme.bodyMedium),
@@ -116,17 +116,19 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () => navigateToFollowDetail(
-                  user?.id ?? '',
-                  user?.username ?? '',
-                  'followers',
-                ),
+                onTap: () => !user.isFollowed && user.isPrivateAccount
+                    ? null
+                    : navigateToFollowDetail(
+                        user.id,
+                        user.username,
+                        'followers',
+                      ),
                 child: SizedBox(
                   width: 75,
                   child: Column(
                     children: [
                       Text(
-                        instagramNumberFormatter(user?.followersCount ?? 0),
+                        instagramNumberFormatter(user.followersCount),
                         style: titleLargeBold(context),
                       ),
                       Text('Followers', style: textTheme.bodyMedium),
@@ -135,17 +137,19 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () => navigateToFollowDetail(
-                  user?.id ?? '',
-                  user?.username ?? '',
-                  'following',
-                ),
+                onTap: () => !user.isFollowed && user.isPrivateAccount
+                    ? null
+                    : navigateToFollowDetail(
+                        user.id,
+                        user.username,
+                        'following',
+                      ),
                 child: SizedBox(
                   width: 75,
                   child: Column(
                     children: [
                       Text(
-                        instagramNumberFormatter(user?.followingCount ?? 0),
+                        instagramNumberFormatter(user.followingCount),
                         style: titleLargeBold(context),
                       ),
                       Text('Following', style: textTheme.bodyMedium),
@@ -157,16 +161,16 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
           ),
           const SizedBox(height: 8.0),
           Text(
-            user?.name ?? '',
+            user.name,
             style: bodyLargeBold(context),
           ),
           const SizedBox(height: 4.0),
           Visibility(
-            visible: user?.bio.isNotEmpty == true,
+            visible: user.bio.isNotEmpty == true,
             child: Column(
               children: [
                 Text(
-                  user?.bio ?? '',
+                  user.bio,
                   style: textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8.0),
@@ -178,14 +182,14 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: user?.isFollowed == true
+                  child: user.isFollowed == true
                       ? ElevatedButton(
-                          onPressed: () => onUnFollow(user?.id ?? ''),
+                          onPressed: () => onUnFollow(user.id),
                           style: secondaryButtonStyle,
                           child: const Text('Unfollow'),
                         )
                       : ElevatedButton(
-                          onPressed: () => onFollow(user?.id ?? ''),
+                          onPressed: () => onFollow(user.id),
                           child: const Text('Follow'),
                         ),
                 ),
@@ -227,8 +231,123 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
     );
   }
 
-  Widget buildData(GetUserResponseData data) {
+  Widget buildPostsTab() {
     ScrollController outerController = ScrollController();
+
+    return ListView(
+      controller: outerController,
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      children: [
+        DefaultTabController(
+          length: 2,
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 50.0,
+                width: double.maxFinite,
+                child: TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  overlayColor: MaterialStatePropertyAll(lightGrayColor),
+                  indicatorColor: Colors.black,
+                  labelColor: Colors.black,
+                  tabs: <Widget>[
+                    Tab(icon: Icon(Icons.grid_on)),
+                    Tab(icon: Icon(Icons.account_box)),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 50 * 10,
+                width: double.maxFinite,
+                child: TabBarView(
+                  children: [
+                    RiverPagedBuilder(
+                      firstPageKey: 1,
+                      limit: 20,
+                      provider: userPostsProvider(widget.profileId ?? ''),
+                      pullToRefresh: true,
+                      newPageProgressIndicatorBuilder: (
+                        context,
+                        controller,
+                      ) {
+                        return Container();
+                      },
+                      itemBuilder: (context, item, index) {
+                        return PostGridItem(
+                          assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                          assetsCount: item.assets.length,
+                          onTap: () => showPostItem(item),
+                        );
+                      },
+                      noItemsFoundIndicatorBuilder: (context, controller) {
+                        return buildNoItems();
+                      },
+                      pagedBuilder: (controller, builder) => PagedGridView(
+                        pagingController: controller,
+                        builderDelegate: builder,
+                        gridDelegate: photoGridDelegate,
+                      ),
+                    ),
+                    RiverPagedBuilder(
+                      firstPageKey: 1,
+                      limit: 20,
+                      provider: userTaggedPostsProvider(
+                        widget.profileId ?? '',
+                      ),
+                      pullToRefresh: true,
+                      newPageProgressIndicatorBuilder: (
+                        context,
+                        controller,
+                      ) {
+                        return Container();
+                      },
+                      itemBuilder: (context, item, index) {
+                        return PostGridItem(
+                          assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                          assetsCount: item.assets.length,
+                          onTap: () => showPostItem(item),
+                        );
+                      },
+                      noItemsFoundIndicatorBuilder: (context, controller) {
+                        return buildNoItems();
+                      },
+                      pagedBuilder: (controller, builder) => PagedGridView(
+                        pagingController: controller,
+                        builderDelegate: builder,
+                        gridDelegate: photoGridDelegate,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPrivateAccount() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Icon(Icons.lock_outline, size: 40.0),
+        const SizedBox(width: 20.0),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('This Account is Private', style: bodyLargeBold(context)),
+            const Text('Follow this account to see their photos\nand videos.')
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget buildData(GetUserResponseData data) {
     return Scaffold(
       body: NestedScrollView(
         physics: const NeverScrollableScrollPhysics(),
@@ -252,98 +371,9 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
             )
           ];
         },
-        body: ListView(
-          controller: outerController,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          children: [
-            DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 50.0,
-                    width: double.maxFinite,
-                    child: TabBar(
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      overlayColor: MaterialStatePropertyAll(lightGrayColor),
-                      indicatorColor: Colors.black,
-                      labelColor: Colors.black,
-                      tabs: <Widget>[
-                        Tab(icon: Icon(Icons.grid_on)),
-                        Tab(icon: Icon(Icons.account_box)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 50 * 10,
-                    width: double.maxFinite,
-                    child: TabBarView(
-                      children: [
-                        RiverPagedBuilder(
-                          firstPageKey: 1,
-                          limit: 20,
-                          provider: userPostsProvider(widget.profileId ?? ''),
-                          pullToRefresh: true,
-                          newPageProgressIndicatorBuilder: (
-                            context,
-                            controller,
-                          ) {
-                            return Container();
-                          },
-                          itemBuilder: (context, item, index) {
-                            return PostGridItem(
-                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
-                              assetsCount: item.assets.length,
-                              onTap: () => showPostItem(item),
-                            );
-                          },
-                          noItemsFoundIndicatorBuilder: (context, controller) {
-                            return buildNoItems();
-                          },
-                          pagedBuilder: (controller, builder) => PagedGridView(
-                            pagingController: controller,
-                            builderDelegate: builder,
-                            gridDelegate: photoGridDelegate,
-                          ),
-                        ),
-                        RiverPagedBuilder(
-                          firstPageKey: 1,
-                          limit: 20,
-                          provider: userTaggedPostsProvider(
-                            widget.profileId ?? '',
-                          ),
-                          pullToRefresh: true,
-                          newPageProgressIndicatorBuilder: (
-                            context,
-                            controller,
-                          ) {
-                            return Container();
-                          },
-                          itemBuilder: (context, item, index) {
-                            return PostGridItem(
-                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
-                              assetsCount: item.assets.length,
-                              onTap: () => showPostItem(item),
-                            );
-                          },
-                          noItemsFoundIndicatorBuilder: (context, controller) {
-                            return buildNoItems();
-                          },
-                          pagedBuilder: (controller, builder) => PagedGridView(
-                            pagingController: controller,
-                            builderDelegate: builder,
-                            gridDelegate: photoGridDelegate,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        body: !data.isFollowed && data.isPrivateAccount
+            ? buildPrivateAccount()
+            : buildPostsTab(),
       ),
     );
   }

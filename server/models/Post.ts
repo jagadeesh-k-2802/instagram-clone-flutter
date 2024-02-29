@@ -1,4 +1,8 @@
 import mongoose from 'mongoose';
+import { PostLikes } from './PostLikes';
+import { PostSaves } from './PostSaves';
+import { Comment } from './Comment';
+import { CommentLikes } from './CommentLikes';
 
 interface AssetItem {
   assetType: string;
@@ -41,6 +45,21 @@ const schema = new mongoose.Schema<Post>(
   },
   { toJSON: { virtuals: true }, timestamps: true }
 );
+
+// Cascade delete
+schema.pre('findOneAndDelete', async function (next) {
+  const id = this.getQuery()._id;
+  await PostLikes.deleteMany({ post: id });
+  await PostSaves.deleteMany({ post: id });
+  const commentIds = await Comment.find({ post: id }).select('id');
+  await Comment.deleteMany({ post: id });
+
+  for await (const comment of commentIds) {
+    await CommentLikes.deleteMany({ comment: comment._id });
+  }
+
+  next();
+});
 
 const Post = mongoose.model<Post>('Post', schema);
 type PostType = mongoose.HydratedDocument<Post>;

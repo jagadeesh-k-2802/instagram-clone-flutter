@@ -198,6 +198,7 @@ mixin _$GetUserResponseData {
   int get followersCount => throw _privateConstructorUsedError;
   int get followingCount => throw _privateConstructorUsedError;
   bool get isFollowed => throw _privateConstructorUsedError;
+  bool get isPrivateAccount => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -220,7 +221,8 @@ abstract class $GetUserResponseDataCopyWith<$Res> {
       int postCount,
       int followersCount,
       int followingCount,
-      bool isFollowed});
+      bool isFollowed,
+      bool isPrivateAccount});
 }
 
 /// @nodoc
@@ -245,6 +247,7 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
     Object? followersCount = null,
     Object? followingCount = null,
     Object? isFollowed = null,
+    Object? isPrivateAccount = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -283,6 +286,10 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
           ? _value.isFollowed
           : isFollowed // ignore: cast_nullable_to_non_nullable
               as bool,
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -304,7 +311,8 @@ abstract class _$$GetUserResponseDataImplCopyWith<$Res>
       int postCount,
       int followersCount,
       int followingCount,
-      bool isFollowed});
+      bool isFollowed,
+      bool isPrivateAccount});
 }
 
 /// @nodoc
@@ -327,6 +335,7 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
     Object? followersCount = null,
     Object? followingCount = null,
     Object? isFollowed = null,
+    Object? isPrivateAccount = null,
   }) {
     return _then(_$GetUserResponseDataImpl(
       id: null == id
@@ -365,6 +374,10 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
           ? _value.isFollowed
           : isFollowed // ignore: cast_nullable_to_non_nullable
               as bool,
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -381,7 +394,8 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
       required this.postCount,
       required this.followersCount,
       required this.followingCount,
-      required this.isFollowed});
+      required this.isFollowed,
+      required this.isPrivateAccount});
 
   factory _$GetUserResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetUserResponseDataImplFromJson(json);
@@ -405,10 +419,12 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
   final int followingCount;
   @override
   final bool isFollowed;
+  @override
+  final bool isPrivateAccount;
 
   @override
   String toString() {
-    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, isFollowed: $isFollowed)';
+    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, isFollowed: $isFollowed, isPrivateAccount: $isPrivateAccount)';
   }
 
   @override
@@ -429,13 +445,15 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
             (identical(other.isFollowed, isFollowed) ||
-                other.isFollowed == isFollowed));
+                other.isFollowed == isFollowed) &&
+            (identical(other.isPrivateAccount, isPrivateAccount) ||
+                other.isPrivateAccount == isPrivateAccount));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, username, avatar, bio,
-      postCount, followersCount, followingCount, isFollowed);
+      postCount, followersCount, followingCount, isFollowed, isPrivateAccount);
 
   @JsonKey(ignore: true)
   @override
@@ -462,7 +480,8 @@ abstract class _GetUserResponseData implements GetUserResponseData {
       required final int postCount,
       required final int followersCount,
       required final int followingCount,
-      required final bool isFollowed}) = _$GetUserResponseDataImpl;
+      required final bool isFollowed,
+      required final bool isPrivateAccount}) = _$GetUserResponseDataImpl;
 
   factory _GetUserResponseData.fromJson(Map<String, dynamic> json) =
       _$GetUserResponseDataImpl.fromJson;
@@ -486,6 +505,8 @@ abstract class _GetUserResponseData implements GetUserResponseData {
   int get followingCount;
   @override
   bool get isFollowed;
+  @override
+  bool get isPrivateAccount;
   @override
   @JsonKey(ignore: true)
   _$$GetUserResponseDataImplCopyWith<_$GetUserResponseDataImpl> get copyWith =>

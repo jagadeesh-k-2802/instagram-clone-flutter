@@ -10,6 +10,7 @@ router.get('/tagged-posts/:id', protect, userController.getUserTaggedPosts);
 router.post('/follow/:id', protect, userController.followUser);
 router.post('/unfollow/:id', protect, userController.unFollowUser);
 router.get('/followers/:id', protect, userController.getFollowers);
+router.delete('/followers/:id', protect, userController.removeFollower);
 router.get('/following/:id', protect, userController.getFollowing);
 router.get('/:id', protect, userController.getUser);
 

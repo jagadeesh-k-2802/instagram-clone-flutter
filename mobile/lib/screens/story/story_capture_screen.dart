@@ -19,7 +19,7 @@ class _StoryCaptureScreenState extends State<StoryCaptureScreen> {
             (mediaCapture) {
               if (mediaCapture != null) {
                 mediaCapture.captureRequest.when(single: (single) {
-                  // TODO: Upload Story
+                  // TODO: Upload Story Image
                 });
               }
             },

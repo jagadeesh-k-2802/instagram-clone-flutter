@@ -6,17 +6,40 @@ import ErrorResponse from '@utils/errorResponse';
 import { zParse } from '@validation/index';
 import * as commentValidation from '@validation/comment';
 import { CommentLikes } from '@models/CommentLikes';
+import { UserType } from '@models/User';
+import { UserFollows } from '@models/UserFollows';
 
 /**
  * @route GET /api/comment/:id
  * @desc fetch comments of a post
  * @secure true
  */
-export const getCommentsForPost = catchAsync(async (req, res) => {
+export const getCommentsForPost = catchAsync(async (req, res, next) => {
   const postId = req.params.postId;
+  const user = req.user;
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
   const skip = (page - 1) * limit;
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   const comments = await Comment.aggregate([
     {
@@ -89,6 +112,26 @@ export const createCommentOnPost = catchAsync(async (req, res, next) => {
   const { comment } = body;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   // TODO: Send Push Notification
 

@@ -43,11 +43,32 @@ export const searchUsers = catchAsync(async (req, res) => {
  * @desc Fetch posts of a user
  * @secure true
  */
-export const getUserPosts = catchAsync(async (req, res) => {
+export const getUserPosts = catchAsync(async (req, res, next) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limi as string) || 20;
   const userId = req.params.id;
   const skip = (page - 1) * limit;
+  const user = req.user;
+  const otherUser = await User.findById(userId);
+
+  // Check if user exists
+  if (!otherUser) {
+    next(new ErrorResponse('User not found', 404));
+    return;
+  }
+
+  if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: otherUser.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   const posts = await Post.find({ user: userId })
     .select('id caption assets')
@@ -63,11 +84,32 @@ export const getUserPosts = catchAsync(async (req, res) => {
  * @desc Fetch tagged posts of a user
  * @secure true
  */
-export const getUserTaggedPosts = catchAsync(async (req, res) => {
+export const getUserTaggedPosts = catchAsync(async (req, res, next) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
   const userId = req.params.id;
   const skip = (page - 1) * limit;
+  const user = req.user;
+  const otherUser = await User.findById(userId);
+
+  // Check if user exists
+  if (!otherUser) {
+    next(new ErrorResponse('User not found', 404));
+    return;
+  }
+
+  if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: otherUser.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   const posts = await Post.find({ taggedUsers: userId })
     .select('id caption assets')
@@ -136,11 +178,31 @@ export const unFollowUser = catchAsync(async (req, res, next) => {
  * @desc get followers of a user
  * @secure true
  */
-export const getFollowers = catchAsync(async (req, res) => {
+export const getFollowers = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const page = parseInt(req.query.page as string) || 1;
-  const user = req.user;
   const limit = parseInt(req.query.limit as string) || 20;
+  const user = req.user;
+  const otherUser = await User.findById(id);
+
+  // Check if user exists
+  if (!otherUser) {
+    next(new ErrorResponse('User not found', 404));
+    return;
+  }
+
+  if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: otherUser.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   const followers = await UserFollows.find({ followee: id })
     .skip((page - 1) * limit)
@@ -170,15 +232,71 @@ export const getFollowers = catchAsync(async (req, res) => {
 });
 
 /**
+ * @route DELETE /api/user/followers/:id
+ * @desc remove follower of current user
+ * @secure true
+ */
+export const removeFollower = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const userId = req.params.id;
+  const otherUser = await User.findById(userId);
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  // Check if post exists
+  if (!otherUser) {
+    new ErrorResponse('User not found', 404);
+    return;
+  }
+
+  try {
+    await User.findByIdAndUpdate(user.id, { $inc: { followersCount: -1 } });
+    await User.findByIdAndUpdate(userId, { $inc: { followingCount: -1 } });
+    await UserFollows.deleteOne({ follower: otherUser.id, followee: user.id });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Follower removed succesful'
+  });
+});
+
+/**
  * @route PATCH /api/user/following/:id
  * @desc get following of a user
  * @secure true
  */
-export const getFollowing = catchAsync(async (req, res) => {
+export const getFollowing = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const user = req.user;
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
+  const user = req.user;
+  const otherUser = await User.findById(id);
+
+  // Check if user exists
+  if (!otherUser) {
+    next(new ErrorResponse('User not found', 404));
+    return;
+  }
+
+  if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: otherUser.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   const following = await UserFollows.find({ follower: id })
     .skip((page - 1) * limit)
@@ -225,7 +343,8 @@ export const getUser = catchAsync(async (req, res, next) => {
       avatar: 1,
       postCount: 1,
       followersCount: 1,
-      followingCount: 1
+      followingCount: 1,
+      isPrivateAccount: 1
     })
     .lean();
 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CommentLikes } from './CommentLikes';
 
 interface Comment {
   comment: string;
@@ -24,6 +25,13 @@ const schema = new mongoose.Schema<Comment>(
   },
   { toJSON: { virtuals: true }, timestamps: true }
 );
+
+// Cascade Delete
+schema.pre('findOneAndDelete', async function (next) {
+  const id = this.getQuery()._id;
+  await CommentLikes.deleteMany({ comment: id });
+  next();
+});
 
 const Comment = mongoose.model<Comment>('Comment', schema);
 type CommentType = mongoose.HydratedDocument<Comment>;

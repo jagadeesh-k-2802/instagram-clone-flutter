@@ -90,6 +90,22 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
     }
   }
 
+  Future<void> onUserRemove(GetFollowOfUserResponseData user) async {
+    final args = widget.args as FollowDetailScreenArgs;
+    final profileId = args.userId ?? '';
+    var followersNotifier = ref.read(userFollowersProvider(profileId).notifier);
+    followersNotifier.removeFollower(user.id);
+    setState(() {}); // To update changes
+
+    try {
+      await UserService.removeFollower(userId: user.id);
+      ref.refresh(publicUserProvider(args.userId ?? '')).isRefreshing;
+      ref.read(globalStateProvider.notifier).decrementFollowersCount();
+    } catch (error) {
+      followersNotifier.addFollower(user);
+    }
+  }
+
   void openUserProfile(GetFollowOfUserResponseData item) {
     context.push(Routes.publicProfilePath(item.id), extra: (String action) {
       final args = widget.args as FollowDetailScreenArgs;
@@ -112,12 +128,16 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
   Widget buildListItem(
     GetFollowOfUserResponseData item,
     UserResponseData? user,
+    String screen,
   ) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    bool isCurrentUser = user?.id == item.id;
+    bool isCurrentUserItem = user?.id == item.id;
+    bool isFollowersScreen = screen == 'followers';
+    final args = widget.args as FollowDetailScreenArgs;
+    bool isCurrentUserProfile = user?.id == args.userId;
 
     return InkWell(
-      onTap: () => isCurrentUser ? null : openUserProfile(item),
+      onTap: () => isCurrentUserItem ? null : openUserProfile(item),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: defaultPagePadding,
@@ -143,7 +163,19 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
             ),
             const Spacer(),
             Visibility(
-              visible: !isCurrentUser,
+              visible: isCurrentUserProfile && isFollowersScreen,
+              child: SizedBox(
+                height: 35,
+                width: 120,
+                child: ElevatedButton(
+                  onPressed: () => onUserRemove(item),
+                  style: secondaryButtonStyle,
+                  child: const Text('Remove'),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: !isCurrentUserItem && !isFollowersScreen,
               child: item.isFollowed
                   ? SizedBox(
                       height: 35,
@@ -198,7 +230,7 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
               limit: 20,
               provider: userFollowersProvider(args.userId ?? ''),
               itemBuilder: (context, item, index) {
-                return buildListItem(item, user);
+                return buildListItem(item, user, 'followers');
               },
               noItemsFoundIndicatorBuilder: (context, controller) {
                 return const Center(child: Text('No Followers'));
@@ -214,7 +246,7 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
               limit: 20,
               provider: userFollowingProvider(args.userId ?? ''),
               itemBuilder: (context, item, index) {
-                return buildListItem(item, user);
+                return buildListItem(item, user, 'following');
               },
               noItemsFoundIndicatorBuilder: (context, controller) {
                 return const Center(child: Text('No Following'));

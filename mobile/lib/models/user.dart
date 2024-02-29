@@ -25,6 +25,7 @@ class GetUserResponseData with _$GetUserResponseData {
     required int followersCount,
     required int followingCount,
     required bool isFollowed,
+    required bool isPrivateAccount,
   }) = _GetUserResponseData;
 
   factory GetUserResponseData.fromJson(Map<String, Object?> json) =>

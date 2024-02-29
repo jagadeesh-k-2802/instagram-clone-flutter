@@ -188,4 +188,23 @@ class UserService {
       rethrow;
     }
   }
+
+  static Future<MessageResponse> removeFollower({
+    required String userId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/followers/$userId';
+      final response = await dio.delete(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

@@ -4,7 +4,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
 import { AssetType, Post } from '@models/Post';
-import { User } from '@models/User';
+import { User, UserType } from '@models/User';
 import { UserFollows } from '@models/UserFollows';
 import { PostLikes } from '@models/PostLikes';
 import { PostSaves } from '@models/PostSaves';
@@ -162,6 +162,26 @@ export const likePost = catchAsync(async (req, res, next) => {
   const postId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   // TODO: Send Push Notification
 
@@ -190,6 +210,26 @@ export const unLikePost = catchAsync(async (req, res, next) => {
   const postId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   // TODO: Send Push Notification
 
@@ -217,6 +257,26 @@ export const savePost = catchAsync(async (req, res, next) => {
   const postId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   // TODO: Send Push Notification
 
@@ -244,6 +304,26 @@ export const unSavePost = catchAsync(async (req, res, next) => {
   const postId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const post = await Post.findById(postId).populate<{ user: UserType }>('user');
+
+  // Check if post exists
+  if (!post) {
+    next(new ErrorResponse('Post not found', 404));
+    return;
+  }
+
+  if (post.user.isPrivateAccount && post.user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post.user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
+  }
 
   // TODO: Send Push Notification
 
@@ -370,6 +450,7 @@ export const getPost = catchAsync(async (req, res, next) => {
         'user.name': 1,
         'user.avatar': 1,
         'user.username': 1,
+        'user.isPrivateAccount': 1,
         commentCount: 1,
         likeCount: 1,
         isLiked: 1,
@@ -428,9 +509,23 @@ export const getPost = catchAsync(async (req, res, next) => {
     }
   ]);
 
+  // Check if post exists
   if (!post[0]) {
     next(new ErrorResponse('No post found', 404));
     return;
+  }
+
+  if (post[0].user.isPrivateAccount && post[0].user.id !== user.id) {
+    const isFollowing = await UserFollows.exists({
+      follower: user.id,
+      followee: post[0].user.id
+    });
+
+    // Deny access if account is private and user not following them
+    if (!isFollowing) {
+      next(new ErrorResponse('Unauthorized Access', 401));
+      return;
+    }
   }
 
   res.status(200).json({ success: true, data: post[0] });
