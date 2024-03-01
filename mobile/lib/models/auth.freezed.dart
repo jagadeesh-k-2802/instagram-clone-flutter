@@ -341,6 +341,7 @@ UserResponseData _$UserResponseDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserResponseData {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   String get avatar => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
@@ -350,6 +351,7 @@ mixin _$UserResponseData {
   String get bio => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   bool get isPrivateAccount => throw _privateConstructorUsedError;
+  int get unReadNotificationsCount => throw _privateConstructorUsedError;
   String? get fcmToken => throw _privateConstructorUsedError;
   int get postCount => throw _privateConstructorUsedError;
   int get followersCount => throw _privateConstructorUsedError;
@@ -370,7 +372,7 @@ abstract class $UserResponseDataCopyWith<$Res> {
       _$UserResponseDataCopyWithImpl<$Res, UserResponseData>;
   @useResult
   $Res call(
-      {String id,
+      {@JsonKey(name: '_id') String id,
       String avatar,
       String name,
       String username,
@@ -379,6 +381,7 @@ abstract class $UserResponseDataCopyWith<$Res> {
       String bio,
       String? phone,
       bool isPrivateAccount,
+      int unReadNotificationsCount,
       String? fcmToken,
       int postCount,
       int followersCount,
@@ -408,6 +411,7 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
     Object? bio = null,
     Object? phone = freezed,
     Object? isPrivateAccount = null,
+    Object? unReadNotificationsCount = null,
     Object? fcmToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
@@ -451,6 +455,10 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
           ? _value.isPrivateAccount
           : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      unReadNotificationsCount: null == unReadNotificationsCount
+          ? _value.unReadNotificationsCount
+          : unReadNotificationsCount // ignore: cast_nullable_to_non_nullable
+              as int,
       fcmToken: freezed == fcmToken
           ? _value.fcmToken
           : fcmToken // ignore: cast_nullable_to_non_nullable
@@ -484,7 +492,7 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id,
+      {@JsonKey(name: '_id') String id,
       String avatar,
       String name,
       String username,
@@ -493,6 +501,7 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
       String bio,
       String? phone,
       bool isPrivateAccount,
+      int unReadNotificationsCount,
       String? fcmToken,
       int postCount,
       int followersCount,
@@ -520,6 +529,7 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
     Object? bio = null,
     Object? phone = freezed,
     Object? isPrivateAccount = null,
+    Object? unReadNotificationsCount = null,
     Object? fcmToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
@@ -563,6 +573,10 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
           ? _value.isPrivateAccount
           : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      unReadNotificationsCount: null == unReadNotificationsCount
+          ? _value.unReadNotificationsCount
+          : unReadNotificationsCount // ignore: cast_nullable_to_non_nullable
+              as int,
       fcmToken: freezed == fcmToken
           ? _value.fcmToken
           : fcmToken // ignore: cast_nullable_to_non_nullable
@@ -591,7 +605,7 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserResponseDataImpl implements _UserResponseData {
   const _$UserResponseDataImpl(
-      {required this.id,
+      {@JsonKey(name: '_id') required this.id,
       required this.avatar,
       required this.name,
       required this.username,
@@ -600,6 +614,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       required this.bio,
       required this.phone,
       required this.isPrivateAccount,
+      required this.unReadNotificationsCount,
       required this.fcmToken,
       required this.postCount,
       required this.followersCount,
@@ -610,6 +625,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       _$$UserResponseDataImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   @override
   final String avatar;
@@ -628,6 +644,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @override
   final bool isPrivateAccount;
   @override
+  final int unReadNotificationsCount;
+  @override
   final String? fcmToken;
   @override
   final int postCount;
@@ -641,7 +659,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
   @override
   String toString() {
-    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, isPrivateAccount: $isPrivateAccount, fcmToken: $fcmToken, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, createdAt: $createdAt)';
+    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, isPrivateAccount: $isPrivateAccount, unReadNotificationsCount: $unReadNotificationsCount, fcmToken: $fcmToken, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, createdAt: $createdAt)';
   }
 
   @override
@@ -660,6 +678,9 @@ class _$UserResponseDataImpl implements _UserResponseData {
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.isPrivateAccount, isPrivateAccount) ||
                 other.isPrivateAccount == isPrivateAccount) &&
+            (identical(
+                    other.unReadNotificationsCount, unReadNotificationsCount) ||
+                other.unReadNotificationsCount == unReadNotificationsCount) &&
             (identical(other.fcmToken, fcmToken) ||
                 other.fcmToken == fcmToken) &&
             (identical(other.postCount, postCount) ||
@@ -685,6 +706,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       bio,
       phone,
       isPrivateAccount,
+      unReadNotificationsCount,
       fcmToken,
       postCount,
       followersCount,
@@ -708,7 +730,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
 abstract class _UserResponseData implements UserResponseData {
   const factory _UserResponseData(
-          {required final String id,
+          {@JsonKey(name: '_id') required final String id,
           required final String avatar,
           required final String name,
           required final String username,
@@ -717,6 +739,7 @@ abstract class _UserResponseData implements UserResponseData {
           required final String bio,
           required final String? phone,
           required final bool isPrivateAccount,
+          required final int unReadNotificationsCount,
           required final String? fcmToken,
           required final int postCount,
           required final int followersCount,
@@ -728,6 +751,7 @@ abstract class _UserResponseData implements UserResponseData {
       _$UserResponseDataImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
   String get avatar;
@@ -745,6 +769,8 @@ abstract class _UserResponseData implements UserResponseData {
   String? get phone;
   @override
   bool get isPrivateAccount;
+  @override
+  int get unReadNotificationsCount;
   @override
   String? get fcmToken;
   @override

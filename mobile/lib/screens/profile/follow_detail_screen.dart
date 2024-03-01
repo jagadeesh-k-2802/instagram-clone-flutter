@@ -54,21 +54,28 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
     });
   }
 
-  Future<void> onFollow(String userId) async {
+  Future<void> onFollow(GetFollowOfUserResponseData user) async {
     final args = widget.args as FollowDetailScreenArgs;
     final profileId = args.userId ?? '';
     var followersNotifier = ref.read(userFollowersProvider(profileId).notifier);
     var followingNotifier = ref.read(userFollowingProvider(profileId).notifier);
-    followersNotifier.updateFollow(userId, true);
-    followingNotifier.updateFollow(userId, true);
+
+    if (user.isPrivateAccount) {
+      followersNotifier.updateFollowType(user.id, UserFollowType.requested);
+      followingNotifier.updateFollowType(user.id, UserFollowType.requested);
+    } else {
+      followersNotifier.updateFollowType(user.id, UserFollowType.following);
+      followingNotifier.updateFollowType(user.id, UserFollowType.following);
+      ref.read(globalStateProvider.notifier).incrementFollowingCount();
+    }
 
     try {
-      await UserService.followUser(userId: userId);
-      ref.refresh(publicUserProvider(userId)).isRefreshing;
-      ref.read(globalStateProvider.notifier).incrementFollowingCount();
+      await UserService.followUser(userId: user.id);
+      ref.refresh(publicUserProvider(user.id)).isRefreshing;
     } catch (error) {
-      followersNotifier.updateFollow(userId, false);
-      followingNotifier.updateFollow(userId, false);
+      followersNotifier.updateFollowType(user.id, null);
+      followingNotifier.updateFollowType(user.id, null);
+      ref.read(globalStateProvider.notifier).decrementFollowingCount();
     }
   }
 
@@ -77,16 +84,33 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
     final profileId = args.userId ?? '';
     var followersNotifier = ref.read(userFollowersProvider(profileId).notifier);
     var followingNotifier = ref.read(userFollowingProvider(profileId).notifier);
-    followersNotifier.updateFollow(userId, false);
-    followingNotifier.updateFollow(userId, false);
+    followersNotifier.updateFollowType(userId, null);
+    followingNotifier.updateFollowType(userId, null);
 
     try {
       await UserService.unFollowUser(userId: userId);
       ref.refresh(publicUserProvider(args.userId ?? '')).isRefreshing;
       ref.read(globalStateProvider.notifier).decrementFollowingCount();
     } catch (error) {
-      followersNotifier.updateFollow(userId, true);
-      followingNotifier.updateFollow(userId, true);
+      followersNotifier.updateFollowType(userId, UserFollowType.following);
+      followingNotifier.updateFollowType(userId, UserFollowType.following);
+    }
+  }
+
+  Future<void> onRequestDelete(GetFollowOfUserResponseData user) async {
+    final args = widget.args as FollowDetailScreenArgs;
+    final profileId = args.userId ?? '';
+    var followersNotifier = ref.read(userFollowersProvider(profileId).notifier);
+    var followingNotifier = ref.read(userFollowingProvider(profileId).notifier);
+    followersNotifier.updateFollowType(user.id, null);
+    followingNotifier.updateFollowType(user.id, null);
+
+    try {
+      await UserService.unFollowUser(userId: user.id);
+      ref.refresh(publicUserProvider(args.userId ?? '')).isRefreshing;
+    } catch (error) {
+      followersNotifier.updateFollowType(user.id, UserFollowType.requested);
+      followingNotifier.updateFollowType(user.id, UserFollowType.requested);
     }
   }
 
@@ -114,12 +138,18 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
       var followingNotifier = ref.read(userFollowingProvider(profile).notifier);
 
       if (action == 'follow') {
-        followingNotifier.updateFollow(item.id, true);
-        followersNotifier.updateFollow(item.id, true);
+        followersNotifier.updateFollowType(item.id, UserFollowType.following);
+        followingNotifier.updateFollowType(item.id, UserFollowType.following);
         ref.read(globalStateProvider.notifier).incrementFollowingCount();
+      } else if (action == 'requested') {
+        followersNotifier.updateFollowType(item.id, UserFollowType.requested);
+        followingNotifier.updateFollowType(item.id, UserFollowType.requested);
+      } else if (action == 'delete-requested') {
+        followersNotifier.updateFollowType(item.id, null);
+        followingNotifier.updateFollowType(item.id, null);
       } else {
-        followingNotifier.updateFollow(item.id, false);
-        followersNotifier.updateFollow(item.id, false);
+        followingNotifier.updateFollowType(item.id, null);
+        followersNotifier.updateFollowType(item.id, null);
         ref.read(globalStateProvider.notifier).decrementFollowingCount();
       }
     });
@@ -175,8 +205,9 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
               ),
             ),
             Visibility(
-              visible: !isCurrentUserItem && !isFollowersScreen,
-              child: item.isFollowed
+              visible: !isCurrentUserItem &&
+                  (!isFollowersScreen || !isCurrentUserProfile),
+              child: item.followType == UserFollowType.following
                   ? SizedBox(
                       height: 35,
                       width: 120,
@@ -186,14 +217,24 @@ class _FollowDetailScreenState extends ConsumerState<FollowDetailScreen> {
                         child: const Text('Unfollow'),
                       ),
                     )
-                  : SizedBox(
-                      height: 35,
-                      width: 120,
-                      child: ElevatedButton(
-                        onPressed: () => onFollow(item.id),
-                        child: const Text('Follow'),
-                      ),
-                    ),
+                  : item.followType == UserFollowType.requested
+                      ? SizedBox(
+                          height: 35,
+                          width: 120,
+                          child: ElevatedButton(
+                            onPressed: () => onRequestDelete(item),
+                            style: secondaryButtonStyle,
+                            child: const Text('Requested'),
+                          ),
+                        )
+                      : SizedBox(
+                          height: 35,
+                          width: 120,
+                          child: ElevatedButton(
+                            onPressed: () => onFollow(item),
+                            child: const Text('Follow'),
+                          ),
+                        ),
             )
           ],
         ),

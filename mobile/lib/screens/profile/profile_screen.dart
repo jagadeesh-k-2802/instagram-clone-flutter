@@ -10,6 +10,7 @@ import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
+import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/post/user_posts_provider.dart';
 import 'package:instagram_clone/state/post/user_tagged_posts_provider.dart';
@@ -18,6 +19,7 @@ import 'package:instagram_clone/utils/functions.dart';
 import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -136,6 +138,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void showMenuModal() {
     showModalBottomSheet(
       showDragHandle: true,
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return SizedBox(
@@ -197,174 +200,192 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget buildTabView(UserResponseData? user) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 50.0,
+            width: double.maxFinite,
+            child: TabBar(
+              indicatorSize: TabBarIndicatorSize.tab,
+              overlayColor: MaterialStatePropertyAll(lightGrayColor),
+              indicatorColor: Colors.black,
+              labelColor: Colors.black,
+              tabs: <Widget>[
+                Tab(icon: Icon(Icons.grid_on)),
+                Tab(icon: Icon(Icons.account_box)),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 50 * 10,
+            width: double.maxFinite,
+            child: TabBarView(
+              children: [
+                RiverPagedBuilder(
+                  firstPageKey: 1,
+                  limit: 20,
+                  provider: userPostsProvider(user?.id ?? ''),
+                  pullToRefresh: true,
+                  newPageProgressIndicatorBuilder: (
+                    context,
+                    controller,
+                  ) {
+                    return Container();
+                  },
+                  itemBuilder: (context, item, index) {
+                    return PostGridItem(
+                      assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                      assetsCount: item.assets.length,
+                      onTap: () => showPostItem(item),
+                    );
+                  },
+                  noItemsFoundIndicatorBuilder: (context, controller) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 150,
+                        horizontal: 32,
+                      ),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Capture the moment with a friend',
+                              style: bodyLargeBold(context),
+                            ),
+                            TextButton(
+                              onPressed: navigateToNewPost,
+                              child: Text(
+                                'Create your first post ',
+                                style: textTheme.bodyLarge?.copyWith(
+                                  color: primaryColor,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  pagedBuilder: (controller, builder) => PagedGridView(
+                    pagingController: controller,
+                    builderDelegate: builder,
+                    gridDelegate: photoGridDelegate,
+                  ),
+                ),
+                RiverPagedBuilder(
+                  firstPageKey: 1,
+                  limit: 20,
+                  provider: userTaggedPostsProvider(user?.id ?? ''),
+                  pullToRefresh: true,
+                  newPageProgressIndicatorBuilder: (
+                    context,
+                    controller,
+                  ) {
+                    return Container();
+                  },
+                  itemBuilder: (context, item, index) {
+                    return PostGridItem(
+                      assetUrl: '$apiUrl/posts/${item.assets[0].url}',
+                      assetsCount: item.assets.length,
+                      onTap: () => showPostItem(item),
+                    );
+                  },
+                  noItemsFoundIndicatorBuilder: (context, controller) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 150,
+                        horizontal: 32,
+                      ),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            const Icon(Icons.account_box, size: 80.0),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'When people tag you in photos and videos, they\'ll appear here.',
+                              textAlign: TextAlign.center,
+                              style: textTheme.bodyLarge,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  pagedBuilder: (controller, builder) => PagedGridView(
+                    pagingController: controller,
+                    builderDelegate: builder,
+                    gridDelegate: photoGridDelegate,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     UserResponseData? user = ref.watch(globalStateProvider).user;
     ScrollController outerController = ScrollController();
-    TextTheme textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      body: NestedScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(user?.username ?? ''),
-                  GestureDetector(
-                    onTap: showMenuModal,
-                    child: SvgPicture.asset(
-                      AssetsConstants.menu,
-                      height: 26,
-                      width: 26,
-                    ),
-                  )
-                ],
-              ),
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(
-                  user?.bio.isNotEmpty == true ? 220 : 170,
-                ),
-                child: buildProfileHeader(user: user),
-              ),
-            )
-          ];
-        },
-        body: ListView(
-          controller: outerController,
+    return VisibilityDetector(
+      key: const Key('ProfileScreen'),
+      onVisibilityChanged: (visibilityInfo) async {
+        var visiblePercentage = visibilityInfo.visibleFraction * 100;
+
+        if (visiblePercentage == 100 && mounted) {
+          UserResponse userResponse = await AuthService.getMe();
+          final appState = ref.read(globalStateProvider.notifier);
+          appState.setUser(userResponse.data);
+        }
+      },
+      child: Scaffold(
+        body: NestedScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          children: [
-            DefaultTabController(
-              length: 2,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 50.0,
-                    width: double.maxFinite,
-                    child: TabBar(
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      overlayColor: MaterialStatePropertyAll(lightGrayColor),
-                      indicatorColor: Colors.black,
-                      labelColor: Colors.black,
-                      tabs: <Widget>[
-                        Tab(icon: Icon(Icons.grid_on)),
-                        Tab(icon: Icon(Icons.account_box)),
-                      ],
-                    ),
+          headerSliverBuilder: (
+            BuildContext context,
+            bool innerBoxIsScrolled,
+          ) {
+            return [
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(user?.username ?? ''),
+                    GestureDetector(
+                      onTap: showMenuModal,
+                      child: SvgPicture.asset(
+                        AssetsConstants.menu,
+                        height: 26,
+                        width: 26,
+                      ),
+                    )
+                  ],
+                ),
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(
+                    user?.bio.isNotEmpty == true ? 220 : 170,
                   ),
-                  SizedBox(
-                    height: 50 * 10,
-                    width: double.maxFinite,
-                    child: TabBarView(
-                      children: [
-                        RiverPagedBuilder(
-                          firstPageKey: 1,
-                          limit: 20,
-                          provider: userPostsProvider(user?.id ?? ''),
-                          pullToRefresh: true,
-                          newPageProgressIndicatorBuilder: (
-                            context,
-                            controller,
-                          ) {
-                            return Container();
-                          },
-                          itemBuilder: (context, item, index) {
-                            return PostGridItem(
-                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
-                              assetsCount: item.assets.length,
-                              onTap: () => showPostItem(item),
-                            );
-                          },
-                          noItemsFoundIndicatorBuilder: (context, controller) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 150,
-                                horizontal: 32,
-                              ),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'Capture the moment with a friend',
-                                      style: bodyLargeBold(context),
-                                    ),
-                                    TextButton(
-                                      onPressed: navigateToNewPost,
-                                      child: Text(
-                                        'Create your first post ',
-                                        style: textTheme.bodyLarge?.copyWith(
-                                          color: primaryColor,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          pagedBuilder: (controller, builder) => PagedGridView(
-                            pagingController: controller,
-                            builderDelegate: builder,
-                            gridDelegate: photoGridDelegate,
-                          ),
-                        ),
-                        RiverPagedBuilder(
-                          firstPageKey: 1,
-                          limit: 20,
-                          provider: userTaggedPostsProvider(user?.id ?? ''),
-                          pullToRefresh: true,
-                          newPageProgressIndicatorBuilder: (
-                            context,
-                            controller,
-                          ) {
-                            return Container();
-                          },
-                          itemBuilder: (context, item, index) {
-                            return PostGridItem(
-                              assetUrl: '$apiUrl/posts/${item.assets[0].url}',
-                              assetsCount: item.assets.length,
-                              onTap: () => showPostItem(item),
-                            );
-                          },
-                          noItemsFoundIndicatorBuilder: (context, controller) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 150,
-                                horizontal: 32,
-                              ),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    const Icon(Icons.account_box, size: 80.0),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      'When people tag you in photos and videos, they\'ll appear here.',
-                                      textAlign: TextAlign.center,
-                                      style: textTheme.bodyLarge,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          pagedBuilder: (controller, builder) => PagedGridView(
-                            pagingController: controller,
-                            builderDelegate: builder,
-                            gridDelegate: photoGridDelegate,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                  child: buildProfileHeader(user: user),
+                ),
+              )
+            ];
+          },
+          body: ListView(
+            controller: outerController,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            children: [buildTabView(user)],
+          ),
         ),
       ),
     );

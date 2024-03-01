@@ -23,9 +23,7 @@ class Notifier extends StateNotifier<Data> {
 
   void decrementPostCount() {
     state = State(
-      state.user?.copyWith(
-        postCount: (state.user?.postCount ?? 0) - 1,
-      ),
+      state.user?.copyWith(postCount: (state.user?.postCount ?? 0) - 1),
     );
   }
 
@@ -45,12 +43,24 @@ class Notifier extends StateNotifier<Data> {
     );
   }
 
+  void incrementFollowersCount() {
+    state = State(
+      state.user?.copyWith(
+        followersCount: (state.user?.followersCount ?? 0) + 1,
+      ),
+    );
+  }
+
   void decrementFollowersCount() {
     state = State(
       state.user?.copyWith(
         followersCount: (state.user?.followersCount ?? 0) - 1,
       ),
     );
+  }
+
+  void readNotifications() {
+    state = State(state.user?.copyWith(unReadNotificationsCount: 0));
   }
 }
 

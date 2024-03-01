@@ -2,6 +2,13 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'user.freezed.dart';
 part 'user.g.dart';
 
+enum UserFollowType {
+  @JsonValue('following')
+  following,
+  @JsonValue('requested')
+  requested
+}
+
 @freezed
 class GetUserResponse with _$GetUserResponse {
   const factory GetUserResponse({
@@ -24,8 +31,8 @@ class GetUserResponseData with _$GetUserResponseData {
     required int postCount,
     required int followersCount,
     required int followingCount,
-    required bool isFollowed,
     required bool isPrivateAccount,
+    required UserFollowType? followType,
   }) = _GetUserResponseData;
 
   factory GetUserResponseData.fromJson(Map<String, Object?> json) =>
@@ -108,7 +115,8 @@ class GetFollowOfUserResponseData with _$GetFollowOfUserResponseData {
     required String name,
     required String username,
     required String avatar,
-    required bool isFollowed,
+    required bool isPrivateAccount,
+    required UserFollowType? followType,
   }) = _GetFollowOfUserResponseData;
 
   factory GetFollowOfUserResponseData.fromJson(Map<String, Object?> json) =>

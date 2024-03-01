@@ -5,7 +5,7 @@ import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
 import { AssetType, Post } from '@models/Post';
 import { User, UserType } from '@models/User';
-import { UserFollows } from '@models/UserFollows';
+import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
 import { PostLikes } from '@models/PostLikes';
 import { PostSaves } from '@models/PostSaves';
 import { zParse } from '@validation/index';
@@ -15,7 +15,7 @@ import * as functions from '@utils/functions';
 import * as postValidation from '@validation/post';
 
 /**
- * @route POST /api/post/feed-posts
+ * @route GET /api/post/feed-posts
  * @desc Fetch current user feed
  * @secure true
  */
@@ -26,7 +26,12 @@ export const getFeedPosts = catchAsync(async (req, res) => {
   const skip = (page - 1) * limit;
 
   type ObjectID = mongoose.Types.ObjectId | mongoose.Schema.Types.ObjectId;
-  const followingUsers = await UserFollows.find({ follower: user.id });
+
+  const followingUsers = await UserFollows.find({
+    follower: user.id,
+    type: UserFollowsTypeEnum.following
+  });
+
   const followingUserIds: ObjectID[] = followingUsers.map(e => e.followee);
   followingUserIds.push(new mongoose.Types.ObjectId(user.id));
 
@@ -116,7 +121,7 @@ export const getFeedPosts = catchAsync(async (req, res) => {
 });
 
 /**
- * @route POST /api/post/explore-posts
+ * @route GET /api/post/explore-posts
  * @desc Fetch explore posts
  * @secure true
  */
@@ -173,7 +178,8 @@ export const likePost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -221,7 +227,8 @@ export const unLikePost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -268,7 +275,8 @@ export const savePost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -315,7 +323,8 @@ export const unSavePost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -341,7 +350,7 @@ export const unSavePost = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @route POST /api/post/delete/:id
+ * @route DELETE /api/post/delete/:id
  * @desc let a user delete a post
  * @secure true
  */
@@ -379,7 +388,7 @@ export const deletePost = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @route POST /api/post/liked-posts/:id
+ * @route GET /api/post/liked-posts/:id
  * @desc Fetch posts liked by current user
  * @secure true
  */
@@ -389,18 +398,89 @@ export const getLikedPosts = catchAsync(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 20;
   const skip = (page - 1) * limit;
 
-  const posts = await PostLikes.find({ user })
-    .select('post createdAt')
-    .populate('post', 'id assets')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+  // Filter out liked posts where the owner is private and the user
+  // is not following them currently
+  const posts = await PostLikes.aggregate([
+    {
+      $match: { user: new mongoose.Types.ObjectId(user.id) }
+    },
+    {
+      $lookup: {
+        from: 'posts',
+        localField: 'post',
+        foreignField: '_id',
+        as: 'post'
+      }
+    },
+    {
+      $unwind: '$post'
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'post.user',
+        foreignField: '_id',
+        as: 'post.user'
+      }
+    },
+    {
+      $unwind: '$post.user'
+    },
+    {
+      $lookup: {
+        from: 'userfollows',
+        let: { userId: '$post.user._id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$follower', new mongoose.Types.ObjectId(user.id)] },
+                  { $eq: ['$$userId', '$followee'] },
+                  { $eq: ['$type', 'following'] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'followings'
+      }
+    },
+    {
+      $addFields: {
+        isPrivateAccount: '$post.user.isPrivateAccount'
+      }
+    },
+    {
+      $match: {
+        $or: [
+          { 'post.user._id': new mongoose.Types.ObjectId(user.id) },
+          { isPrivateAccount: false },
+          {
+            $and: [
+              { isPrivateAccount: true },
+              { $expr: { $gt: [{ $size: '$followings' }, 0] } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        'post._id': 1,
+        'post.assets': 1
+      }
+    },
+    { $skip: skip },
+    { $limit: limit },
+    { $sort: { createdAt: -1 } }
+  ]);
 
   res.status(200).json({ success: true, data: posts });
 });
 
 /**
- * @route POST /api/post/saved-posts/:id
+ * @route GET /api/post/saved-posts/:id
  * @desc Fetch posts saved by current user
  * @secure true
  */
@@ -410,18 +490,87 @@ export const getSavedPosts = catchAsync(async (req, res) => {
   const limit = parseInt(req.query.limit as string) || 20;
   const skip = (page - 1) * limit;
 
-  const posts = await PostSaves.find({ user })
-    .select('post createdAt')
-    .populate('post', 'id assets')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+  const posts = await PostSaves.aggregate([
+    {
+      $match: { user: new mongoose.Types.ObjectId(user.id) }
+    },
+    {
+      $lookup: {
+        from: 'posts',
+        localField: 'post',
+        foreignField: '_id',
+        as: 'post'
+      }
+    },
+    {
+      $unwind: '$post'
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'post.user',
+        foreignField: '_id',
+        as: 'post.user'
+      }
+    },
+    {
+      $unwind: '$post.user'
+    },
+    {
+      $lookup: {
+        from: 'userfollows',
+        let: { userId: '$post.user._id' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$follower', new mongoose.Types.ObjectId(user.id)] },
+                  { $eq: ['$$userId', '$followee'] },
+                  { $eq: ['$type', 'following'] }
+                ]
+              }
+            }
+          }
+        ],
+        as: 'followings'
+      }
+    },
+    {
+      $addFields: {
+        isPrivateAccount: '$post.user.isPrivateAccount'
+      }
+    },
+    {
+      $match: {
+        $or: [
+          { 'post.user._id': new mongoose.Types.ObjectId(user.id) },
+          { isPrivateAccount: false },
+          {
+            $and: [
+              { isPrivateAccount: true },
+              { $expr: { $gt: [{ $size: '$followings' }, 0] } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        'post._id': 1,
+        'post.assets': 1
+      }
+    },
+    { $skip: skip },
+    { $limit: limit },
+    { $sort: { createdAt: -1 } }
+  ]);
 
   res.status(200).json({ success: true, data: posts });
 });
 
 /**
- * @route POST /api/post/:id
+ * @route GET /api/post/:id
  * @desc Fetch a single post
  * @secure true
  */
@@ -515,10 +664,14 @@ export const getPost = catchAsync(async (req, res, next) => {
     return;
   }
 
-  if (post[0].user.isPrivateAccount && post[0].user.id !== user.id) {
+  if (
+    post[0].user.isPrivateAccount &&
+    post[0].user._id.toString() !== user.id
+  ) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post[0].user.id
+      followee: post[0].user._id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -529,6 +682,29 @@ export const getPost = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json({ success: true, data: post[0] });
+});
+
+/**
+ * @route GET /api/post/likes/:id
+ * @desc Fetch a single post
+ * @secure true
+ */
+export const getLikedUsersForPost = catchAsync(async (req, res) => {
+  const postId = req.params.id;
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const skip = (page - 1) * limit;
+
+  const postLikes = await PostLikes.find({ post: postId })
+    .populate<{ user: UserType }>('user', 'id avatar name username')
+    .select('user')
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const transformedPostLikes = postLikes.map(el => el.user);
+
+  res.status(200).json({ success: true, data: transformedPostLikes });
 });
 
 /**

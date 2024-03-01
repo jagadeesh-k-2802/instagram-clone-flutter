@@ -1427,10 +1427,9 @@ GetUsersPostResponseData _$GetUsersPostResponseDataFromJson(
 
 /// @nodoc
 mixin _$GetUsersPostResponseData {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   UserPostItem get post => throw _privateConstructorUsedError;
-  @DateTimeConvertor()
-  DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1444,8 +1443,7 @@ abstract class $GetUsersPostResponseDataCopyWith<$Res> {
           $Res Function(GetUsersPostResponseData) then) =
       _$GetUsersPostResponseDataCopyWithImpl<$Res, GetUsersPostResponseData>;
   @useResult
-  $Res call(
-      {String id, UserPostItem post, @DateTimeConvertor() DateTime createdAt});
+  $Res call({@JsonKey(name: '_id') String id, UserPostItem post});
 
   $UserPostItemCopyWith<$Res> get post;
 }
@@ -1466,7 +1464,6 @@ class _$GetUsersPostResponseDataCopyWithImpl<$Res,
   $Res call({
     Object? id = null,
     Object? post = null,
-    Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -1477,10 +1474,6 @@ class _$GetUsersPostResponseDataCopyWithImpl<$Res,
           ? _value.post
           : post // ignore: cast_nullable_to_non_nullable
               as UserPostItem,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
     ) as $Val);
   }
 
@@ -1502,8 +1495,7 @@ abstract class _$$GetUsersPostResponseDataImplCopyWith<$Res>
       __$$GetUsersPostResponseDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id, UserPostItem post, @DateTimeConvertor() DateTime createdAt});
+  $Res call({@JsonKey(name: '_id') String id, UserPostItem post});
 
   @override
   $UserPostItemCopyWith<$Res> get post;
@@ -1524,7 +1516,6 @@ class __$$GetUsersPostResponseDataImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? post = null,
-    Object? createdAt = null,
   }) {
     return _then(_$GetUsersPostResponseDataImpl(
       id: null == id
@@ -1535,10 +1526,6 @@ class __$$GetUsersPostResponseDataImplCopyWithImpl<$Res>
           ? _value.post
           : post // ignore: cast_nullable_to_non_nullable
               as UserPostItem,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
     ));
   }
 }
@@ -1547,24 +1534,20 @@ class __$$GetUsersPostResponseDataImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GetUsersPostResponseDataImpl implements _GetUsersPostResponseData {
   const _$GetUsersPostResponseDataImpl(
-      {required this.id,
-      required this.post,
-      @DateTimeConvertor() required this.createdAt});
+      {@JsonKey(name: '_id') required this.id, required this.post});
 
   factory _$GetUsersPostResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetUsersPostResponseDataImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   @override
   final UserPostItem post;
-  @override
-  @DateTimeConvertor()
-  final DateTime createdAt;
 
   @override
   String toString() {
-    return 'GetUsersPostResponseData(id: $id, post: $post, createdAt: $createdAt)';
+    return 'GetUsersPostResponseData(id: $id, post: $post)';
   }
 
   @override
@@ -1573,14 +1556,12 @@ class _$GetUsersPostResponseDataImpl implements _GetUsersPostResponseData {
         (other.runtimeType == runtimeType &&
             other is _$GetUsersPostResponseDataImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.post, post) || other.post == post) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+            (identical(other.post, post) || other.post == post));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, post, createdAt);
+  int get hashCode => Object.hash(runtimeType, id, post);
 
   @JsonKey(ignore: true)
   @override
@@ -1599,21 +1580,17 @@ class _$GetUsersPostResponseDataImpl implements _GetUsersPostResponseData {
 
 abstract class _GetUsersPostResponseData implements GetUsersPostResponseData {
   const factory _GetUsersPostResponseData(
-          {required final String id,
-          required final UserPostItem post,
-          @DateTimeConvertor() required final DateTime createdAt}) =
-      _$GetUsersPostResponseDataImpl;
+      {@JsonKey(name: '_id') required final String id,
+      required final UserPostItem post}) = _$GetUsersPostResponseDataImpl;
 
   factory _GetUsersPostResponseData.fromJson(Map<String, dynamic> json) =
       _$GetUsersPostResponseDataImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
   UserPostItem get post;
-  @override
-  @DateTimeConvertor()
-  DateTime get createdAt;
   @override
   @JsonKey(ignore: true)
   _$$GetUsersPostResponseDataImplCopyWith<_$GetUsersPostResponseDataImpl>
@@ -1626,6 +1603,7 @@ UserPostItem _$UserPostItemFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserPostItem {
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
   List<PostAssetItem> get assets => throw _privateConstructorUsedError;
 
@@ -1641,7 +1619,7 @@ abstract class $UserPostItemCopyWith<$Res> {
           UserPostItem value, $Res Function(UserPostItem) then) =
       _$UserPostItemCopyWithImpl<$Res, UserPostItem>;
   @useResult
-  $Res call({String id, List<PostAssetItem> assets});
+  $Res call({@JsonKey(name: '_id') String id, List<PostAssetItem> assets});
 }
 
 /// @nodoc
@@ -1681,7 +1659,7 @@ abstract class _$$UserPostItemImplCopyWith<$Res>
       __$$UserPostItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, List<PostAssetItem> assets});
+  $Res call({@JsonKey(name: '_id') String id, List<PostAssetItem> assets});
 }
 
 /// @nodoc
@@ -1715,13 +1693,15 @@ class __$$UserPostItemImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserPostItemImpl implements _UserPostItem {
   const _$UserPostItemImpl(
-      {required this.id, required final List<PostAssetItem> assets})
+      {@JsonKey(name: '_id') required this.id,
+      required final List<PostAssetItem> assets})
       : _assets = assets;
 
   factory _$UserPostItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserPostItemImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
   final String id;
   final List<PostAssetItem> _assets;
   @override
@@ -1766,13 +1746,14 @@ class _$UserPostItemImpl implements _UserPostItem {
 
 abstract class _UserPostItem implements UserPostItem {
   const factory _UserPostItem(
-      {required final String id,
+      {@JsonKey(name: '_id') required final String id,
       required final List<PostAssetItem> assets}) = _$UserPostItemImpl;
 
   factory _UserPostItem.fromJson(Map<String, dynamic> json) =
       _$UserPostItemImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
   String get id;
   @override
   List<PostAssetItem> get assets;
@@ -2296,5 +2277,385 @@ abstract class _GetExplorePostsResponseData
   @override
   @JsonKey(ignore: true)
   _$$GetExplorePostsResponseDataImplCopyWith<_$GetExplorePostsResponseDataImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetLikesUsersResponse _$GetLikesUsersResponseFromJson(
+    Map<String, dynamic> json) {
+  return _GetLikesUsersResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetLikesUsersResponse {
+  bool get success => throw _privateConstructorUsedError;
+  List<GetLikesUsersResponseData> get data =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetLikesUsersResponseCopyWith<GetLikesUsersResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetLikesUsersResponseCopyWith<$Res> {
+  factory $GetLikesUsersResponseCopyWith(GetLikesUsersResponse value,
+          $Res Function(GetLikesUsersResponse) then) =
+      _$GetLikesUsersResponseCopyWithImpl<$Res, GetLikesUsersResponse>;
+  @useResult
+  $Res call({bool success, List<GetLikesUsersResponseData> data});
+}
+
+/// @nodoc
+class _$GetLikesUsersResponseCopyWithImpl<$Res,
+        $Val extends GetLikesUsersResponse>
+    implements $GetLikesUsersResponseCopyWith<$Res> {
+  _$GetLikesUsersResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetLikesUsersResponseData>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetLikesUsersResponseImplCopyWith<$Res>
+    implements $GetLikesUsersResponseCopyWith<$Res> {
+  factory _$$GetLikesUsersResponseImplCopyWith(
+          _$GetLikesUsersResponseImpl value,
+          $Res Function(_$GetLikesUsersResponseImpl) then) =
+      __$$GetLikesUsersResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, List<GetLikesUsersResponseData> data});
+}
+
+/// @nodoc
+class __$$GetLikesUsersResponseImplCopyWithImpl<$Res>
+    extends _$GetLikesUsersResponseCopyWithImpl<$Res,
+        _$GetLikesUsersResponseImpl>
+    implements _$$GetLikesUsersResponseImplCopyWith<$Res> {
+  __$$GetLikesUsersResponseImplCopyWithImpl(_$GetLikesUsersResponseImpl _value,
+      $Res Function(_$GetLikesUsersResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_$GetLikesUsersResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetLikesUsersResponseData>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetLikesUsersResponseImpl implements _GetLikesUsersResponse {
+  const _$GetLikesUsersResponseImpl(
+      {required this.success,
+      required final List<GetLikesUsersResponseData> data})
+      : _data = data;
+
+  factory _$GetLikesUsersResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetLikesUsersResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  final List<GetLikesUsersResponseData> _data;
+  @override
+  List<GetLikesUsersResponseData> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  @override
+  String toString() {
+    return 'GetLikesUsersResponse(success: $success, data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetLikesUsersResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            const DeepCollectionEquality().equals(other._data, _data));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, success, const DeepCollectionEquality().hash(_data));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetLikesUsersResponseImplCopyWith<_$GetLikesUsersResponseImpl>
+      get copyWith => __$$GetLikesUsersResponseImplCopyWithImpl<
+          _$GetLikesUsersResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetLikesUsersResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetLikesUsersResponse implements GetLikesUsersResponse {
+  const factory _GetLikesUsersResponse(
+          {required final bool success,
+          required final List<GetLikesUsersResponseData> data}) =
+      _$GetLikesUsersResponseImpl;
+
+  factory _GetLikesUsersResponse.fromJson(Map<String, dynamic> json) =
+      _$GetLikesUsersResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  List<GetLikesUsersResponseData> get data;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetLikesUsersResponseImplCopyWith<_$GetLikesUsersResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetLikesUsersResponseData _$GetLikesUsersResponseDataFromJson(
+    Map<String, dynamic> json) {
+  return _GetLikesUsersResponseData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetLikesUsersResponseData {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetLikesUsersResponseDataCopyWith<GetLikesUsersResponseData> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetLikesUsersResponseDataCopyWith<$Res> {
+  factory $GetLikesUsersResponseDataCopyWith(GetLikesUsersResponseData value,
+          $Res Function(GetLikesUsersResponseData) then) =
+      _$GetLikesUsersResponseDataCopyWithImpl<$Res, GetLikesUsersResponseData>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String avatar,
+      String name,
+      String username});
+}
+
+/// @nodoc
+class _$GetLikesUsersResponseDataCopyWithImpl<$Res,
+        $Val extends GetLikesUsersResponseData>
+    implements $GetLikesUsersResponseDataCopyWith<$Res> {
+  _$GetLikesUsersResponseDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatar = null,
+    Object? name = null,
+    Object? username = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetLikesUsersResponseDataImplCopyWith<$Res>
+    implements $GetLikesUsersResponseDataCopyWith<$Res> {
+  factory _$$GetLikesUsersResponseDataImplCopyWith(
+          _$GetLikesUsersResponseDataImpl value,
+          $Res Function(_$GetLikesUsersResponseDataImpl) then) =
+      __$$GetLikesUsersResponseDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String avatar,
+      String name,
+      String username});
+}
+
+/// @nodoc
+class __$$GetLikesUsersResponseDataImplCopyWithImpl<$Res>
+    extends _$GetLikesUsersResponseDataCopyWithImpl<$Res,
+        _$GetLikesUsersResponseDataImpl>
+    implements _$$GetLikesUsersResponseDataImplCopyWith<$Res> {
+  __$$GetLikesUsersResponseDataImplCopyWithImpl(
+      _$GetLikesUsersResponseDataImpl _value,
+      $Res Function(_$GetLikesUsersResponseDataImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatar = null,
+    Object? name = null,
+    Object? username = null,
+  }) {
+    return _then(_$GetLikesUsersResponseDataImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetLikesUsersResponseDataImpl implements _GetLikesUsersResponseData {
+  const _$GetLikesUsersResponseDataImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required this.avatar,
+      required this.name,
+      required this.username});
+
+  factory _$GetLikesUsersResponseDataImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetLikesUsersResponseDataImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String avatar;
+  @override
+  final String name;
+  @override
+  final String username;
+
+  @override
+  String toString() {
+    return 'GetLikesUsersResponseData(id: $id, avatar: $avatar, name: $name, username: $username)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetLikesUsersResponseDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.username, username) ||
+                other.username == username));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, avatar, name, username);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetLikesUsersResponseDataImplCopyWith<_$GetLikesUsersResponseDataImpl>
+      get copyWith => __$$GetLikesUsersResponseDataImplCopyWithImpl<
+          _$GetLikesUsersResponseDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetLikesUsersResponseDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetLikesUsersResponseData implements GetLikesUsersResponseData {
+  const factory _GetLikesUsersResponseData(
+      {@JsonKey(name: '_id') required final String id,
+      required final String avatar,
+      required final String name,
+      required final String username}) = _$GetLikesUsersResponseDataImpl;
+
+  factory _GetLikesUsersResponseData.fromJson(Map<String, dynamic> json) =
+      _$GetLikesUsersResponseDataImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get avatar;
+  @override
+  String get name;
+  @override
+  String get username;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetLikesUsersResponseDataImplCopyWith<_$GetLikesUsersResponseDataImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

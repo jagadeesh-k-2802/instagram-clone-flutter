@@ -63,8 +63,7 @@ class PostItem extends ConsumerStatefulWidget {
   ConsumerState<PostItem> createState() => _PostItemState();
 }
 
-class _PostItemState extends ConsumerState<PostItem>
-    with TickerProviderStateMixin {
+class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMixin {
   bool showFullCaption = false;
   int selectedIndex = 0;
   bool isHeartVisible = false;
@@ -73,6 +72,7 @@ class _PostItemState extends ConsumerState<PostItem>
   void showPostActionsModal() {
     showModalBottomSheet(
       showDragHandle: true,
+      useRootNavigator: true,
       context: context,
       builder: (context) {
         return StatefulBuilder(
@@ -101,8 +101,12 @@ class _PostItemState extends ConsumerState<PostItem>
     );
   }
 
-  void openUserProfile(String userId) {
-    context.push(Routes.publicProfilePath(userId));
+  void openUserProfile(String userId, bool isOwner) {
+    if (isOwner) {
+      context.pushNamed(Routes.profile);
+    } else {
+      context.push(Routes.publicProfilePath(userId));
+    }
   }
 
   void showCommentsModal() {
@@ -176,6 +180,10 @@ class _PostItemState extends ConsumerState<PostItem>
     return list;
   }
 
+  void navigateToLikedDetail() {
+    context.push(Routes.postLikeDetailPath(widget.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -188,7 +196,7 @@ class _PostItemState extends ConsumerState<PostItem>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => openUserProfile(widget.user.id),
+            onTap: () => openUserProfile(widget.user.id, isOwner),
             child: Row(
               children: [
                 const SizedBox(width: 12.0),
@@ -330,14 +338,17 @@ class _PostItemState extends ConsumerState<PostItem>
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8.0,
-              vertical: 4.0,
-            ),
-            child: Text(
-              '${widget.likeCount} like${widget.likeCount > 1 ? 's' : ''}',
-              style: bodyLargeBold(context),
+          GestureDetector(
+            onTap: navigateToLikedDetail,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
+              child: Text(
+                '${widget.likeCount} like${widget.likeCount > 1 ? 's' : ''}',
+                style: bodyLargeBold(context),
+              ),
             ),
           ),
           Visibility(

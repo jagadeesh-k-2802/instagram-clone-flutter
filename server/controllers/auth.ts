@@ -9,6 +9,7 @@ import { isAuthenticated } from '@middlewares/auth';
 import { zParse } from '@validation/index';
 import * as functions from '@utils/functions';
 import * as authValidation from '@validation/auth';
+import { Notification } from '@models/Notification';
 
 /**
  * @route POST /api/auth/login
@@ -177,7 +178,17 @@ export const verifyConfirmationCode = catchAsync(async (req, res, next) => {
  */
 export const getCurrentUser = catchAsync(async (req, res) => {
   await isAuthenticated(req); // Injects req.user
-  res.status(200).json({ success: true, data: req.user });
+  const user = req.user.toObject();
+
+  const unReadNotificationsCount = await Notification.countDocuments({
+    user: user,
+    isRead: false
+  });
+
+  res.status(200).json({
+    success: true,
+    data: { ...user, unReadNotificationsCount }
+  });
 });
 
 /**

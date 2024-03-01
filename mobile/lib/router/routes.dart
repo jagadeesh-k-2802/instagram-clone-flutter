@@ -12,6 +12,7 @@ class Routes {
   static const searchDetail = "search-detail";
   static publicProfilePath(String id) => "/profile/$id";
   static postDetailPath(String id) => "/post/$id";
+  static postLikeDetailPath(String id) => "/post/like/$id";
   static const followDetail = "follow-detail";
   static const notifications = "notifications";
   static const profile = "profile";

@@ -94,9 +94,8 @@ class GetUsersPostResponse with _$GetUsersPostResponse {
 @freezed
 class GetUsersPostResponseData with _$GetUsersPostResponseData {
   const factory GetUsersPostResponseData({
-    required String id,
-    required UserPostItem post,
-    @DateTimeConvertor() required DateTime createdAt,
+    @JsonKey(name: '_id') required String id,
+    required UserPostItem post
   }) = _GetUsersPostResponseData;
 
   factory GetUsersPostResponseData.fromJson(Map<String, Object?> json) =>
@@ -106,7 +105,7 @@ class GetUsersPostResponseData with _$GetUsersPostResponseData {
 @freezed
 class UserPostItem with _$UserPostItem {
   const factory UserPostItem({
-    required String id,
+    @JsonKey(name: '_id') required String id,
     required List<PostAssetItem> assets,
   }) = _UserPostItem;
 
@@ -145,4 +144,28 @@ class GetExplorePostsResponseData with _$GetExplorePostsResponseData {
 
   factory GetExplorePostsResponseData.fromJson(Map<String, Object?> json) =>
       _$GetExplorePostsResponseDataFromJson(json);
+}
+
+@freezed
+class GetLikesUsersResponse with _$GetLikesUsersResponse {
+  const factory GetLikesUsersResponse({
+    required bool success,
+    required List<GetLikesUsersResponseData> data,
+  }) = _GetLikesUsersResponse;
+
+  factory GetLikesUsersResponse.fromJson(Map<String, Object?> json) =>
+      _$GetLikesUsersResponseFromJson(json);
+}
+
+@freezed
+class GetLikesUsersResponseData with _$GetLikesUsersResponseData {
+  const factory GetLikesUsersResponseData({
+    @JsonKey(name: '_id') required String id,
+    required String avatar,
+    required String name,
+    required String username,
+  }) = _GetLikesUsersResponseData;
+
+  factory GetLikesUsersResponseData.fromJson(Map<String, Object?> json) =>
+      _$GetLikesUsersResponseDataFromJson(json);
 }

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/auth/change_password_screen.dart';
 import 'package:instagram_clone/screens/post/post_detail_screen.dart';
+import 'package:instagram_clone/screens/post/post_like_detail_screen.dart';
 import 'package:instagram_clone/screens/settings/account_privacy_screen.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
 import 'package:instagram_clone/screens/profile/liked_posts_screen.dart';
@@ -85,6 +86,15 @@ final List<RouteBase> _routes = [
             path: Routes.postDetailPath(':id'),
             pageBuilder: (context, state) => NoTransitionPage(
               child: PostDetailScreen(
+                postId: state.pathParameters['id'],
+              ),
+            ),
+          ),
+          GoRoute(
+            name: Routes.postLikeDetailPath(''),
+            path: Routes.postLikeDetailPath(':id'),
+            pageBuilder: (context, state) => NoTransitionPage(
+              child: PostLikeDetailScreen(
                 postId: state.pathParameters['id'],
               ),
             ),

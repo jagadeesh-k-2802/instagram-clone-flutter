@@ -157,7 +157,7 @@ class _CommentsModalState extends ConsumerState<CommentsModal> {
             automaticallyImplyLeading: false,
           ),
           bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
                 CircleAvatar(
@@ -216,9 +216,7 @@ class _CommentsModalState extends ConsumerState<CommentsModal> {
               return buildCommentItem(item, setState);
             },
             noItemsFoundIndicatorBuilder: (context, controller) {
-              return const Center(
-                child: Text('No Comments'),
-              );
+              return const Center(child: Text('No Comments'));
             },
             pagedBuilder: (controller, builder) => PagedListView.separated(
               pagingController: controller,

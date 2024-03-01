@@ -135,7 +135,7 @@ class PostService {
     try {
       final dio = await getDioClient();
       final url = '$apiUrl/api/v1/post/delete/$postId';
-      final response = await dio.post(url);
+      final response = await dio.delete(url);
 
       if (response.statusCode != 200) {
         var errorResponse = ErrorResponse.fromJson(response.data);
@@ -211,6 +211,31 @@ class PostService {
       }
 
       return GetPostResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<GetLikesUsersResponse> getLikedUsersForPost({
+    required String id,
+    required int page,
+    required int limit,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/post/likes/$id';
+
+      final response = await dio.get(
+        url,
+        queryParameters: {'page': page, 'limit': limit},
+      );
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return GetLikesUsersResponse.fromJson(response.data);
     } catch (error) {
       rethrow;
     }

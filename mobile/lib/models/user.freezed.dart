@@ -197,8 +197,8 @@ mixin _$GetUserResponseData {
   int get postCount => throw _privateConstructorUsedError;
   int get followersCount => throw _privateConstructorUsedError;
   int get followingCount => throw _privateConstructorUsedError;
-  bool get isFollowed => throw _privateConstructorUsedError;
   bool get isPrivateAccount => throw _privateConstructorUsedError;
+  UserFollowType? get followType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -221,8 +221,8 @@ abstract class $GetUserResponseDataCopyWith<$Res> {
       int postCount,
       int followersCount,
       int followingCount,
-      bool isFollowed,
-      bool isPrivateAccount});
+      bool isPrivateAccount,
+      UserFollowType? followType});
 }
 
 /// @nodoc
@@ -246,8 +246,8 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
-    Object? isFollowed = null,
     Object? isPrivateAccount = null,
+    Object? followType = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -282,14 +282,14 @@ class _$GetUserResponseDataCopyWithImpl<$Res, $Val extends GetUserResponseData>
           ? _value.followingCount
           : followingCount // ignore: cast_nullable_to_non_nullable
               as int,
-      isFollowed: null == isFollowed
-          ? _value.isFollowed
-          : isFollowed // ignore: cast_nullable_to_non_nullable
-              as bool,
       isPrivateAccount: null == isPrivateAccount
           ? _value.isPrivateAccount
           : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      followType: freezed == followType
+          ? _value.followType
+          : followType // ignore: cast_nullable_to_non_nullable
+              as UserFollowType?,
     ) as $Val);
   }
 }
@@ -311,8 +311,8 @@ abstract class _$$GetUserResponseDataImplCopyWith<$Res>
       int postCount,
       int followersCount,
       int followingCount,
-      bool isFollowed,
-      bool isPrivateAccount});
+      bool isPrivateAccount,
+      UserFollowType? followType});
 }
 
 /// @nodoc
@@ -334,8 +334,8 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
-    Object? isFollowed = null,
     Object? isPrivateAccount = null,
+    Object? followType = freezed,
   }) {
     return _then(_$GetUserResponseDataImpl(
       id: null == id
@@ -370,14 +370,14 @@ class __$$GetUserResponseDataImplCopyWithImpl<$Res>
           ? _value.followingCount
           : followingCount // ignore: cast_nullable_to_non_nullable
               as int,
-      isFollowed: null == isFollowed
-          ? _value.isFollowed
-          : isFollowed // ignore: cast_nullable_to_non_nullable
-              as bool,
       isPrivateAccount: null == isPrivateAccount
           ? _value.isPrivateAccount
           : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      followType: freezed == followType
+          ? _value.followType
+          : followType // ignore: cast_nullable_to_non_nullable
+              as UserFollowType?,
     ));
   }
 }
@@ -394,8 +394,8 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
       required this.postCount,
       required this.followersCount,
       required this.followingCount,
-      required this.isFollowed,
-      required this.isPrivateAccount});
+      required this.isPrivateAccount,
+      required this.followType});
 
   factory _$GetUserResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetUserResponseDataImplFromJson(json);
@@ -418,13 +418,13 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
   @override
   final int followingCount;
   @override
-  final bool isFollowed;
-  @override
   final bool isPrivateAccount;
+  @override
+  final UserFollowType? followType;
 
   @override
   String toString() {
-    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, isFollowed: $isFollowed, isPrivateAccount: $isPrivateAccount)';
+    return 'GetUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, bio: $bio, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, isPrivateAccount: $isPrivateAccount, followType: $followType)';
   }
 
   @override
@@ -444,16 +444,16 @@ class _$GetUserResponseDataImpl implements _GetUserResponseData {
                 other.followersCount == followersCount) &&
             (identical(other.followingCount, followingCount) ||
                 other.followingCount == followingCount) &&
-            (identical(other.isFollowed, isFollowed) ||
-                other.isFollowed == isFollowed) &&
             (identical(other.isPrivateAccount, isPrivateAccount) ||
-                other.isPrivateAccount == isPrivateAccount));
+                other.isPrivateAccount == isPrivateAccount) &&
+            (identical(other.followType, followType) ||
+                other.followType == followType));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, username, avatar, bio,
-      postCount, followersCount, followingCount, isFollowed, isPrivateAccount);
+      postCount, followersCount, followingCount, isPrivateAccount, followType);
 
   @JsonKey(ignore: true)
   @override
@@ -480,8 +480,8 @@ abstract class _GetUserResponseData implements GetUserResponseData {
       required final int postCount,
       required final int followersCount,
       required final int followingCount,
-      required final bool isFollowed,
-      required final bool isPrivateAccount}) = _$GetUserResponseDataImpl;
+      required final bool isPrivateAccount,
+      required final UserFollowType? followType}) = _$GetUserResponseDataImpl;
 
   factory _GetUserResponseData.fromJson(Map<String, dynamic> json) =
       _$GetUserResponseDataImpl.fromJson;
@@ -504,9 +504,9 @@ abstract class _GetUserResponseData implements GetUserResponseData {
   @override
   int get followingCount;
   @override
-  bool get isFollowed;
-  @override
   bool get isPrivateAccount;
+  @override
+  UserFollowType? get followType;
   @override
   @JsonKey(ignore: true)
   _$$GetUserResponseDataImplCopyWith<_$GetUserResponseDataImpl> get copyWith =>
@@ -1570,7 +1570,8 @@ mixin _$GetFollowOfUserResponseData {
   String get name => throw _privateConstructorUsedError;
   String get username => throw _privateConstructorUsedError;
   String get avatar => throw _privateConstructorUsedError;
-  bool get isFollowed => throw _privateConstructorUsedError;
+  bool get isPrivateAccount => throw _privateConstructorUsedError;
+  UserFollowType? get followType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1591,7 +1592,8 @@ abstract class $GetFollowOfUserResponseDataCopyWith<$Res> {
       String name,
       String username,
       String avatar,
-      bool isFollowed});
+      bool isPrivateAccount,
+      UserFollowType? followType});
 }
 
 /// @nodoc
@@ -1612,7 +1614,8 @@ class _$GetFollowOfUserResponseDataCopyWithImpl<$Res,
     Object? name = null,
     Object? username = null,
     Object? avatar = null,
-    Object? isFollowed = null,
+    Object? isPrivateAccount = null,
+    Object? followType = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -1631,10 +1634,14 @@ class _$GetFollowOfUserResponseDataCopyWithImpl<$Res,
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String,
-      isFollowed: null == isFollowed
-          ? _value.isFollowed
-          : isFollowed // ignore: cast_nullable_to_non_nullable
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      followType: freezed == followType
+          ? _value.followType
+          : followType // ignore: cast_nullable_to_non_nullable
+              as UserFollowType?,
     ) as $Val);
   }
 }
@@ -1653,7 +1660,8 @@ abstract class _$$GetFollowOfUserResponseDataImplCopyWith<$Res>
       String name,
       String username,
       String avatar,
-      bool isFollowed});
+      bool isPrivateAccount,
+      UserFollowType? followType});
 }
 
 /// @nodoc
@@ -1673,7 +1681,8 @@ class __$$GetFollowOfUserResponseDataImplCopyWithImpl<$Res>
     Object? name = null,
     Object? username = null,
     Object? avatar = null,
-    Object? isFollowed = null,
+    Object? isPrivateAccount = null,
+    Object? followType = freezed,
   }) {
     return _then(_$GetFollowOfUserResponseDataImpl(
       id: null == id
@@ -1692,10 +1701,14 @@ class __$$GetFollowOfUserResponseDataImplCopyWithImpl<$Res>
           ? _value.avatar
           : avatar // ignore: cast_nullable_to_non_nullable
               as String,
-      isFollowed: null == isFollowed
-          ? _value.isFollowed
-          : isFollowed // ignore: cast_nullable_to_non_nullable
+      isPrivateAccount: null == isPrivateAccount
+          ? _value.isPrivateAccount
+          : isPrivateAccount // ignore: cast_nullable_to_non_nullable
               as bool,
+      followType: freezed == followType
+          ? _value.followType
+          : followType // ignore: cast_nullable_to_non_nullable
+              as UserFollowType?,
     ));
   }
 }
@@ -1709,7 +1722,8 @@ class _$GetFollowOfUserResponseDataImpl
       required this.name,
       required this.username,
       required this.avatar,
-      required this.isFollowed});
+      required this.isPrivateAccount,
+      required this.followType});
 
   factory _$GetFollowOfUserResponseDataImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -1725,11 +1739,13 @@ class _$GetFollowOfUserResponseDataImpl
   @override
   final String avatar;
   @override
-  final bool isFollowed;
+  final bool isPrivateAccount;
+  @override
+  final UserFollowType? followType;
 
   @override
   String toString() {
-    return 'GetFollowOfUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, isFollowed: $isFollowed)';
+    return 'GetFollowOfUserResponseData(id: $id, name: $name, username: $username, avatar: $avatar, isPrivateAccount: $isPrivateAccount, followType: $followType)';
   }
 
   @override
@@ -1742,14 +1758,16 @@ class _$GetFollowOfUserResponseDataImpl
             (identical(other.username, username) ||
                 other.username == username) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
-            (identical(other.isFollowed, isFollowed) ||
-                other.isFollowed == isFollowed));
+            (identical(other.isPrivateAccount, isPrivateAccount) ||
+                other.isPrivateAccount == isPrivateAccount) &&
+            (identical(other.followType, followType) ||
+                other.followType == followType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, username, avatar, isFollowed);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, username, avatar, isPrivateAccount, followType);
 
   @JsonKey(ignore: true)
   @override
@@ -1769,11 +1787,13 @@ class _$GetFollowOfUserResponseDataImpl
 abstract class _GetFollowOfUserResponseData
     implements GetFollowOfUserResponseData {
   const factory _GetFollowOfUserResponseData(
-      {@JsonKey(name: '_id') required final String id,
-      required final String name,
-      required final String username,
-      required final String avatar,
-      required final bool isFollowed}) = _$GetFollowOfUserResponseDataImpl;
+          {@JsonKey(name: '_id') required final String id,
+          required final String name,
+          required final String username,
+          required final String avatar,
+          required final bool isPrivateAccount,
+          required final UserFollowType? followType}) =
+      _$GetFollowOfUserResponseDataImpl;
 
   factory _GetFollowOfUserResponseData.fromJson(Map<String, dynamic> json) =
       _$GetFollowOfUserResponseDataImpl.fromJson;
@@ -1788,7 +1808,9 @@ abstract class _GetFollowOfUserResponseData
   @override
   String get avatar;
   @override
-  bool get isFollowed;
+  bool get isPrivateAccount;
+  @override
+  UserFollowType? get followType;
   @override
   @JsonKey(ignore: true)
   _$$GetFollowOfUserResponseDataImplCopyWith<_$GetFollowOfUserResponseDataImpl>

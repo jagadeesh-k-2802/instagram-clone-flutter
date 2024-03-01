@@ -22,10 +22,10 @@ class Notifier extends PagedNotifier<int, Data> {
           },
         );
 
-  void updateFollow(String userId, bool isFollowed) {
+  void updateFollowType(String userId, UserFollowType? followType) {
     state = state.copyWith(
       records: state.records?.map((user) {
-        return user.id == userId ? user.copyWith(isFollowed: isFollowed) : user;
+        return user.id == userId ? user.copyWith(followType: followType) : user;
       }).toList(),
     );
   }

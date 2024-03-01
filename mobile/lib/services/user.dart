@@ -207,4 +207,42 @@ class UserService {
       rethrow;
     }
   }
+
+  static Future<MessageResponse> acceptFollowRequest({
+    required String notificationId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/accept-request/$notificationId';
+      final response = await dio.post(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<MessageResponse> deleteFollowRequest({
+    required String notificationId,
+  }) async {
+    try {
+      final dio = await getDioClient();
+      final url = '$apiUrl/api/v1/user/delete-request/$notificationId';
+      final response = await dio.post(url);
+
+      if (response.statusCode != 200) {
+        var errorResponse = ErrorResponse.fromJson(response.data);
+        throw errorResponse.error;
+      }
+
+      return MessageResponse.fromJson(response.data);
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

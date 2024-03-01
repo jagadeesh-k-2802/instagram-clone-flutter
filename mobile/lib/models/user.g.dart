@@ -31,8 +31,9 @@ _$GetUserResponseDataImpl _$$GetUserResponseDataImplFromJson(
       postCount: json['postCount'] as int,
       followersCount: json['followersCount'] as int,
       followingCount: json['followingCount'] as int,
-      isFollowed: json['isFollowed'] as bool,
       isPrivateAccount: json['isPrivateAccount'] as bool,
+      followType:
+          $enumDecodeNullable(_$UserFollowTypeEnumMap, json['followType']),
     );
 
 Map<String, dynamic> _$$GetUserResponseDataImplToJson(
@@ -46,9 +47,14 @@ Map<String, dynamic> _$$GetUserResponseDataImplToJson(
       'postCount': instance.postCount,
       'followersCount': instance.followersCount,
       'followingCount': instance.followingCount,
-      'isFollowed': instance.isFollowed,
       'isPrivateAccount': instance.isPrivateAccount,
+      'followType': _$UserFollowTypeEnumMap[instance.followType],
     };
+
+const _$UserFollowTypeEnumMap = {
+  UserFollowType.following: 'following',
+  UserFollowType.requested: 'requested',
+};
 
 _$GetUserPostsResponseImpl _$$GetUserPostsResponseImplFromJson(
         Map<String, dynamic> json) =>
@@ -156,7 +162,9 @@ _$GetFollowOfUserResponseDataImpl _$$GetFollowOfUserResponseDataImplFromJson(
       name: json['name'] as String,
       username: json['username'] as String,
       avatar: json['avatar'] as String,
-      isFollowed: json['isFollowed'] as bool,
+      isPrivateAccount: json['isPrivateAccount'] as bool,
+      followType:
+          $enumDecodeNullable(_$UserFollowTypeEnumMap, json['followType']),
     );
 
 Map<String, dynamic> _$$GetFollowOfUserResponseDataImplToJson(
@@ -166,5 +174,6 @@ Map<String, dynamic> _$$GetFollowOfUserResponseDataImplToJson(
       'name': instance.name,
       'username': instance.username,
       'avatar': instance.avatar,
-      'isFollowed': instance.isFollowed,
+      'isPrivateAccount': instance.isPrivateAccount,
+      'followType': _$UserFollowTypeEnumMap[instance.followType],
     };

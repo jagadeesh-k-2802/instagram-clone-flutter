@@ -33,35 +33,45 @@ class PublicProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
-  Future<void> onFollow(String userId) async {
-    if (widget.onFollowChange is Function) {
-      (widget.onFollowChange as Function).call('follow');
-    }
-
-    try {
-      await UserService.followUser(userId: userId);
-      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
+  Future<void> onFollow(GetUserResponseData user) async {
+    if (!user.isPrivateAccount) {
       ref.read(globalStateProvider.notifier).incrementFollowingCount();
-    } catch (error) {
-      if (widget.onFollowChange is Function) {
-        (widget.onFollowChange as Function).call('unfollow');
-      }
-    }
-  }
 
-  Future<void> onUnFollow(String userId) async {
-    if (widget.onFollowChange is Function) {
-      (widget.onFollowChange as Function).call('unfollow');
-    }
-
-    try {
-      await UserService.unFollowUser(userId: userId);
-      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
-      ref.read(globalStateProvider.notifier).decrementFollowingCount();
-    } catch (error) {
       if (widget.onFollowChange is Function) {
         (widget.onFollowChange as Function).call('follow');
       }
+    } else {
+      if (widget.onFollowChange is Function) {
+        (widget.onFollowChange as Function).call('requested');
+      }
+    }
+
+    try {
+      await UserService.followUser(userId: user.id);
+      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
+    } catch (error) {
+      // Do Nothing
+    }
+  }
+
+  Future<void> onUnFollow(GetUserResponseData user) async {
+    if (!user.isPrivateAccount) {
+      ref.read(globalStateProvider.notifier).decrementFollowingCount();
+
+      if (widget.onFollowChange is Function) {
+        (widget.onFollowChange as Function).call('unfollow');
+      }
+    } else {
+      if (widget.onFollowChange is Function) {
+        (widget.onFollowChange as Function).call('delete-requested');
+      }
+    }
+
+    try {
+      await UserService.unFollowUser(userId: user.id);
+      ref.refresh(publicUserProvider(widget.profileId ?? '')).isRefreshing;
+    } catch (error) {
+      // Do Nothing
     }
   }
 
@@ -116,7 +126,8 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () => !user.isFollowed && user.isPrivateAccount
+                onTap: () => user.followType != UserFollowType.following &&
+                        user.isPrivateAccount
                     ? null
                     : navigateToFollowDetail(
                         user.id,
@@ -137,7 +148,8 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 ),
               ),
               GestureDetector(
-                onTap: () => !user.isFollowed && user.isPrivateAccount
+                onTap: () => user.followType != UserFollowType.following &&
+                        user.isPrivateAccount
                     ? null
                     : navigateToFollowDetail(
                         user.id,
@@ -182,16 +194,22 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: user.isFollowed == true
+                  child: user.followType == UserFollowType.following
                       ? ElevatedButton(
-                          onPressed: () => onUnFollow(user.id),
+                          onPressed: () => onUnFollow(user),
                           style: secondaryButtonStyle,
                           child: const Text('Unfollow'),
                         )
-                      : ElevatedButton(
-                          onPressed: () => onFollow(user.id),
-                          child: const Text('Follow'),
-                        ),
+                      : user.followType == UserFollowType.requested
+                          ? ElevatedButton(
+                              onPressed: () => onUnFollow(user),
+                              style: secondaryButtonStyle,
+                              child: const Text('Requested'),
+                            )
+                          : ElevatedButton(
+                              onPressed: () => onFollow(user),
+                              child: const Text('Follow'),
+                            ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -371,9 +389,10 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
             )
           ];
         },
-        body: !data.isFollowed && data.isPrivateAccount
-            ? buildPrivateAccount()
-            : buildPostsTab(),
+        body:
+            data.followType != UserFollowType.following && data.isPrivateAccount
+                ? buildPrivateAccount()
+                : buildPostsTab(),
       ),
     );
   }

@@ -33,7 +33,7 @@ Map<String, dynamic> _$$UserResponseImplToJson(_$UserResponseImpl instance) =>
 _$UserResponseDataImpl _$$UserResponseDataImplFromJson(
         Map<String, dynamic> json) =>
     _$UserResponseDataImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       avatar: json['avatar'] as String,
       name: json['name'] as String,
       username: json['username'] as String,
@@ -42,6 +42,7 @@ _$UserResponseDataImpl _$$UserResponseDataImplFromJson(
       bio: json['bio'] as String,
       phone: json['phone'] as String?,
       isPrivateAccount: json['isPrivateAccount'] as bool,
+      unReadNotificationsCount: json['unReadNotificationsCount'] as int,
       fcmToken: json['fcmToken'] as String?,
       postCount: json['postCount'] as int,
       followersCount: json['followersCount'] as int,
@@ -52,7 +53,7 @@ _$UserResponseDataImpl _$$UserResponseDataImplFromJson(
 Map<String, dynamic> _$$UserResponseDataImplToJson(
         _$UserResponseDataImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'avatar': instance.avatar,
       'name': instance.name,
       'username': instance.username,
@@ -61,6 +62,7 @@ Map<String, dynamic> _$$UserResponseDataImplToJson(
       'bio': instance.bio,
       'phone': instance.phone,
       'isPrivateAccount': instance.isPrivateAccount,
+      'unReadNotificationsCount': instance.unReadNotificationsCount,
       'fcmToken': instance.fcmToken,
       'postCount': instance.postCount,
       'followersCount': instance.followersCount,

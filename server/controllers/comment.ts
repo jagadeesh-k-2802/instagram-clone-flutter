@@ -1,13 +1,13 @@
 import mongoose from 'mongoose';
 import { Comment } from '@models/Comment';
 import { Post } from '@models/Post';
-import catchAsync from '@utils/catchAsync';
-import ErrorResponse from '@utils/errorResponse';
-import { zParse } from '@validation/index';
-import * as commentValidation from '@validation/comment';
 import { CommentLikes } from '@models/CommentLikes';
 import { UserType } from '@models/User';
-import { UserFollows } from '@models/UserFollows';
+import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
+import { zParse } from '@validation/index';
+import * as commentValidation from '@validation/comment';
+import catchAsync from '@utils/catchAsync';
+import ErrorResponse from '@utils/errorResponse';
 
 /**
  * @route GET /api/comment/:id
@@ -31,7 +31,8 @@ export const getCommentsForPost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -123,7 +124,8 @@ export const createCommentOnPost = catchAsync(async (req, res, next) => {
   if (post.user.isPrivateAccount && post.user.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: post.user.id
+      followee: post.user.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them

@@ -39,7 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserResponseData? user = ref.read(globalStateProvider).user;
+    UserResponseData? user = ref.watch(globalStateProvider).user;
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
@@ -72,7 +72,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           BottomNavigationBarItem(
             label: 'Activity',
             activeIcon: SvgPicture.asset(AssetsConstants.activityFilled),
-            icon: SvgPicture.asset(AssetsConstants.activityOutlined),
+            icon: (user?.unReadNotificationsCount ?? 0) > 0
+                ? Badge.count(
+                    count: user?.unReadNotificationsCount ?? 0,
+                    child: SvgPicture.asset(AssetsConstants.activityOutlined),
+                  )
+                : SvgPicture.asset(AssetsConstants.activityOutlined),
           ),
           BottomNavigationBarItem(
             label: 'Profile',

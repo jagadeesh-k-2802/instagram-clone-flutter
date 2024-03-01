@@ -138,23 +138,20 @@ Map<String, dynamic> _$$GetUsersPostResponseImplToJson(
 _$GetUsersPostResponseDataImpl _$$GetUsersPostResponseDataImplFromJson(
         Map<String, dynamic> json) =>
     _$GetUsersPostResponseDataImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       post: UserPostItem.fromJson(json['post'] as Map<String, dynamic>),
-      createdAt:
-          const DateTimeConvertor().fromJson(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$$GetUsersPostResponseDataImplToJson(
         _$GetUsersPostResponseDataImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'post': instance.post,
-      'createdAt': const DateTimeConvertor().toJson(instance.createdAt),
     };
 
 _$UserPostItemImpl _$$UserPostItemImplFromJson(Map<String, dynamic> json) =>
     _$UserPostItemImpl(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       assets: (json['assets'] as List<dynamic>)
           .map((e) => PostAssetItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -162,7 +159,7 @@ _$UserPostItemImpl _$$UserPostItemImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$UserPostItemImplToJson(_$UserPostItemImpl instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'assets': instance.assets,
     };
 
@@ -212,4 +209,39 @@ Map<String, dynamic> _$$GetExplorePostsResponseDataImplToJson(
     <String, dynamic>{
       '_id': instance.id,
       'assets': instance.assets,
+    };
+
+_$GetLikesUsersResponseImpl _$$GetLikesUsersResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetLikesUsersResponseImpl(
+      success: json['success'] as bool,
+      data: (json['data'] as List<dynamic>)
+          .map((e) =>
+              GetLikesUsersResponseData.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$GetLikesUsersResponseImplToJson(
+        _$GetLikesUsersResponseImpl instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'data': instance.data,
+    };
+
+_$GetLikesUsersResponseDataImpl _$$GetLikesUsersResponseDataImplFromJson(
+        Map<String, dynamic> json) =>
+    _$GetLikesUsersResponseDataImpl(
+      id: json['_id'] as String,
+      avatar: json['avatar'] as String,
+      name: json['name'] as String,
+      username: json['username'] as String,
+    );
+
+Map<String, dynamic> _$$GetLikesUsersResponseDataImplToJson(
+        _$GetLikesUsersResponseDataImpl instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'avatar': instance.avatar,
+      'name': instance.name,
+      'username': instance.username,
     };

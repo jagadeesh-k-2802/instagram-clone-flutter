@@ -28,7 +28,7 @@ class UserResponse with _$UserResponse {
 @freezed
 class UserResponseData with _$UserResponseData {
   const factory UserResponseData({
-    required String id,
+    @JsonKey(name: '_id') required String id,
     required String avatar,
     required String name,
     required String username,
@@ -37,6 +37,7 @@ class UserResponseData with _$UserResponseData {
     required String bio,
     required String? phone,
     required bool isPrivateAccount,
+    required int unReadNotificationsCount,
     required String? fcmToken,
     required int postCount,
     required int followersCount,

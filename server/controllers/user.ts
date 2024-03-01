@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import { User, UserType } from '@models/User';
 import { Post } from '@models/Post';
-import { UserFollows } from '@models/UserFollows';
+import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
+import { Notification, NotificationTypeEnum } from '@models/Notification';
 import catchAsync from '@utils/catchAsync';
 import ErrorResponse from '@utils/errorResponse';
 
@@ -60,7 +61,8 @@ export const getUserPosts = catchAsync(async (req, res, next) => {
   if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: otherUser.id
+      followee: otherUser.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -101,7 +103,8 @@ export const getUserTaggedPosts = catchAsync(async (req, res, next) => {
   if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: otherUser.id
+      followee: otherUser.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -121,7 +124,7 @@ export const getUserTaggedPosts = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @route PATCH /api/user/follow/:id
+ * @route POST /api/user/follow/:id
  * @desc follow a user
  * @secure true
  */
@@ -130,13 +133,36 @@ export const followUser = catchAsync(async (req, res, next) => {
   const followeeId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const otherUser = await User.findById(followeeId);
+
+  // Check if user exists
+  if (!otherUser) {
+    next(new ErrorResponse('User not found', 404));
+    return;
+  }
+
+  const type = otherUser.isPrivateAccount
+    ? UserFollowsTypeEnum.requested
+    : UserFollowsTypeEnum.following;
+
+  if (type === UserFollowsTypeEnum.requested) {
+    await Notification.create({
+      content: `${user.username} sent you follow request`,
+      user: otherUser,
+      type: NotificationTypeEnum.followRequest,
+      data: { user }
+    });
+  }
 
   // TODO: Send Push Notification
 
   try {
-    await UserFollows.create({ follower: user.id, followee: followeeId });
-    await User.findByIdAndUpdate(user.id, { $inc: { followingCount: 1 } });
-    await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: 1 } });
+    await UserFollows.create({ follower: user.id, followee: followeeId, type });
+
+    if (type === UserFollowsTypeEnum.following) {
+      await User.findByIdAndUpdate(user.id, { $inc: { followingCount: 1 } });
+      await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: 1 } });
+    }
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -145,11 +171,16 @@ export const followUser = catchAsync(async (req, res, next) => {
     session.endSession();
   }
 
-  res.status(200).json({ success: true, message: 'Follow succesful' });
+  res.status(200).json({
+    success: true,
+    message: `${
+      type === UserFollowsTypeEnum.following ? 'Follow' : 'Request'
+    } succesful`
+  });
 });
 
 /**
- * @route PATCH /api/user/unfollow/:id
+ * @route POST /api/user/unfollow/:id
  * @desc Unfollow a user
  * @secure true
  */
@@ -159,10 +190,24 @@ export const unFollowUser = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  try {
-    await UserFollows.deleteOne({ follower: user.id, followee: followeeId });
+  const followType = await UserFollows.findOne({
+    follower: user.id,
+    followee: followeeId
+  }).select('type');
+
+  if (followType?.type === UserFollowsTypeEnum.following) {
     await User.findByIdAndUpdate(user.id, { $inc: { followingCount: -1 } });
     await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: -1 } });
+  } else {
+    await Notification.deleteOne({
+      user: followeeId,
+      type: NotificationTypeEnum.followRequest,
+      'data.user': user
+    });
+  }
+
+  try {
+    await UserFollows.deleteOne({ follower: user.id, followee: followeeId });
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -170,11 +215,19 @@ export const unFollowUser = catchAsync(async (req, res, next) => {
   } finally {
     session.endSession();
   }
-  res.status(200).json({ success: true, message: 'Unfollow succesful' });
+
+  res.status(200).json({
+    success: true,
+    message: `${
+      followType?.type === UserFollowsTypeEnum.following
+        ? 'Unfollow'
+        : 'Request deleted'
+    } succesful`
+  });
 });
 
 /**
- * @route PATCH /api/user/followers/:id
+ * @route GET /api/user/followers/:id
  * @desc get followers of a user
  * @secure true
  */
@@ -194,7 +247,8 @@ export const getFollowers = catchAsync(async (req, res, next) => {
   if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: otherUser.id
+      followee: otherUser.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -204,10 +258,16 @@ export const getFollowers = catchAsync(async (req, res, next) => {
     }
   }
 
-  const followers = await UserFollows.find({ followee: id })
+  const followers = await UserFollows.find({
+    followee: id,
+    type: UserFollowsTypeEnum.following
+  })
     .skip((page - 1) * limit)
     .limit(limit)
-    .populate<{ follower: UserType }>('follower', 'id name username avatar')
+    .populate<{ follower: UserType }>(
+      'follower',
+      'id name username avatar isPrivateAccount'
+    )
     .select('follower')
     .sort({ createdAt: -1 })
     .lean();
@@ -218,14 +278,15 @@ export const getFollowers = catchAsync(async (req, res, next) => {
     follower: user.id,
     followee: { $in: followerIds }
   })
-    .select('followee')
+    .select('followee type')
     .lean();
 
   const transformedFollowers = followers.map(follower => ({
     ...follower.follower,
-    isFollowed: !!followedBy.find(
-      x => x.followee.toString() === follower.follower._id.toString()
-    )
+    followType:
+      followedBy.find(
+        x => x.followee.toString() === follower.follower._id.toString()
+      )?.type ?? null
   }));
 
   res.status(200).json({ success: true, data: transformedFollowers });
@@ -268,7 +329,7 @@ export const removeFollower = catchAsync(async (req, res, next) => {
 });
 
 /**
- * @route PATCH /api/user/following/:id
+ * @route GET /api/user/following/:id
  * @desc get following of a user
  * @secure true
  */
@@ -288,7 +349,8 @@ export const getFollowing = catchAsync(async (req, res, next) => {
   if (otherUser.isPrivateAccount && otherUser.id !== user.id) {
     const isFollowing = await UserFollows.exists({
       follower: user.id,
-      followee: otherUser.id
+      followee: otherUser.id,
+      type: UserFollowsTypeEnum.following
     });
 
     // Deny access if account is private and user not following them
@@ -298,11 +360,17 @@ export const getFollowing = catchAsync(async (req, res, next) => {
     }
   }
 
-  const following = await UserFollows.find({ follower: id })
+  const following = await UserFollows.find({
+    follower: id,
+    type: UserFollowsTypeEnum.following
+  })
     .skip((page - 1) * limit)
     .limit(limit)
     .select('followee')
-    .populate<{ followee: UserType }>('followee', 'id name username avatar')
+    .populate<{ followee: UserType }>(
+      'followee',
+      'id name username avatar isPrivateAccount'
+    )
     .sort({ createdAt: -1 })
     .lean();
 
@@ -312,17 +380,114 @@ export const getFollowing = catchAsync(async (req, res, next) => {
     follower: user.id,
     followee: { $in: followingIds }
   })
-    .select('followee')
+    .select('followee type')
     .lean();
 
   const transformedFollowing = following.map(follower => ({
     ...follower.followee,
-    isFollowed: !!followingBy.find(
-      x => x.followee.toString() === follower.followee._id.toString()
-    )
+    followType:
+      followingBy.find(
+        x => x.followee.toString() === follower.followee._id.toString()
+      )?.type ?? null
   }));
 
   res.status(200).json({ success: true, data: transformedFollowing });
+});
+
+/**
+ * @route POST /api/user/accept-request/:id
+ * @desc accept a follow request sent by a user
+ * @secure true
+ */
+export const acceptFollowRequest = catchAsync(async (req, res, next) => {
+  const notificationId = req.params.id;
+  const user = req.user;
+
+  const notification = await Notification.findById(notificationId)
+    .populate<{ data: { user: UserType } }>('data.user', 'id username')
+    .lean();
+
+  // Check if notification exists
+  if (!notification) {
+    next(new ErrorResponse('Request not found', 404));
+    return;
+  }
+
+  const otherUser = notification.data.user;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await UserFollows.findOneAndUpdate(
+      {
+        follower: otherUser,
+        followee: user,
+        type: UserFollowsTypeEnum.requested
+      },
+      { type: UserFollowsTypeEnum.following }
+    );
+
+    await Notification.findByIdAndUpdate(notificationId, {
+      content: `${otherUser.username} has started following you`,
+      type: NotificationTypeEnum.info
+    });
+
+    await User.findByIdAndUpdate(otherUser, { $inc: { followingCount: 1 } });
+    await User.findByIdAndUpdate(user, { $inc: { followersCount: 1 } });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Request accepted successful'
+  });
+});
+
+/**
+ * @route POST /api/user/accept-request/:id
+ * @desc accept a follow request sent by a user
+ * @secure true
+ */
+export const deleteFollowRequest = catchAsync(async (req, res, next) => {
+  const notificationId = req.params.id;
+  const user = req.user;
+  const notification = await Notification.findById(notificationId);
+
+  // Check if notification exists
+  if (!notification) {
+    next(new ErrorResponse('Request not found', 404));
+    return;
+  }
+
+  const otherUser = notification.data.user;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await UserFollows.findOneAndDelete({
+      follower: otherUser,
+      followee: user,
+      type: UserFollowsTypeEnum.requested
+    });
+
+    await Notification.findByIdAndDelete(notificationId);
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Request deleted successful'
+  });
 });
 
 /**
@@ -353,13 +518,13 @@ export const getUser = catchAsync(async (req, res, next) => {
     return;
   }
 
-  const isFollowed = await UserFollows.exists({
+  const isFollowed = await UserFollows.findOne({
     follower: currUser.id,
     followee: userId
-  });
+  }).select('type');
 
   res.status(200).json({
     success: true,
-    data: { ...user, isFollowed: !!isFollowed }
+    data: { ...user, followType: isFollowed?.type ?? null }
   });
 });
