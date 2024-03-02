@@ -21,7 +21,7 @@ interface Post {
 }
 
 const assetSchema = new mongoose.Schema<AssetItem>({
-  assetType: { type: String },
+  assetType: { type: String, enum: ['image', 'video'] },
   url: { type: String }
 });
 

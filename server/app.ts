@@ -6,6 +6,7 @@ import errorHandler from '@middlewares/error';
 import authRoutes from '@routes/auth';
 import userRoutes from '@routes/user';
 import postRoutes from '@routes/post';
+import storyRoutes from '@routes/story';
 import commentRoutes from '@routes/comment';
 import notificationRoutes from '@routes/notification';
 
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/story', storyRoutes);
 app.use('/api/v1/comment', commentRoutes);
 app.use('/api/v1/notification', notificationRoutes);
 

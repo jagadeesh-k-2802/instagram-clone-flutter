@@ -221,6 +221,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
               ],
             ),
           ),
+          const SizedBox(height: 4.0),
           Stack(
             alignment: Alignment.center,
             children: [
@@ -271,6 +272,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                   : Container()
             ],
           ),
+          const SizedBox(height: 4.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Row(

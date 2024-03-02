@@ -73,7 +73,7 @@ class Notifier extends PagedNotifier<int, Data> {
   }
 }
 
-final feedProvider =
+final feedPostsProvider =
     StateNotifierProvider.autoDispose<Notifier, PagedState<int, Data>>(
   (_) => Notifier(),
 );

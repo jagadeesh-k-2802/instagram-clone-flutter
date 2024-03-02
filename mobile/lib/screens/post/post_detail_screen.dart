@@ -5,7 +5,7 @@ import 'package:instagram_clone/services/comment.dart';
 import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/post/comments_provider.dart';
-import 'package:instagram_clone/state/post/feed_provider.dart';
+import 'package:instagram_clone/state/post/feed_posts_provider.dart';
 import 'package:instagram_clone/state/post/post_provider.dart';
 import 'package:instagram_clone/widgets/post/post_item.dart';
 
@@ -19,7 +19,7 @@ class PostDetailScreen extends ConsumerStatefulWidget {
 
 class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Future<void> onLike(String postId) async {
-    ref.read(feedProvider.notifier).likePost(postId);
+    ref.read(feedPostsProvider.notifier).likePost(postId);
 
     try {
       await PostService.likePost(postId: postId);
@@ -30,7 +30,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   }
 
   Future<void> onUnLike(String postId) async {
-    ref.read(feedProvider.notifier).unLikePost(postId);
+    ref.read(feedPostsProvider.notifier).unLikePost(postId);
 
     try {
       await PostService.unLikePost(postId: postId);
@@ -89,7 +89,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
 
   Future<void> onSave(String postId) async {
     try {
-      ref.read(feedProvider.notifier).savePost(postId);
+      ref.read(feedPostsProvider.notifier).savePost(postId);
       await PostService.savePost(postId: postId);
       ref.refresh(postProvider(widget.postId ?? '')).isRefreshing;
     } catch (error) {
@@ -99,7 +99,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
 
   Future<void> onUnsave(String postId) async {
     try {
-      ref.read(feedProvider.notifier).unSavePost(postId);
+      ref.read(feedPostsProvider.notifier).unSavePost(postId);
       await PostService.unSavePost(postId: postId);
       ref.refresh(postProvider(widget.postId ?? '')).isRefreshing;
     } catch (error) {
@@ -110,7 +110,7 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
   Future<void> onDelete(String postId) async {
     try {
       setState(() {}); // to Update Changes
-      ref.read(feedProvider.notifier).deletePost(postId);
+      ref.read(feedPostsProvider.notifier).deletePost(postId);
       ref.read(globalStateProvider.notifier).decrementPostCount();
       await PostService.deletePost(postId: postId);
       if (!mounted) return;

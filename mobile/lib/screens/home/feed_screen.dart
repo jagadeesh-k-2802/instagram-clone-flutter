@@ -9,8 +9,10 @@ import 'package:instagram_clone/services/comment.dart';
 import 'package:instagram_clone/services/post.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/post/comments_provider.dart';
-import 'package:instagram_clone/state/post/feed_provider.dart';
+import 'package:instagram_clone/state/post/feed_posts_provider.dart';
+import 'package:instagram_clone/state/story/feed_stories_provider.dart';
 import 'package:instagram_clone/widgets/post/post_item.dart';
+import 'package:instagram_clone/widgets/story/story_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
@@ -22,7 +24,7 @@ class FeedScreen extends ConsumerStatefulWidget {
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
   Future<void> onLike(String postId) async {
-    ref.read(feedProvider.notifier).likePost(postId);
+    ref.read(feedPostsProvider.notifier).likePost(postId);
 
     try {
       await PostService.likePost(postId: postId);
@@ -32,7 +34,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Future<void> onUnLike(String postId) async {
-    ref.read(feedProvider.notifier).unLikePost(postId);
+    ref.read(feedPostsProvider.notifier).unLikePost(postId);
 
     try {
       await PostService.unLikePost(postId: postId);
@@ -90,7 +92,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Future<void> onSave(String postId) async {
     try {
-      ref.read(feedProvider.notifier).savePost(postId);
+      ref.read(feedPostsProvider.notifier).savePost(postId);
       await PostService.savePost(postId: postId);
     } catch (error) {
       // Do Nothing
@@ -99,7 +101,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Future<void> onUnsave(String postId) async {
     try {
-      ref.read(feedProvider.notifier).unSavePost(postId);
+      ref.read(feedPostsProvider.notifier).unSavePost(postId);
       await PostService.unSavePost(postId: postId);
     } catch (error) {
       // Do Nothing
@@ -109,7 +111,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Future<void> onDelete(String postId) async {
     try {
       setState(() {}); // to Update Changes
-      ref.read(feedProvider.notifier).deletePost(postId);
+      ref.read(feedPostsProvider.notifier).deletePost(postId);
       ref.read(globalStateProvider.notifier).decrementPostCount();
       await PostService.deletePost(postId: postId);
       if (!mounted) return;
@@ -120,6 +122,29 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     } catch (error) {
       // Do Nothing
     }
+  }
+
+  Widget buildStoriesList() {
+    return SizedBox(
+      height: 120,
+      width: double.maxFinite,
+      child: RiverPagedBuilder.autoDispose(
+        firstPageKey: 1,
+        limit: 20,
+        provider: feedStoriesProvider,
+        itemBuilder: (context, item, index) {
+          return StoryItem(story: item);
+        },
+        noItemsFoundIndicatorBuilder: (context, controller) {
+          return Container();
+        },
+        pagedBuilder: (controller, builder) => PagedListView(
+          pagingController: controller,
+          builderDelegate: builder,
+          scrollDirection: Axis.horizontal,
+        ),
+      ),
+    );
   }
 
   @override
@@ -147,6 +172,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                   )
                 ],
               ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(115),
+                child: buildStoriesList(),
+              ),
             ),
           ];
         },
@@ -156,7 +185,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
           child: RiverPagedBuilder.autoDispose(
             firstPageKey: 1,
             limit: 20,
-            provider: feedProvider,
+            provider: feedPostsProvider,
             pullToRefresh: true,
             itemBuilder: (context, item, index) {
               return PostItem(
