@@ -60,9 +60,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data.content, style: textTheme.bodyMedium),
+                      Text(data.content, style: textTheme.bodyLarge),
                       Text(
-                        data.updatedAt.toMoment().fromNow(
+                        data.createdAt.toMoment().fromNow(
                               form: Abbreviation.full,
                               dropPrefixOrSuffix: true,
                             ),
@@ -134,9 +134,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data.content, style: textTheme.bodyMedium),
+                      Text(data.content, style: textTheme.bodyLarge),
                       Text(
-                        data.updatedAt.toMoment().fromNow(
+                        data.createdAt.toMoment().fromNow(
                               form: Abbreviation.full,
                               dropPrefixOrSuffix: true,
                             ),

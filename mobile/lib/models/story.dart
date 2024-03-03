@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:instagram_clone/models/converters.dart';
 part 'story.freezed.dart';
 part 'story.g.dart';
 
@@ -36,23 +37,13 @@ class StoryAssetItem with _$StoryAssetItem {
 }
 
 @freezed
-class StoryUserItem with _$StoryUserItem {
-  const factory StoryUserItem({
-    required String name,
-    required String username,
-    required String avatar,
-  }) = _StoryUserItem;
-
-  factory StoryUserItem.fromJson(Map<String, Object?> json) =>
-      _$StoryUserItemFromJson(json);
-}
-
-@freezed
 class StoryItem with _$StoryItem {
   const factory StoryItem({
+    @JsonKey(name: '_id') required String id,
     required StoryAssetItem asset,
-    required StoryUserItem user,
     required bool isViewed,
+    required int? viewCount,
+    @DateTimeConvertor() required DateTime createdAt,
   }) = _StoryItem;
 
   factory StoryItem.fromJson(Map<String, Object?> json) =>
@@ -63,10 +54,37 @@ class StoryItem with _$StoryItem {
 class GetFeedStoriesResponseData with _$GetFeedStoriesResponseData {
   const factory GetFeedStoriesResponseData({
     @JsonKey(name: '_id') required String id,
+    required String username,
+    required String name,
+    required String avatar,
     required List<StoryItem> stories,
     required bool hasPending,
   }) = _GetFeedStoriesResponseData;
 
   factory GetFeedStoriesResponseData.fromJson(Map<String, Object?> json) =>
       _$GetFeedStoriesResponseDataFromJson(json);
+}
+
+@freezed
+class GetStoryViewersResponse with _$GetStoryViewersResponse {
+  const factory GetStoryViewersResponse({
+    required bool success,
+    required List<GetStoryViewersResponseData> data,
+  }) = _GetStoryViewersResponse;
+
+  factory GetStoryViewersResponse.fromJson(Map<String, Object?> json) =>
+      _$GetStoryViewersResponseFromJson(json);
+}
+
+@freezed
+class GetStoryViewersResponseData with _$GetStoryViewersResponseData {
+  const factory GetStoryViewersResponseData({
+    @JsonKey(name: '_id') required String id,
+    required String name,
+    required String username,
+    required String avatar,
+  }) = _GetStoryViewersResponseData;
+
+  factory GetStoryViewersResponseData.fromJson(Map<String, Object?> json) =>
+      _$GetStoryViewersResponseDataFromJson(json);
 }

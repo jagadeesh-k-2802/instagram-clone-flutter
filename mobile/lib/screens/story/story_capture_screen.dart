@@ -1,14 +1,36 @@
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/services/story.dart';
+import 'package:instagram_clone/state/story/feed_stories_provider.dart';
 
-class StoryCaptureScreen extends StatefulWidget {
+class StoryCaptureScreen extends ConsumerStatefulWidget {
   const StoryCaptureScreen({super.key});
 
   @override
-  State<StoryCaptureScreen> createState() => _StoryCaptureScreenState();
+  ConsumerState<StoryCaptureScreen> createState() => _StoryCaptureScreenState();
 }
 
-class _StoryCaptureScreenState extends State<StoryCaptureScreen> {
+class _StoryCaptureScreenState extends ConsumerState<StoryCaptureScreen> {
+  Future<void> onUploadStory(String path) async {
+    try {
+      await StoryService.createStory(localFilePath: path);
+
+      if (!mounted) return;
+
+      ref.read(feedStoriesProvider.notifier).invalidate();
+      context.goNamed(Routes.feed);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Your story has been uploaded')),
+      );
+    } catch (error) {
+      // Do Nothing
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +41,9 @@ class _StoryCaptureScreenState extends State<StoryCaptureScreen> {
             (mediaCapture) {
               if (mediaCapture != null) {
                 mediaCapture.captureRequest.when(single: (single) {
-                  // TODO: Upload Story Image
+                  if (single.file != null && single.file?.path != null) {
+                    onUploadStory(single.file!.path);
+                  }
                 });
               }
             },

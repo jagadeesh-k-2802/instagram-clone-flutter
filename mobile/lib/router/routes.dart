@@ -23,6 +23,7 @@ class Routes {
   static const newStory = "new-story";
   static const storyCapture = "story-capture";
   static const storyDetail = 'story-detail';
+  static const storyUpload = 'story-upload';
   static const profileEdit = "profile-edit";
   static const likedPosts = "liked-posts";
   static const savedPosts = "saved-posts";

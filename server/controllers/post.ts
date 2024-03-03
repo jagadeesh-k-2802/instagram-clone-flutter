@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import path from 'path';
+import { rm } from 'node:fs/promises';
 import ffmpeg from 'fluent-ffmpeg';
 import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
@@ -357,7 +358,7 @@ export const unSavePost = catchAsync(async (req, res, next) => {
 export const deletePost = catchAsync(async (req, res, next) => {
   const user = req.user;
   const postId = req.params.id;
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).lean();
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -366,6 +367,8 @@ export const deletePost = catchAsync(async (req, res, next) => {
     new ErrorResponse('Post not found', 404);
     return;
   }
+
+  const dirPath = post?.assets[0].url.split('/')[0];
 
   // Check for ownership
   if (!post.user === user.id) {
@@ -383,6 +386,11 @@ export const deletePost = catchAsync(async (req, res, next) => {
   } finally {
     session.endSession();
   }
+
+  await rm(path.join(__dirname, `../public/posts/${dirPath}`), {
+    recursive: true,
+    force: true
+  });
 
   res.status(200).json({ success: true, message: 'Post delete succesful' });
 });

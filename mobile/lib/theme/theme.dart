@@ -101,6 +101,17 @@ final secondaryButtonStyle = ElevatedButton.styleFrom(
   ),
 );
 
+final roundedButtonStyle = ElevatedButton.styleFrom(
+  backgroundColor: Colors.white,
+  foregroundColor: Colors.black54,
+  elevation: 0,
+  minimumSize: const Size.fromHeight(45),
+  shape: const RoundedRectangleBorder(
+    side: BorderSide(color: Colors.black26, width: 2.0),
+    borderRadius: BorderRadius.all(Radius.circular(80.0)),
+  ),
+);
+
 // Typography
 TextStyle? headlineLargeBold(BuildContext context) {
   return Theme.of(context)

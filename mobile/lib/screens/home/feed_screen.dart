@@ -125,6 +125,8 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   Widget buildStoriesList() {
+    var storiesList = ref.watch(feedStoriesProvider).records;
+
     return SizedBox(
       height: 120,
       width: double.maxFinite,
@@ -133,7 +135,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         limit: 20,
         provider: feedStoriesProvider,
         itemBuilder: (context, item, index) {
-          return StoryItem(story: item);
+          return StoryItem(story: item, index: index, storiesList: storiesList);
         },
         noItemsFoundIndicatorBuilder: (context, controller) {
           return Container();
@@ -151,12 +153,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: NestedScrollView(
-        floatHeaderSlivers: true,
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
               automaticallyImplyLeading: false,
-              floating: true,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,

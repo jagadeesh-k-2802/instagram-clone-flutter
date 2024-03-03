@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/feed-stories', protect, storyController.getFeedStories);
 router.get('/user/:id', protect, storyController.getUserStories);
 router.post('/', protect, storyController.createStory);
-router.get('/view/:id', protect, storyController.viewStory);
+router.post('/view/:id', protect, storyController.viewStory);
 router.get('/viewers/:id', protect, storyController.getViewers);
 router.delete('/:id', protect, storyController.deleteStory);
 

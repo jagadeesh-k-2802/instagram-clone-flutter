@@ -29,6 +29,7 @@ import 'package:instagram_clone/screens/auth/signup_screen.dart';
 import 'package:instagram_clone/screens/auth/forgot_password_screen.dart';
 import 'package:instagram_clone/screens/home/home_screen.dart';
 import 'package:instagram_clone/screens/story/story_detail_screen.dart';
+import 'package:instagram_clone/screens/story/story_upload_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -225,7 +226,14 @@ final List<RouteBase> _routes = [
     name: Routes.storyDetail,
     path: '/${Routes.storyDetail}',
     pageBuilder: (context, state) => NoTransitionPage(
-      child: StoryDetailScreen(data: state.extra),
+      child: StoryDetailScreen(args: state.extra),
+    ),
+  ),
+  GoRoute(
+    name: Routes.storyUpload,
+    path: '/${Routes.storyUpload}',
+    pageBuilder: (context, state) => NoTransitionPage(
+      child: StoryUploadScreen(data: state.extra),
     ),
   ),
   GoRoute(

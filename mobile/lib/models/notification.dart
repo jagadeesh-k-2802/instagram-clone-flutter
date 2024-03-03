@@ -52,6 +52,7 @@ class GetNotificationsResponseData with _$GetNotificationsResponseData {
     required String content,
     required NotificationData? data,
     required NotificationType type,
+    @DateTimeConvertor() required DateTime createdAt,
     @DateTimeConvertor() required DateTime updatedAt,
   }) = _GetNotificationsResponseData;
 

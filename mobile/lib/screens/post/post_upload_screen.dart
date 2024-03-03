@@ -157,7 +157,11 @@ class _PostUploadScreenState extends ConsumerState<PostUploadScreen> {
                     );
                   }
 
-                  return AssetEntityImage(item, fit: BoxFit.fitHeight);
+                  return AssetEntityImage(
+                    item,
+                    isOriginal: true,
+                    fit: BoxFit.cover,
+                  );
                 },
               ),
             ),

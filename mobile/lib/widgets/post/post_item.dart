@@ -249,7 +249,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
 
                         return CachedNetworkImage(
                           imageUrl: '$apiUrl/posts/${item.url}',
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                         );
                       },
                     ),

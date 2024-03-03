@@ -565,6 +565,8 @@ mixin _$GetNotificationsResponseData {
   NotificationData? get data => throw _privateConstructorUsedError;
   NotificationType get type => throw _privateConstructorUsedError;
   @DateTimeConvertor()
+  DateTime get createdAt => throw _privateConstructorUsedError;
+  @DateTimeConvertor()
   DateTime get updatedAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -586,6 +588,7 @@ abstract class $GetNotificationsResponseDataCopyWith<$Res> {
       String content,
       NotificationData? data,
       NotificationType type,
+      @DateTimeConvertor() DateTime createdAt,
       @DateTimeConvertor() DateTime updatedAt});
 
   $NotificationDataCopyWith<$Res>? get data;
@@ -609,6 +612,7 @@ class _$GetNotificationsResponseDataCopyWithImpl<$Res,
     Object? content = null,
     Object? data = freezed,
     Object? type = null,
+    Object? createdAt = null,
     Object? updatedAt = null,
   }) {
     return _then(_value.copyWith(
@@ -628,6 +632,10 @@ class _$GetNotificationsResponseDataCopyWithImpl<$Res,
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as NotificationType,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -662,6 +670,7 @@ abstract class _$$GetNotificationsResponseDataImplCopyWith<$Res>
       String content,
       NotificationData? data,
       NotificationType type,
+      @DateTimeConvertor() DateTime createdAt,
       @DateTimeConvertor() DateTime updatedAt});
 
   @override
@@ -685,6 +694,7 @@ class __$$GetNotificationsResponseDataImplCopyWithImpl<$Res>
     Object? content = null,
     Object? data = freezed,
     Object? type = null,
+    Object? createdAt = null,
     Object? updatedAt = null,
   }) {
     return _then(_$GetNotificationsResponseDataImpl(
@@ -704,6 +714,10 @@ class __$$GetNotificationsResponseDataImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as NotificationType,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       updatedAt: null == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -721,6 +735,7 @@ class _$GetNotificationsResponseDataImpl
       required this.content,
       required this.data,
       required this.type,
+      @DateTimeConvertor() required this.createdAt,
       @DateTimeConvertor() required this.updatedAt});
 
   factory _$GetNotificationsResponseDataImpl.fromJson(
@@ -737,11 +752,14 @@ class _$GetNotificationsResponseDataImpl
   final NotificationType type;
   @override
   @DateTimeConvertor()
+  final DateTime createdAt;
+  @override
+  @DateTimeConvertor()
   final DateTime updatedAt;
 
   @override
   String toString() {
-    return 'GetNotificationsResponseData(id: $id, content: $content, data: $data, type: $type, updatedAt: $updatedAt)';
+    return 'GetNotificationsResponseData(id: $id, content: $content, data: $data, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -753,6 +771,8 @@ class _$GetNotificationsResponseDataImpl
             (identical(other.content, content) || other.content == content) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt));
   }
@@ -760,7 +780,7 @@ class _$GetNotificationsResponseDataImpl
   @JsonKey(ignore: true)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, content, data, type, updatedAt);
+      Object.hash(runtimeType, id, content, data, type, createdAt, updatedAt);
 
   @JsonKey(ignore: true)
   @override
@@ -785,6 +805,7 @@ abstract class _GetNotificationsResponseData
           required final String content,
           required final NotificationData? data,
           required final NotificationType type,
+          @DateTimeConvertor() required final DateTime createdAt,
           @DateTimeConvertor() required final DateTime updatedAt}) =
       _$GetNotificationsResponseDataImpl;
 
@@ -799,6 +820,9 @@ abstract class _GetNotificationsResponseData
   NotificationData? get data;
   @override
   NotificationType get type;
+  @override
+  @DateTimeConvertor()
+  DateTime get createdAt;
   @override
   @DateTimeConvertor()
   DateTime get updatedAt;

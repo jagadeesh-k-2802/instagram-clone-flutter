@@ -21,7 +21,7 @@ export const getNotifications = catchAsync(async (req, res) => {
   const notifications = await Notification.find({ user })
     .skip(skip)
     .limit(limit)
-    .select('id content data type updatedAt')
+    .select('id content data type createdAt updatedAt')
     .populate('data.user', 'id avatar name username')
     .sort({ createdAt: -1 });
 

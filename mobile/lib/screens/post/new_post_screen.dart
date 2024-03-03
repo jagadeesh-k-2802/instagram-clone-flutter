@@ -168,6 +168,14 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
     TextTheme textTheme = Theme.of(context).textTheme;
     final gallery = ref.watch(localGalleryProvider);
 
+    if (permissionState == PermissionState.restricted) {
+      return const Scaffold(
+        body: Center(
+          child: Text('Please give permission to access photos and videos'),
+        ),
+      );
+    }
+
     return Scaffold(
       floatingActionButton: buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -194,57 +202,65 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                 ),
               ],
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(250),
-                child: gallery.records?[0] != null
-                    ? SizedBox(
-                        height: 250,
-                        child: AssetEntityImage(
-                          selectedImage != null
-                              ? selectedImage!
-                              : gallery.records![0],
-                          isOriginal: false,
-                          thumbnailFormat: ThumbnailFormat.jpeg,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : const CircularProgressIndicator(),
+                preferredSize: const Size.fromHeight(270),
+                child: gallery.records?.isNotEmpty == true
+                    ? gallery.records != null && gallery.records?.first != null
+                        ? Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: SizedBox(
+                              height: 250,
+                              child: AssetEntityImage(
+                                selectedImage != null
+                                    ? selectedImage!
+                                    : gallery.records![0],
+                                isOriginal: true,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                        )
+                        : const CircularProgressIndicator()
+                    : Container(),
               ),
             )
           ];
         },
-        body: RiverPagedBuilder.autoDispose(
-          firstPageKey: 0,
-          limit: 50,
-          provider: localGalleryProvider,
-          pullToRefresh: true,
-          newPageProgressIndicatorBuilder: (
-            context,
-            controller,
-          ) {
-            return Container();
-          },
-          itemBuilder: (context, item, index) {
-            return buildGalleryItem(item, index);
-          },
-          noItemsFoundIndicatorBuilder: (context, controller) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 150,
-                horizontal: 32,
-              ),
-              child: Center(
-                child: Text(
-                  'No photos/videos available',
-                  textAlign: TextAlign.center,
-                  style: textTheme.bodyLarge,
+        body: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: RiverPagedBuilder.autoDispose(
+            firstPageKey: 0,
+            limit: 50,
+            provider: localGalleryProvider,
+            pullToRefresh: true,
+            newPageProgressIndicatorBuilder: (
+              context,
+              controller,
+            ) {
+              return Container();
+            },
+            itemBuilder: (context, item, index) {
+              return buildGalleryItem(item, index);
+            },
+            noItemsFoundIndicatorBuilder: (context, controller) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 150,
+                  horizontal: 32,
                 ),
-              ),
-            );
-          },
-          pagedBuilder: (controller, builder) => PagedGridView(
-            pagingController: controller,
-            builderDelegate: builder,
-            gridDelegate: photoGridDelegate,
+                child: Center(
+                  child: Text(
+                    'No photos/videos available',
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyLarge,
+                  ),
+                ),
+              );
+            },
+            pagedBuilder: (controller, builder) => PagedGridView(
+              pagingController: controller,
+              builderDelegate: builder,
+              gridDelegate: photoGridDelegate,
+            ),
           ),
         ),
       ),

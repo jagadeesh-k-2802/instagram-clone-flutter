@@ -527,188 +527,19 @@ abstract class _StoryAssetItem implements StoryAssetItem {
       throw _privateConstructorUsedError;
 }
 
-StoryUserItem _$StoryUserItemFromJson(Map<String, dynamic> json) {
-  return _StoryUserItem.fromJson(json);
-}
-
-/// @nodoc
-mixin _$StoryUserItem {
-  String get name => throw _privateConstructorUsedError;
-  String get username => throw _privateConstructorUsedError;
-  String get avatar => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $StoryUserItemCopyWith<StoryUserItem> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $StoryUserItemCopyWith<$Res> {
-  factory $StoryUserItemCopyWith(
-          StoryUserItem value, $Res Function(StoryUserItem) then) =
-      _$StoryUserItemCopyWithImpl<$Res, StoryUserItem>;
-  @useResult
-  $Res call({String name, String username, String avatar});
-}
-
-/// @nodoc
-class _$StoryUserItemCopyWithImpl<$Res, $Val extends StoryUserItem>
-    implements $StoryUserItemCopyWith<$Res> {
-  _$StoryUserItemCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? username = null,
-    Object? avatar = null,
-  }) {
-    return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: null == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$StoryUserItemImplCopyWith<$Res>
-    implements $StoryUserItemCopyWith<$Res> {
-  factory _$$StoryUserItemImplCopyWith(
-          _$StoryUserItemImpl value, $Res Function(_$StoryUserItemImpl) then) =
-      __$$StoryUserItemImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String name, String username, String avatar});
-}
-
-/// @nodoc
-class __$$StoryUserItemImplCopyWithImpl<$Res>
-    extends _$StoryUserItemCopyWithImpl<$Res, _$StoryUserItemImpl>
-    implements _$$StoryUserItemImplCopyWith<$Res> {
-  __$$StoryUserItemImplCopyWithImpl(
-      _$StoryUserItemImpl _value, $Res Function(_$StoryUserItemImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? username = null,
-    Object? avatar = null,
-  }) {
-    return _then(_$StoryUserItemImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      username: null == username
-          ? _value.username
-          : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      avatar: null == avatar
-          ? _value.avatar
-          : avatar // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$StoryUserItemImpl implements _StoryUserItem {
-  const _$StoryUserItemImpl(
-      {required this.name, required this.username, required this.avatar});
-
-  factory _$StoryUserItemImpl.fromJson(Map<String, dynamic> json) =>
-      _$$StoryUserItemImplFromJson(json);
-
-  @override
-  final String name;
-  @override
-  final String username;
-  @override
-  final String avatar;
-
-  @override
-  String toString() {
-    return 'StoryUserItem(name: $name, username: $username, avatar: $avatar)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$StoryUserItemImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.username, username) ||
-                other.username == username) &&
-            (identical(other.avatar, avatar) || other.avatar == avatar));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, name, username, avatar);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$StoryUserItemImplCopyWith<_$StoryUserItemImpl> get copyWith =>
-      __$$StoryUserItemImplCopyWithImpl<_$StoryUserItemImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$StoryUserItemImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _StoryUserItem implements StoryUserItem {
-  const factory _StoryUserItem(
-      {required final String name,
-      required final String username,
-      required final String avatar}) = _$StoryUserItemImpl;
-
-  factory _StoryUserItem.fromJson(Map<String, dynamic> json) =
-      _$StoryUserItemImpl.fromJson;
-
-  @override
-  String get name;
-  @override
-  String get username;
-  @override
-  String get avatar;
-  @override
-  @JsonKey(ignore: true)
-  _$$StoryUserItemImplCopyWith<_$StoryUserItemImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
 StoryItem _$StoryItemFromJson(Map<String, dynamic> json) {
   return _StoryItem.fromJson(json);
 }
 
 /// @nodoc
 mixin _$StoryItem {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
   StoryAssetItem get asset => throw _privateConstructorUsedError;
-  StoryUserItem get user => throw _privateConstructorUsedError;
   bool get isViewed => throw _privateConstructorUsedError;
+  int? get viewCount => throw _privateConstructorUsedError;
+  @DateTimeConvertor()
+  DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -721,10 +552,14 @@ abstract class $StoryItemCopyWith<$Res> {
   factory $StoryItemCopyWith(StoryItem value, $Res Function(StoryItem) then) =
       _$StoryItemCopyWithImpl<$Res, StoryItem>;
   @useResult
-  $Res call({StoryAssetItem asset, StoryUserItem user, bool isViewed});
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      StoryAssetItem asset,
+      bool isViewed,
+      int? viewCount,
+      @DateTimeConvertor() DateTime createdAt});
 
   $StoryAssetItemCopyWith<$Res> get asset;
-  $StoryUserItemCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -740,23 +575,33 @@ class _$StoryItemCopyWithImpl<$Res, $Val extends StoryItem>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? asset = null,
-    Object? user = null,
     Object? isViewed = null,
+    Object? viewCount = freezed,
+    Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       asset: null == asset
           ? _value.asset
           : asset // ignore: cast_nullable_to_non_nullable
               as StoryAssetItem,
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as StoryUserItem,
       isViewed: null == isViewed
           ? _value.isViewed
           : isViewed // ignore: cast_nullable_to_non_nullable
               as bool,
+      viewCount: freezed == viewCount
+          ? _value.viewCount
+          : viewCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ) as $Val);
   }
 
@@ -765,14 +610,6 @@ class _$StoryItemCopyWithImpl<$Res, $Val extends StoryItem>
   $StoryAssetItemCopyWith<$Res> get asset {
     return $StoryAssetItemCopyWith<$Res>(_value.asset, (value) {
       return _then(_value.copyWith(asset: value) as $Val);
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $StoryUserItemCopyWith<$Res> get user {
-    return $StoryUserItemCopyWith<$Res>(_value.user, (value) {
-      return _then(_value.copyWith(user: value) as $Val);
     });
   }
 }
@@ -785,12 +622,15 @@ abstract class _$$StoryItemImplCopyWith<$Res>
       __$$StoryItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({StoryAssetItem asset, StoryUserItem user, bool isViewed});
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      StoryAssetItem asset,
+      bool isViewed,
+      int? viewCount,
+      @DateTimeConvertor() DateTime createdAt});
 
   @override
   $StoryAssetItemCopyWith<$Res> get asset;
-  @override
-  $StoryUserItemCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -804,23 +644,33 @@ class __$$StoryItemImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? asset = null,
-    Object? user = null,
     Object? isViewed = null,
+    Object? viewCount = freezed,
+    Object? createdAt = null,
   }) {
     return _then(_$StoryItemImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
       asset: null == asset
           ? _value.asset
           : asset // ignore: cast_nullable_to_non_nullable
               as StoryAssetItem,
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as StoryUserItem,
       isViewed: null == isViewed
           ? _value.isViewed
           : isViewed // ignore: cast_nullable_to_non_nullable
               as bool,
+      viewCount: freezed == viewCount
+          ? _value.viewCount
+          : viewCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
     ));
   }
 }
@@ -829,21 +679,31 @@ class __$$StoryItemImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$StoryItemImpl implements _StoryItem {
   const _$StoryItemImpl(
-      {required this.asset, required this.user, required this.isViewed});
+      {@JsonKey(name: '_id') required this.id,
+      required this.asset,
+      required this.isViewed,
+      required this.viewCount,
+      @DateTimeConvertor() required this.createdAt});
 
   factory _$StoryItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoryItemImplFromJson(json);
 
   @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
   final StoryAssetItem asset;
   @override
-  final StoryUserItem user;
-  @override
   final bool isViewed;
+  @override
+  final int? viewCount;
+  @override
+  @DateTimeConvertor()
+  final DateTime createdAt;
 
   @override
   String toString() {
-    return 'StoryItem(asset: $asset, user: $user, isViewed: $isViewed)';
+    return 'StoryItem(id: $id, asset: $asset, isViewed: $isViewed, viewCount: $viewCount, createdAt: $createdAt)';
   }
 
   @override
@@ -851,15 +711,20 @@ class _$StoryItemImpl implements _StoryItem {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$StoryItemImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.asset, asset) || other.asset == asset) &&
-            (identical(other.user, user) || other.user == user) &&
             (identical(other.isViewed, isViewed) ||
-                other.isViewed == isViewed));
+                other.isViewed == isViewed) &&
+            (identical(other.viewCount, viewCount) ||
+                other.viewCount == viewCount) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, asset, user, isViewed);
+  int get hashCode =>
+      Object.hash(runtimeType, id, asset, isViewed, viewCount, createdAt);
 
   @JsonKey(ignore: true)
   @override
@@ -877,19 +742,28 @@ class _$StoryItemImpl implements _StoryItem {
 
 abstract class _StoryItem implements StoryItem {
   const factory _StoryItem(
-      {required final StoryAssetItem asset,
-      required final StoryUserItem user,
-      required final bool isViewed}) = _$StoryItemImpl;
+          {@JsonKey(name: '_id') required final String id,
+          required final StoryAssetItem asset,
+          required final bool isViewed,
+          required final int? viewCount,
+          @DateTimeConvertor() required final DateTime createdAt}) =
+      _$StoryItemImpl;
 
   factory _StoryItem.fromJson(Map<String, dynamic> json) =
       _$StoryItemImpl.fromJson;
 
   @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
   StoryAssetItem get asset;
   @override
-  StoryUserItem get user;
-  @override
   bool get isViewed;
+  @override
+  int? get viewCount;
+  @override
+  @DateTimeConvertor()
+  DateTime get createdAt;
   @override
   @JsonKey(ignore: true)
   _$$StoryItemImplCopyWith<_$StoryItemImpl> get copyWith =>
@@ -905,6 +779,9 @@ GetFeedStoriesResponseData _$GetFeedStoriesResponseDataFromJson(
 mixin _$GetFeedStoriesResponseData {
   @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
   List<StoryItem> get stories => throw _privateConstructorUsedError;
   bool get hasPending => throw _privateConstructorUsedError;
 
@@ -923,6 +800,9 @@ abstract class $GetFeedStoriesResponseDataCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
+      String username,
+      String name,
+      String avatar,
       List<StoryItem> stories,
       bool hasPending});
 }
@@ -942,6 +822,9 @@ class _$GetFeedStoriesResponseDataCopyWithImpl<$Res,
   @override
   $Res call({
     Object? id = null,
+    Object? username = null,
+    Object? name = null,
+    Object? avatar = null,
     Object? stories = null,
     Object? hasPending = null,
   }) {
@@ -949,6 +832,18 @@ class _$GetFeedStoriesResponseDataCopyWithImpl<$Res,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
               as String,
       stories: null == stories
           ? _value.stories
@@ -973,6 +868,9 @@ abstract class _$$GetFeedStoriesResponseDataImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: '_id') String id,
+      String username,
+      String name,
+      String avatar,
       List<StoryItem> stories,
       bool hasPending});
 }
@@ -991,6 +889,9 @@ class __$$GetFeedStoriesResponseDataImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? username = null,
+    Object? name = null,
+    Object? avatar = null,
     Object? stories = null,
     Object? hasPending = null,
   }) {
@@ -998,6 +899,18 @@ class __$$GetFeedStoriesResponseDataImplCopyWithImpl<$Res>
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
               as String,
       stories: null == stories
           ? _value._stories
@@ -1016,6 +929,9 @@ class __$$GetFeedStoriesResponseDataImplCopyWithImpl<$Res>
 class _$GetFeedStoriesResponseDataImpl implements _GetFeedStoriesResponseData {
   const _$GetFeedStoriesResponseDataImpl(
       {@JsonKey(name: '_id') required this.id,
+      required this.username,
+      required this.name,
+      required this.avatar,
       required final List<StoryItem> stories,
       required this.hasPending})
       : _stories = stories;
@@ -1027,6 +943,12 @@ class _$GetFeedStoriesResponseDataImpl implements _GetFeedStoriesResponseData {
   @override
   @JsonKey(name: '_id')
   final String id;
+  @override
+  final String username;
+  @override
+  final String name;
+  @override
+  final String avatar;
   final List<StoryItem> _stories;
   @override
   List<StoryItem> get stories {
@@ -1040,7 +962,7 @@ class _$GetFeedStoriesResponseDataImpl implements _GetFeedStoriesResponseData {
 
   @override
   String toString() {
-    return 'GetFeedStoriesResponseData(id: $id, stories: $stories, hasPending: $hasPending)';
+    return 'GetFeedStoriesResponseData(id: $id, username: $username, name: $name, avatar: $avatar, stories: $stories, hasPending: $hasPending)';
   }
 
   @override
@@ -1049,6 +971,10 @@ class _$GetFeedStoriesResponseDataImpl implements _GetFeedStoriesResponseData {
         (other.runtimeType == runtimeType &&
             other is _$GetFeedStoriesResponseDataImpl &&
             (identical(other.id, id) || other.id == id) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
             const DeepCollectionEquality().equals(other._stories, _stories) &&
             (identical(other.hasPending, hasPending) ||
                 other.hasPending == hasPending));
@@ -1056,7 +982,7 @@ class _$GetFeedStoriesResponseDataImpl implements _GetFeedStoriesResponseData {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id,
+  int get hashCode => Object.hash(runtimeType, id, username, name, avatar,
       const DeepCollectionEquality().hash(_stories), hasPending);
 
   @JsonKey(ignore: true)
@@ -1078,6 +1004,9 @@ abstract class _GetFeedStoriesResponseData
     implements GetFeedStoriesResponseData {
   const factory _GetFeedStoriesResponseData(
       {@JsonKey(name: '_id') required final String id,
+      required final String username,
+      required final String name,
+      required final String avatar,
       required final List<StoryItem> stories,
       required final bool hasPending}) = _$GetFeedStoriesResponseDataImpl;
 
@@ -1088,11 +1017,403 @@ abstract class _GetFeedStoriesResponseData
   @JsonKey(name: '_id')
   String get id;
   @override
+  String get username;
+  @override
+  String get name;
+  @override
+  String get avatar;
+  @override
   List<StoryItem> get stories;
   @override
   bool get hasPending;
   @override
   @JsonKey(ignore: true)
   _$$GetFeedStoriesResponseDataImplCopyWith<_$GetFeedStoriesResponseDataImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetStoryViewersResponse _$GetStoryViewersResponseFromJson(
+    Map<String, dynamic> json) {
+  return _GetStoryViewersResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetStoryViewersResponse {
+  bool get success => throw _privateConstructorUsedError;
+  List<GetStoryViewersResponseData> get data =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetStoryViewersResponseCopyWith<GetStoryViewersResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetStoryViewersResponseCopyWith<$Res> {
+  factory $GetStoryViewersResponseCopyWith(GetStoryViewersResponse value,
+          $Res Function(GetStoryViewersResponse) then) =
+      _$GetStoryViewersResponseCopyWithImpl<$Res, GetStoryViewersResponse>;
+  @useResult
+  $Res call({bool success, List<GetStoryViewersResponseData> data});
+}
+
+/// @nodoc
+class _$GetStoryViewersResponseCopyWithImpl<$Res,
+        $Val extends GetStoryViewersResponse>
+    implements $GetStoryViewersResponseCopyWith<$Res> {
+  _$GetStoryViewersResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_value.copyWith(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetStoryViewersResponseData>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetStoryViewersResponseImplCopyWith<$Res>
+    implements $GetStoryViewersResponseCopyWith<$Res> {
+  factory _$$GetStoryViewersResponseImplCopyWith(
+          _$GetStoryViewersResponseImpl value,
+          $Res Function(_$GetStoryViewersResponseImpl) then) =
+      __$$GetStoryViewersResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({bool success, List<GetStoryViewersResponseData> data});
+}
+
+/// @nodoc
+class __$$GetStoryViewersResponseImplCopyWithImpl<$Res>
+    extends _$GetStoryViewersResponseCopyWithImpl<$Res,
+        _$GetStoryViewersResponseImpl>
+    implements _$$GetStoryViewersResponseImplCopyWith<$Res> {
+  __$$GetStoryViewersResponseImplCopyWithImpl(
+      _$GetStoryViewersResponseImpl _value,
+      $Res Function(_$GetStoryViewersResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? success = null,
+    Object? data = null,
+  }) {
+    return _then(_$GetStoryViewersResponseImpl(
+      success: null == success
+          ? _value.success
+          : success // ignore: cast_nullable_to_non_nullable
+              as bool,
+      data: null == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetStoryViewersResponseData>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetStoryViewersResponseImpl implements _GetStoryViewersResponse {
+  const _$GetStoryViewersResponseImpl(
+      {required this.success,
+      required final List<GetStoryViewersResponseData> data})
+      : _data = data;
+
+  factory _$GetStoryViewersResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetStoryViewersResponseImplFromJson(json);
+
+  @override
+  final bool success;
+  final List<GetStoryViewersResponseData> _data;
+  @override
+  List<GetStoryViewersResponseData> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  @override
+  String toString() {
+    return 'GetStoryViewersResponse(success: $success, data: $data)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetStoryViewersResponseImpl &&
+            (identical(other.success, success) || other.success == success) &&
+            const DeepCollectionEquality().equals(other._data, _data));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, success, const DeepCollectionEquality().hash(_data));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetStoryViewersResponseImplCopyWith<_$GetStoryViewersResponseImpl>
+      get copyWith => __$$GetStoryViewersResponseImplCopyWithImpl<
+          _$GetStoryViewersResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetStoryViewersResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetStoryViewersResponse implements GetStoryViewersResponse {
+  const factory _GetStoryViewersResponse(
+          {required final bool success,
+          required final List<GetStoryViewersResponseData> data}) =
+      _$GetStoryViewersResponseImpl;
+
+  factory _GetStoryViewersResponse.fromJson(Map<String, dynamic> json) =
+      _$GetStoryViewersResponseImpl.fromJson;
+
+  @override
+  bool get success;
+  @override
+  List<GetStoryViewersResponseData> get data;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetStoryViewersResponseImplCopyWith<_$GetStoryViewersResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+GetStoryViewersResponseData _$GetStoryViewersResponseDataFromJson(
+    Map<String, dynamic> json) {
+  return _GetStoryViewersResponseData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GetStoryViewersResponseData {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GetStoryViewersResponseDataCopyWith<GetStoryViewersResponseData>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GetStoryViewersResponseDataCopyWith<$Res> {
+  factory $GetStoryViewersResponseDataCopyWith(
+          GetStoryViewersResponseData value,
+          $Res Function(GetStoryViewersResponseData) then) =
+      _$GetStoryViewersResponseDataCopyWithImpl<$Res,
+          GetStoryViewersResponseData>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar});
+}
+
+/// @nodoc
+class _$GetStoryViewersResponseDataCopyWithImpl<$Res,
+        $Val extends GetStoryViewersResponseData>
+    implements $GetStoryViewersResponseDataCopyWith<$Res> {
+  _$GetStoryViewersResponseDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? username = null,
+    Object? avatar = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GetStoryViewersResponseDataImplCopyWith<$Res>
+    implements $GetStoryViewersResponseDataCopyWith<$Res> {
+  factory _$$GetStoryViewersResponseDataImplCopyWith(
+          _$GetStoryViewersResponseDataImpl value,
+          $Res Function(_$GetStoryViewersResponseDataImpl) then) =
+      __$$GetStoryViewersResponseDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String name,
+      String username,
+      String avatar});
+}
+
+/// @nodoc
+class __$$GetStoryViewersResponseDataImplCopyWithImpl<$Res>
+    extends _$GetStoryViewersResponseDataCopyWithImpl<$Res,
+        _$GetStoryViewersResponseDataImpl>
+    implements _$$GetStoryViewersResponseDataImplCopyWith<$Res> {
+  __$$GetStoryViewersResponseDataImplCopyWithImpl(
+      _$GetStoryViewersResponseDataImpl _value,
+      $Res Function(_$GetStoryViewersResponseDataImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? username = null,
+    Object? avatar = null,
+  }) {
+    return _then(_$GetStoryViewersResponseDataImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetStoryViewersResponseDataImpl
+    implements _GetStoryViewersResponseData {
+  const _$GetStoryViewersResponseDataImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required this.name,
+      required this.username,
+      required this.avatar});
+
+  factory _$GetStoryViewersResponseDataImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$GetStoryViewersResponseDataImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String name;
+  @override
+  final String username;
+  @override
+  final String avatar;
+
+  @override
+  String toString() {
+    return 'GetStoryViewersResponseData(id: $id, name: $name, username: $username, avatar: $avatar)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetStoryViewersResponseDataImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.username, username) ||
+                other.username == username) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, username, avatar);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetStoryViewersResponseDataImplCopyWith<_$GetStoryViewersResponseDataImpl>
+      get copyWith => __$$GetStoryViewersResponseDataImplCopyWithImpl<
+          _$GetStoryViewersResponseDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetStoryViewersResponseDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetStoryViewersResponseData
+    implements GetStoryViewersResponseData {
+  const factory _GetStoryViewersResponseData(
+      {@JsonKey(name: '_id') required final String id,
+      required final String name,
+      required final String username,
+      required final String avatar}) = _$GetStoryViewersResponseDataImpl;
+
+  factory _GetStoryViewersResponseData.fromJson(Map<String, dynamic> json) =
+      _$GetStoryViewersResponseDataImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get name;
+  @override
+  String get username;
+  @override
+  String get avatar;
+  @override
+  @JsonKey(ignore: true)
+  _$$GetStoryViewersResponseDataImplCopyWith<_$GetStoryViewersResponseDataImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

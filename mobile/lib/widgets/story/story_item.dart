@@ -6,15 +6,20 @@ import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/story.dart';
 import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/screens/story/story_detail_screen.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 
 class StoryItem extends ConsumerStatefulWidget {
   final GetFeedStoriesResponseData story;
+  final int index;
+  final List<GetFeedStoriesResponseData>? storiesList;
 
   const StoryItem({
     super.key,
     required this.story,
+    required this.index,
+    required this.storiesList,
   });
 
   @override
@@ -27,7 +32,13 @@ class _StoryItemState extends ConsumerState<StoryItem> {
   }
 
   void navigateToStoryDetail() {
-    context.pushNamed(Routes.storyDetail, extra: widget.story);
+    context.pushNamed(
+      Routes.storyDetail,
+      extra: StoryDetailScreenArgs(
+        initialIndex: widget.index,
+        storiesList: widget.storiesList,
+      ),
+    );
   }
 
   Widget buildPlaceholderStory() {
@@ -73,7 +84,7 @@ class _StoryItemState extends ConsumerState<StoryItem> {
                     child: Align(
                       alignment: Alignment.bottomRight,
                       child: Padding(
-                        padding: EdgeInsets.only(top: 50, left: 54),
+                        padding: EdgeInsets.only(top: 53, left: 53),
                         child: Icon(
                           Icons.add_circle,
                           size: 30,
@@ -118,7 +129,7 @@ class _StoryItemState extends ConsumerState<StoryItem> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: widget.story.hasPending
+                  colors: !isOwner && widget.story.hasPending
                       ? [
                           const Color.fromARGB(255, 249, 206, 52),
                           const Color.fromARGB(255, 238, 42, 123),
@@ -141,8 +152,7 @@ class _StoryItemState extends ConsumerState<StoryItem> {
                         radius: 35,
                         child: ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl:
-                                '$apiUrl/avatar/${widget.story.stories[0].user.avatar}',
+                            imageUrl: '$apiUrl/avatar/${widget.story.avatar}',
                           ),
                         ),
                       ),
@@ -153,7 +163,7 @@ class _StoryItemState extends ConsumerState<StoryItem> {
             ),
             const SizedBox(height: 2.0),
             Text(
-              isOwner ? 'Your Story' : widget.story.stories[0].user.username,
+              isOwner ? 'Your Story' : widget.story.username,
               style: textTheme.labelLarge,
             ),
           ],

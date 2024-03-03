@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { formidable } from 'formidable';
 import { v4 as uuidv4 } from 'uuid';
+import { rm } from 'node:fs/promises';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import { Story } from '@models/Story';
@@ -70,6 +71,9 @@ export const getFeedStories = catchAsync(async (req, res) => {
     {
       $group: {
         _id: '$user._id',
+        username: { $first: '$user.username' },
+        name: { $first: '$user.name' },
+        avatar: { $first: '$user.avatar' },
         stories: { $push: '$$ROOT' }
       }
     },
@@ -81,19 +85,39 @@ export const getFeedStories = catchAsync(async (req, res) => {
     {
       $project: {
         _id: 1,
-        'stories.asset': 1,
-        'stories.createdAt': 1,
-        'stories.isViewed': 1,
-        'stories.user.name': 1,
-        'stories.user.username': 1,
-        'stories.user.avatar': 1,
-        isViewedCount: 1,
+        name: 1,
+        username: 1,
+        avatar: 1,
+        stories: {
+          $map: {
+            input: '$stories',
+            as: 'story',
+            in: {
+              _id: '$$story._id',
+              asset: '$$story.asset',
+              createdAt: '$$story.createdAt',
+              isViewed: '$$story.isViewed',
+              viewCount: {
+                $cond: [
+                  {
+                    $eq: [
+                      '$$story.user._id',
+                      new mongoose.Types.ObjectId(user.id)
+                    ]
+                  },
+                  '$$story.viewCount',
+                  null
+                ]
+              }
+            }
+          }
+        },
         hasPending: 1
       }
     },
     { $skip: skip },
     { $limit: limit },
-    { $sort: { hasPending: 1 } }
+    { $sort: { hasPending: -1 } }
   ]);
 
   const currentUserStories = stories.filter(
@@ -181,6 +205,9 @@ export const getUserStories = catchAsync(async (req, res, next) => {
     {
       $group: {
         _id: '$user._id',
+        username: { $first: '$user.username' },
+        name: { $first: '$user.name' },
+        avatar: { $first: '$user.avatar' },
         stories: { $push: '$$ROOT' }
       }
     },
@@ -192,9 +219,13 @@ export const getUserStories = catchAsync(async (req, res, next) => {
     {
       $project: {
         _id: 1,
+        name: 1,
+        username: 1,
+        avatar: 1,
+        'stories._id': 1,
         'stories.asset': 1,
+        'stories.createdAt': 1,
         'stories.isViewed': 1,
-        isViewedCount: 1,
         hasPending: 1
       }
     }
@@ -221,6 +252,12 @@ export const viewStory = catchAsync(async (req, res, next) => {
   // Check if story exists
   if (!story) {
     next(new ErrorResponse('Story not found', 404));
+    return;
+  }
+
+  // Owner views story
+  if (story.user._id.toString() == user.id) {
+    res.status(200).json({ success: true, message: 'Story viewed' });
     return;
   }
 
@@ -284,7 +321,8 @@ export const getViewers = catchAsync(async (req, res, next) => {
     .limit(limit)
     .sort({ createdAt: -1 });
 
-  res.status(200).json({ success: true, data: viewers });
+  const transformedViewers = viewers.map(elem => elem.user);
+  res.status(200).json({ success: true, data: transformedViewers });
 });
 
 /**
@@ -364,6 +402,8 @@ export const deleteStory = catchAsync(async (req, res, next) => {
     return;
   }
 
+  const dirPath = story?.asset.url.split('/')[0];
+
   // Check for ownership
   if (story.user != user.id) {
     next(new ErrorResponse('Unauthorized Access', 401));
@@ -371,6 +411,11 @@ export const deleteStory = catchAsync(async (req, res, next) => {
   }
 
   await Story.findByIdAndDelete(storyId);
+
+  await rm(path.join(__dirname, `../public/story/${dirPath}`), {
+    recursive: true,
+    force: true
+  });
 
   res.status(200).json({
     success: true,

@@ -68,8 +68,8 @@ class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
     await PhotoManager.requestPermissionExtend();
   }
 
-  void selectImage(AssetEntity index) {
-    // TODO: Upload Story Image/Video
+  void selectImage(AssetEntity item) {
+    context.pushNamed(Routes.storyUpload, extra: item);
   }
 
   Widget buildTopBarItem({
@@ -119,14 +119,6 @@ class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
             onTap: () => ref
                 .read(localGalleryProvider.notifier)
                 .updateRequestType(RequestType.image),
-          ),
-          const SizedBox(width: 12.0),
-          buildTopBarItem(
-            text: 'Videos',
-            icon: Icons.play_circle_filled_rounded,
-            onTap: () => ref
-                .read(localGalleryProvider.notifier)
-                .updateRequestType(RequestType.video),
           ),
         ],
       ),
@@ -186,45 +178,52 @@ class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
               ),
               title: const Text('New Story'),
               bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(120),
-                child: buildTopBarItems(),
+                preferredSize: const Size.fromHeight(135),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: buildTopBarItems(),
+                ),
               ),
             )
           ];
         },
-        body: RiverPagedBuilder.autoDispose(
-          firstPageKey: 0,
-          limit: 50,
-          provider: localGalleryProvider,
-          pullToRefresh: true,
-          newPageProgressIndicatorBuilder: (
-            context,
-            controller,
-          ) {
-            return Container();
-          },
-          itemBuilder: (context, item, index) {
-            return buildGalleryItem(item, index);
-          },
-          noItemsFoundIndicatorBuilder: (context, controller) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 150,
-                horizontal: 32,
-              ),
-              child: Center(
-                child: Text(
-                  'No photos/videos available',
-                  textAlign: TextAlign.center,
-                  style: textTheme.bodyLarge,
+        body: MediaQuery.removePadding(
+          removeTop: true,
+          context: context,
+          child: RiverPagedBuilder.autoDispose(
+            firstPageKey: 0,
+            limit: 50,
+            provider: localGalleryProvider,
+            pullToRefresh: true,
+            newPageProgressIndicatorBuilder: (
+              context,
+              controller,
+            ) {
+              return Container();
+            },
+            itemBuilder: (context, item, index) {
+              return buildGalleryItem(item, index);
+            },
+            noItemsFoundIndicatorBuilder: (context, controller) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 150,
+                  horizontal: 32,
                 ),
-              ),
-            );
-          },
-          pagedBuilder: (controller, builder) => PagedGridView(
-            pagingController: controller,
-            builderDelegate: builder,
-            gridDelegate: photoGridDelegate,
+                child: Center(
+                  child: Text(
+                    'No photos/videos available',
+                    textAlign: TextAlign.center,
+                    style: textTheme.bodyLarge,
+                  ),
+                ),
+              );
+            },
+            pagedBuilder: (controller, builder) => PagedGridView(
+              pagingController: controller,
+              builderDelegate: builder,
+              gridDelegate: photoGridDelegate,
+            ),
           ),
         ),
       ),

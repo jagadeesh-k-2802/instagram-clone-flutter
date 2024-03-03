@@ -66,6 +66,8 @@ _$GetNotificationsResponseDataImpl _$$GetNotificationsResponseDataImplFromJson(
           ? null
           : NotificationData.fromJson(json['data'] as Map<String, dynamic>),
       type: $enumDecode(_$NotificationTypeEnumMap, json['type']),
+      createdAt:
+          const DateTimeConvertor().fromJson(json['createdAt'] as String),
       updatedAt:
           const DateTimeConvertor().fromJson(json['updatedAt'] as String),
     );
@@ -77,6 +79,7 @@ Map<String, dynamic> _$$GetNotificationsResponseDataImplToJson(
       'content': instance.content,
       'data': instance.data,
       'type': _$NotificationTypeEnumMap[instance.type]!,
+      'createdAt': const DateTimeConvertor().toJson(instance.createdAt),
       'updatedAt': const DateTimeConvertor().toJson(instance.updatedAt),
     };
 
