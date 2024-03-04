@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/config/constants.dart';
+import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/profile/follow_detail_screen.dart';
@@ -14,8 +15,10 @@ import 'package:instagram_clone/state/profile/user_provider.dart';
 import 'package:instagram_clone/state/post/user_tagged_posts_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/functions.dart';
+import 'package:instagram_clone/utils/stream_chat.dart';
 import 'package:instagram_clone/widgets/post/post_grid_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class PublicProfileScreen extends ConsumerStatefulWidget {
   final String? profileId;
@@ -33,6 +36,8 @@ class PublicProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
+  StreamChatClient client = StreamChatSingleton.instance!.client;
+
   Future<void> onFollow(GetUserResponseData user) async {
     if (!user.isPrivateAccount) {
       ref.read(globalStateProvider.notifier).incrementFollowingCount();
@@ -75,8 +80,34 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
     }
   }
 
-  void onMessage() {
-    // TODO: Implement Message Screen
+  Future<void> onMessage(GetUserResponseData otherUser) async {
+    UserResponseData? user = ref.read(globalStateProvider).user;
+    final filter = Filter.in_('members', [user!.avatar, otherUser.username]);
+    final prevChannel = await client.queryChannels(filter: filter).last;
+
+    // If already exists return it
+    if (prevChannel.firstOrNull != null) {
+      if (!mounted) return;
+      context.push(Routes.messageDetailPath(prevChannel.first.id ?? ''));
+      return;
+    }
+
+    // Create channel if not exists with user avatars with opposite ids (username)
+    Channel channel = client.channel(
+      'messaging',
+      id: '${user.username}_${otherUser.username}',
+      extraData: {
+        'members': [user.username, otherUser.username],
+        client.state.currentUser!.id: '$apiUrl/avatar/${otherUser.avatar}',
+        otherUser.username: '$apiUrl/avatar/${user.avatar}',
+        '${client.state.currentUser!.id}-name': otherUser.name,
+        '${otherUser.username}-name': user.name,
+      },
+    );
+
+    await channel.create();
+    if (!mounted) return;
+    context.push(Routes.messageDetailPath(channel.id ?? ''));
   }
 
   void navigateToFollowDetail(
@@ -214,7 +245,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: onMessage,
+                    onPressed: () => onMessage(user),
                     style: secondaryButtonStyle,
                     child: const Text('Message'),
                   ),

@@ -97,6 +97,8 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
 
   Future<void> onPostUpload() async {
     final gallery = ref.read(localGalleryProvider);
+    if (gallery.records?.isEmpty == true) return;
+
     selectedImage ??= gallery.records?[0];
     List<AssetEntity> data = [];
 
@@ -165,7 +167,6 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
     final gallery = ref.watch(localGalleryProvider);
 
     if (permissionState == PermissionState.restricted) {
@@ -191,12 +192,15 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
               ),
               title: const Text('New Post'),
               actions: [
-                TextButton(
-                  onPressed: onPostUpload,
-                  child: Text(
-                    'Next',
-                    style: bodyLargeBold(context)?.copyWith(
-                      color: primaryColor,
+                Visibility(
+                  visible: gallery.records?.isNotEmpty == true,
+                  child: TextButton(
+                    onPressed: onPostUpload,
+                    child: Text(
+                      'Next',
+                      style: bodyLargeBold(context)?.copyWith(
+                        color: primaryColor,
+                      ),
                     ),
                   ),
                 ),
@@ -206,8 +210,8 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                 child: gallery.records?.isNotEmpty == true
                     ? gallery.records != null && gallery.records?.first != null
                         ? Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: SizedBox(
+                            padding: const EdgeInsets.only(bottom: 20),
+                            child: SizedBox(
                               height: 250,
                               child: AssetEntityImage(
                                 selectedImage != null
@@ -217,7 +221,7 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                        )
+                          )
                         : const CircularProgressIndicator()
                     : Container(),
               ),
@@ -242,16 +246,12 @@ class _NewPostScreenState extends ConsumerState<NewPostScreen> {
               return buildGalleryItem(item, index);
             },
             noItemsFoundIndicatorBuilder: (context, controller) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 150,
-                  horizontal: 32,
-                ),
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 80, horizontal: 32),
                 child: Center(
                   child: Text(
-                    'No photos/videos available',
+                    'No media available on device',
                     textAlign: TextAlign.center,
-                    style: textTheme.bodyLarge,
                   ),
                 ),
               );

@@ -83,10 +83,6 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
     }
   }
 
-  Future<void> onShare() async {
-    // TODO: Implement OnShare
-  }
-
   Future<void> onSave(String postId) async {
     try {
       ref.read(feedPostsProvider.notifier).savePost(postId);
@@ -142,10 +138,10 @@ class _PostDetailScreenState extends ConsumerState<PostDetailScreen> {
             isSaved: item.isSaved,
             likeCount: item.likeCount,
             commentCount: item.commentCount,
+            createdAt: item.createdAt,
             onLike: () => onLike(item.id),
             onUnLike: () => onUnLike(item.id),
             onComment: (comment) => onComment(item.id, comment),
-            onShare: onShare,
             onSave: () => onSave(item.id),
             onUnsave: () => onUnsave(item.id),
             onDelete: () => onDelete(item.id),

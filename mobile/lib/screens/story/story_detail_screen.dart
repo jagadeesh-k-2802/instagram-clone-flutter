@@ -7,6 +7,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:instagram_clone/config/constants.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/models/story.dart';
+import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/story.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/story/feed_stories_provider.dart';
@@ -153,9 +154,11 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
     } else {
       currentIndex += 1;
 
-      // If last page then pop
+      // If last page and last story then pop
       if (currentPage == (storiesList?.length ?? 0) - 1) {
-        context.pop();
+        if (currentIndex > (story?.stories.length ?? 0) - 1) {
+          context.pop();
+        }
       } else {
         // If last story item move to next page
         if (currentIndex > (story?.stories.length ?? 0) - 1) {
@@ -271,6 +274,16 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: '$apiUrl/avatar/${item.avatar}',
+                  errorWidget: (_, __, ___) {
+                    return Center(
+                      child: Text(
+                        'Something went wrong',
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -355,6 +368,10 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
     );
 
     setState(() => pauseTimer = false);
+  }
+
+  void navigateToUserProfile(String userId) {
+    context.push(Routes.publicProfilePath(userId));
   }
 
   Widget buildStoryDetail() {

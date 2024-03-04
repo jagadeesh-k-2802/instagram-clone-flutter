@@ -22,7 +22,7 @@ class GetCommentsResponseData with _$GetCommentsResponseData {
     required int likeCount,
     required bool isLiked,
     required CommentUser user,
-    @DateTimeConvertor() required String createdAt,
+    @DateTimeConvertor() required DateTime createdAt,
   }) = _GetCommentsResponseData;
 
   factory GetCommentsResponseData.fromJson(Map<String, Object?> json) =>

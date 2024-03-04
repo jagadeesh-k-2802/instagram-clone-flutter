@@ -12,6 +12,7 @@ import 'package:instagram_clone/state/post/comments_provider.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
+import 'package:moment_dart/moment_dart.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
 
 class CommentsModal extends ConsumerStatefulWidget {
@@ -103,18 +104,36 @@ class _CommentsModalState extends ConsumerState<CommentsModal> {
               ),
             ),
             const SizedBox(width: 12.0),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.user.username,
-                  style: bodyLargeBold(context),
-                ),
-                Text(
-                  item.comment,
-                  style: textTheme.bodyMedium,
-                ),
-              ],
+            SizedBox(
+              width: 300,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        item.user.username,
+                        style: bodyLargeBold(context),
+                      ),
+                      const SizedBox(width: 6.0),
+                      Text(
+                        item.createdAt.toMoment().fromNow(
+                              dropPrefixOrSuffix: true,
+                              form: Abbreviation.full,
+                            ),
+                        style: textTheme.labelMedium,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    item.comment,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 5,
+                    softWrap: true,
+                    style: textTheme.bodyMedium,
+                  ),
+                ],
+              ),
             ),
             const Spacer(),
             Column(

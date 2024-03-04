@@ -161,8 +161,6 @@ class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       floatingActionButton: buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -205,16 +203,12 @@ class _NewStoryScreenState extends ConsumerState<NewStoryScreen> {
               return buildGalleryItem(item, index);
             },
             noItemsFoundIndicatorBuilder: (context, controller) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 150,
-                  horizontal: 32,
-                ),
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 80, horizontal: 32),
                 child: Center(
                   child: Text(
-                    'No photos/videos available',
+                    'No media available on device',
                     textAlign: TextAlign.center,
-                    style: textTheme.bodyLarge,
                   ),
                 ),
               );

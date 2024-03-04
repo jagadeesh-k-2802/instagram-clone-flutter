@@ -11,9 +11,11 @@ import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/state/post/comments_provider.dart';
 import 'package:instagram_clone/state/post/feed_posts_provider.dart';
 import 'package:instagram_clone/state/story/feed_stories_provider.dart';
+import 'package:instagram_clone/utils/stream_chat.dart';
 import 'package:instagram_clone/widgets/post/post_item.dart';
 import 'package:instagram_clone/widgets/story/story_item.dart';
 import 'package:riverpod_infinite_scroll/riverpod_infinite_scroll.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -23,13 +25,15 @@ class FeedScreen extends ConsumerStatefulWidget {
 }
 
 class _FeedScreenState extends ConsumerState<FeedScreen> {
+  StreamChatClient? client = StreamChatSingleton.instance?.client;
+
   Future<void> onLike(String postId) async {
     ref.read(feedPostsProvider.notifier).likePost(postId);
 
     try {
       await PostService.likePost(postId: postId);
     } catch (error) {
-      // Do Nothing
+      ref.read(feedPostsProvider.notifier).unLikePost(postId);
     }
   }
 
@@ -39,7 +43,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     try {
       await PostService.unLikePost(postId: postId);
     } catch (error) {
-      // Do Nothing
+      ref.read(feedPostsProvider.notifier).likePost(postId);
     }
   }
 
@@ -47,6 +51,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     try {
       await CommentService.commentOnPost(postId: postId, comment: comment);
       ref.read(commentsProvider(postId).notifier).invalidate();
+      ref.read(feedPostsProvider.notifier).incrementCommentCount(postId);
     } catch (error) {
       if (!mounted) return;
 
@@ -78,16 +83,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Future<void> onCommentDelete(String postId, String commentId) async {
     ref.read(commentsProvider(postId).notifier).deleteComment(commentId);
+    ref.read(feedPostsProvider.notifier).decrementCommentCount(postId);
 
     try {
       await CommentService.deleteComment(commentId: commentId);
     } catch (error) {
       // Do Nothing
     }
-  }
-
-  Future<void> onShare() async {
-    // TODO: Implement OnShare
   }
 
   Future<void> onSave(String postId) async {
@@ -164,11 +166,20 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                   SvgPicture.asset(AssetsConstants.logo),
                   GestureDetector(
                     onTap: () => context.pushNamed(Routes.message),
-                    child: SvgPicture.asset(
-                      AssetsConstants.message,
-                      height: 26,
-                      width: 26,
-                    ),
+                    child: (client?.state.unreadChannels ?? 0) > 0
+                        ? Badge.count(
+                            count: client?.state.unreadChannels ?? 0,
+                            child: SvgPicture.asset(
+                              AssetsConstants.message,
+                              height: 26,
+                              width: 26,
+                            ),
+                          )
+                        : SvgPicture.asset(
+                            AssetsConstants.message,
+                            height: 26,
+                            width: 26,
+                          ),
                   )
                 ],
               ),
@@ -198,10 +209,10 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                 isSaved: item.isSaved,
                 likeCount: item.likeCount,
                 commentCount: item.commentCount,
+                createdAt: item.createdAt,
                 onLike: () => onLike(item.id),
                 onUnLike: () => onUnLike(item.id),
                 onComment: (comment) => onComment(item.id, comment),
-                onShare: onShare,
                 onSave: () => onSave(item.id),
                 onUnsave: () => onUnsave(item.id),
                 onDelete: () => onDelete(item.id),

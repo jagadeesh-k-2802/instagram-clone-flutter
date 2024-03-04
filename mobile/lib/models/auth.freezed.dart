@@ -353,6 +353,7 @@ mixin _$UserResponseData {
   bool get isPrivateAccount => throw _privateConstructorUsedError;
   int get unReadNotificationsCount => throw _privateConstructorUsedError;
   String? get fcmToken => throw _privateConstructorUsedError;
+  String? get streamToken => throw _privateConstructorUsedError;
   int get postCount => throw _privateConstructorUsedError;
   int get followersCount => throw _privateConstructorUsedError;
   int get followingCount => throw _privateConstructorUsedError;
@@ -383,6 +384,7 @@ abstract class $UserResponseDataCopyWith<$Res> {
       bool isPrivateAccount,
       int unReadNotificationsCount,
       String? fcmToken,
+      String? streamToken,
       int postCount,
       int followersCount,
       int followingCount,
@@ -413,6 +415,7 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
     Object? isPrivateAccount = null,
     Object? unReadNotificationsCount = null,
     Object? fcmToken = freezed,
+    Object? streamToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
@@ -463,6 +466,10 @@ class _$UserResponseDataCopyWithImpl<$Res, $Val extends UserResponseData>
           ? _value.fcmToken
           : fcmToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      streamToken: freezed == streamToken
+          ? _value.streamToken
+          : streamToken // ignore: cast_nullable_to_non_nullable
+              as String?,
       postCount: null == postCount
           ? _value.postCount
           : postCount // ignore: cast_nullable_to_non_nullable
@@ -503,6 +510,7 @@ abstract class _$$UserResponseDataImplCopyWith<$Res>
       bool isPrivateAccount,
       int unReadNotificationsCount,
       String? fcmToken,
+      String? streamToken,
       int postCount,
       int followersCount,
       int followingCount,
@@ -531,6 +539,7 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
     Object? isPrivateAccount = null,
     Object? unReadNotificationsCount = null,
     Object? fcmToken = freezed,
+    Object? streamToken = freezed,
     Object? postCount = null,
     Object? followersCount = null,
     Object? followingCount = null,
@@ -581,6 +590,10 @@ class __$$UserResponseDataImplCopyWithImpl<$Res>
           ? _value.fcmToken
           : fcmToken // ignore: cast_nullable_to_non_nullable
               as String?,
+      streamToken: freezed == streamToken
+          ? _value.streamToken
+          : streamToken // ignore: cast_nullable_to_non_nullable
+              as String?,
       postCount: null == postCount
           ? _value.postCount
           : postCount // ignore: cast_nullable_to_non_nullable
@@ -616,6 +629,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       required this.isPrivateAccount,
       required this.unReadNotificationsCount,
       required this.fcmToken,
+      required this.streamToken,
       required this.postCount,
       required this.followersCount,
       required this.followingCount,
@@ -648,6 +662,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
   @override
   final String? fcmToken;
   @override
+  final String? streamToken;
+  @override
   final int postCount;
   @override
   final int followersCount;
@@ -659,7 +675,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
 
   @override
   String toString() {
-    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, isPrivateAccount: $isPrivateAccount, unReadNotificationsCount: $unReadNotificationsCount, fcmToken: $fcmToken, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, createdAt: $createdAt)';
+    return 'UserResponseData(id: $id, avatar: $avatar, name: $name, username: $username, email: $email, gender: $gender, bio: $bio, phone: $phone, isPrivateAccount: $isPrivateAccount, unReadNotificationsCount: $unReadNotificationsCount, fcmToken: $fcmToken, streamToken: $streamToken, postCount: $postCount, followersCount: $followersCount, followingCount: $followingCount, createdAt: $createdAt)';
   }
 
   @override
@@ -683,6 +699,8 @@ class _$UserResponseDataImpl implements _UserResponseData {
                 other.unReadNotificationsCount == unReadNotificationsCount) &&
             (identical(other.fcmToken, fcmToken) ||
                 other.fcmToken == fcmToken) &&
+            (identical(other.streamToken, streamToken) ||
+                other.streamToken == streamToken) &&
             (identical(other.postCount, postCount) ||
                 other.postCount == postCount) &&
             (identical(other.followersCount, followersCount) ||
@@ -708,6 +726,7 @@ class _$UserResponseDataImpl implements _UserResponseData {
       isPrivateAccount,
       unReadNotificationsCount,
       fcmToken,
+      streamToken,
       postCount,
       followersCount,
       followingCount,
@@ -741,6 +760,7 @@ abstract class _UserResponseData implements UserResponseData {
           required final bool isPrivateAccount,
           required final int unReadNotificationsCount,
           required final String? fcmToken,
+          required final String? streamToken,
           required final int postCount,
           required final int followersCount,
           required final int followingCount,
@@ -773,6 +793,8 @@ abstract class _UserResponseData implements UserResponseData {
   int get unReadNotificationsCount;
   @override
   String? get fcmToken;
+  @override
+  String? get streamToken;
   @override
   int get postCount;
   @override

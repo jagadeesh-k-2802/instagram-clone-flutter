@@ -31,7 +31,8 @@ _$GetCommentsResponseDataImpl _$$GetCommentsResponseDataImplFromJson(
       likeCount: json['likeCount'] as int,
       isLiked: json['isLiked'] as bool,
       user: CommentUser.fromJson(json['user'] as Map<String, dynamic>),
-      createdAt: json['createdAt'] as String,
+      createdAt:
+          const DateTimeConvertor().fromJson(json['createdAt'] as String),
     );
 
 Map<String, dynamic> _$$GetCommentsResponseDataImplToJson(
@@ -42,7 +43,7 @@ Map<String, dynamic> _$$GetCommentsResponseDataImplToJson(
       'likeCount': instance.likeCount,
       'isLiked': instance.isLiked,
       'user': instance.user,
-      'createdAt': instance.createdAt,
+      'createdAt': const DateTimeConvertor().toJson(instance.createdAt),
     };
 
 _$CommentUserImpl _$$CommentUserImplFromJson(Map<String, dynamic> json) =>

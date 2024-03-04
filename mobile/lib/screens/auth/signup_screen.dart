@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -80,6 +81,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   Future<void> sendSignupRequest() async {
     if (formKey.currentState?.validate() == false) return;
+    final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
 
     try {
       await AuthService.register(
@@ -91,7 +93,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         gender: selectedGender ?? '',
         password: passwordController.text,
         confirmationCode: confirmationController.text,
-        fcmToken: '',
+        fcmToken: fcmToken,
       );
 
       UserResponse userResponse = await AuthService.getMe();

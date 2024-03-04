@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { formidable } from 'formidable';
+import { StreamChat } from 'stream-chat';
 import { UserType, User } from '@models/User';
 import { Confirmation } from '@models/Confirmations';
 import catchAsync from '@utils/catchAsync';
@@ -88,6 +89,15 @@ export const register = catchAsync(async (req, res, next) => {
     await functions.moveFromTemp(avatarFile, '../public/avatar', filename);
   }
 
+  // Stream Chat Setup
+  const serverClient = StreamChat.getInstance(
+    process.env.STREAM_API_KEY,
+    process.env.STREAM_SECRET
+  );
+
+  const streamToken = serverClient.createToken(username);
+  await serverClient.upsertUsers([{ id: username, role: 'user' }]);
+
   const user = await User.create({
     name,
     username,
@@ -96,7 +106,8 @@ export const register = catchAsync(async (req, res, next) => {
     email,
     gender,
     password,
-    fcmToken
+    fcmToken,
+    streamToken
   });
 
   await Confirmation.deleteOne({

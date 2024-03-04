@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,14 +24,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await FirebaseMessaging.instance.requestPermission(provisional: true);
+    });
+  }
+
   Future<void> sendLoginRequest() async {
     if (formKey.currentState?.validate() == false) return;
+    final fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
 
     try {
       await AuthService.login(
         identifier: emailController.text,
         password: passwordController.text,
-        fcmToken: '',
+        fcmToken: fcmToken,
       );
 
       UserResponse userResponse = await AuthService.getMe();
@@ -89,9 +100,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Center(
               heightFactor: 0,
               child: SizedBox(
-                width: 200,
-                child: SvgPicture.asset(AssetsConstants.logo, height: 200)
-              ),
+                  width: 200,
+                  child: SvgPicture.asset(AssetsConstants.logo, height: 200)),
             ),
             const SizedBox(height: 60),
             Form(

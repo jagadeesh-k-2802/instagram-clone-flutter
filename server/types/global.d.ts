@@ -5,6 +5,9 @@ declare global {
       NODE_ENV: 'development' | 'production';
       PORT?: number;
 
+      STREAM_API_KEY: string;
+      STREAM_SECRET: string;
+
       JWT_SECRET: string;
       JWT_EXPIRE: string;
 

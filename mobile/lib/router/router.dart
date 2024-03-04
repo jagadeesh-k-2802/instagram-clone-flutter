@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/screens/auth/change_password_screen.dart';
+import 'package:instagram_clone/screens/message/message_detail_screen.dart';
+import 'package:instagram_clone/screens/message/message_screen.dart';
 import 'package:instagram_clone/screens/post/post_detail_screen.dart';
 import 'package:instagram_clone/screens/post/post_like_detail_screen.dart';
 import 'package:instagram_clone/screens/settings/account_privacy_screen.dart';
@@ -14,7 +16,6 @@ import 'package:instagram_clone/screens/search/search_detail_screen.dart';
 import 'package:instagram_clone/screens/story/new_story_screen.dart';
 import 'package:instagram_clone/screens/home/notifications_screen.dart';
 import 'package:instagram_clone/screens/home/feed_screen.dart';
-import 'package:instagram_clone/screens/home/message_screen.dart';
 import 'package:instagram_clone/screens/post/new_post_screen.dart';
 import 'package:instagram_clone/screens/post/post_upload_screen.dart';
 import 'package:instagram_clone/screens/profile/profile_edit_screen.dart';
@@ -185,6 +186,15 @@ final List<RouteBase> _routes = [
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return LeftSlideTransition(animation: animation, child: child);
       },
+    ),
+  ),
+  GoRoute(
+    name: Routes.messageDetailPath(''),
+    path: Routes.messageDetailPath(':id'),
+    pageBuilder: (context, state) => NoTransitionPage(
+      child: MessageDetailScreen(
+        channelId: state.pathParameters['id'],
+      ),
     ),
   ),
   GoRoute(

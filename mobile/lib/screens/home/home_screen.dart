@@ -1,13 +1,18 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/config/assets.dart';
 import 'package:instagram_clone/config/constants.dart';
+import 'package:instagram_clone/config/env.dart';
 import 'package:instagram_clone/models/auth.dart';
 import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
+import 'package:instagram_clone/state/notification/notification_provider.dart';
+import 'package:instagram_clone/utils/stream_chat.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -20,6 +25,38 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await FirebaseMessaging.instance.requestPermission(provisional: true);
+
+      // Update state when notification recieved when on foreground
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        ref.read(globalStateProvider.notifier).onNotification();
+        ref.read(notificationsProvider.notifier).invalidate();
+      });
+
+      // Stream SDK
+      if (!mounted) return;
+      UserResponseData? user = ref.read(globalStateProvider).user;
+      StreamChatClient client = StreamChatClient(Environment.streamApiKey);
+      StreamChatSingleton singleton = StreamChatSingleton(client: client);
+
+      await singleton.client.connectUser(
+        User(
+          id: user?.username ?? '',
+          extraData: {
+            'name': user?.name,
+            'image': '$apiUrl/avatar/${user?.avatar}',
+          },
+        ),
+        user?.streamToken ?? '',
+      );
+    });
+  }
+
   void onNavigate(int index) {
     // PostNew Screen
     if (index == 2) {

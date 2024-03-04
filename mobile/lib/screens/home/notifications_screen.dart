@@ -29,6 +29,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }
   }
 
+  void openPostDetail(String? postId) {
+    if (postId != null) {
+      context.push(Routes.postDetailPath(postId));
+    }
+  }
+
   Widget buildInfoType(GetNotificationsResponseData data) {
     TextTheme textTheme = Theme.of(context).textTheme;
 
@@ -38,7 +44,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         vertical: 4.0,
       ),
       child: GestureDetector(
-        onTap: () => openUserProfile(data.data?.user?.id),
+        onTap: () => data.data?.post != null
+            ? openPostDetail(data.data?.post)
+            : openUserProfile(data.data?.user?.id),
         child: Row(
           children: [
             Visibility(
@@ -60,7 +68,16 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data.content, style: textTheme.bodyLarge),
+                      SizedBox(
+                        width: 275,
+                        child: Text(
+                          data.content,
+                          style: textTheme.bodyMedium,
+                          maxLines: 5,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       Text(
                         data.createdAt.toMoment().fromNow(
                               form: Abbreviation.full,
@@ -134,7 +151,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data.content, style: textTheme.bodyLarge),
+                      Text(data.content, style: textTheme.bodyMedium),
                       Text(
                         data.createdAt.toMoment().fromNow(
                               form: Abbreviation.full,

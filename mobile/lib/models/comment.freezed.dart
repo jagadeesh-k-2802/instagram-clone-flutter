@@ -193,7 +193,7 @@ mixin _$GetCommentsResponseData {
   bool get isLiked => throw _privateConstructorUsedError;
   CommentUser get user => throw _privateConstructorUsedError;
   @DateTimeConvertor()
-  String get createdAt => throw _privateConstructorUsedError;
+  DateTime get createdAt => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -213,7 +213,7 @@ abstract class $GetCommentsResponseDataCopyWith<$Res> {
       int likeCount,
       bool isLiked,
       CommentUser user,
-      @DateTimeConvertor() String createdAt});
+      @DateTimeConvertor() DateTime createdAt});
 
   $CommentUserCopyWith<$Res> get user;
 }
@@ -263,7 +263,7 @@ class _$GetCommentsResponseDataCopyWithImpl<$Res,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
     ) as $Val);
   }
 
@@ -291,7 +291,7 @@ abstract class _$$GetCommentsResponseDataImplCopyWith<$Res>
       int likeCount,
       bool isLiked,
       CommentUser user,
-      @DateTimeConvertor() String createdAt});
+      @DateTimeConvertor() DateTime createdAt});
 
   @override
   $CommentUserCopyWith<$Res> get user;
@@ -341,7 +341,7 @@ class __$$GetCommentsResponseDataImplCopyWithImpl<$Res>
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
+              as DateTime,
     ));
   }
 }
@@ -373,7 +373,7 @@ class _$GetCommentsResponseDataImpl implements _GetCommentsResponseData {
   final CommentUser user;
   @override
   @DateTimeConvertor()
-  final String createdAt;
+  final DateTime createdAt;
 
   @override
   String toString() {
@@ -422,7 +422,7 @@ abstract class _GetCommentsResponseData implements GetCommentsResponseData {
           required final int likeCount,
           required final bool isLiked,
           required final CommentUser user,
-          @DateTimeConvertor() required final String createdAt}) =
+          @DateTimeConvertor() required final DateTime createdAt}) =
       _$GetCommentsResponseDataImpl;
 
   factory _GetCommentsResponseData.fromJson(Map<String, dynamic> json) =
@@ -441,7 +441,7 @@ abstract class _GetCommentsResponseData implements GetCommentsResponseData {
   CommentUser get user;
   @override
   @DateTimeConvertor()
-  String get createdAt;
+  DateTime get createdAt;
   @override
   @JsonKey(ignore: true)
   _$$GetCommentsResponseDataImplCopyWith<_$GetCommentsResponseDataImpl>

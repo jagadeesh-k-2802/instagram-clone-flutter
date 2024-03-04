@@ -19,6 +19,26 @@ class Notifier extends PagedNotifier<int, Data> {
           },
         );
 
+  void incrementCommentCount(String postId) {
+    state = state.copyWith(
+      records: state.records?.map((post) {
+        return post.id == postId
+            ? post.copyWith(commentCount: post.commentCount + 1)
+            : post;
+      }).toList(),
+    );
+  }
+
+  void decrementCommentCount(String postId) {
+    state = state.copyWith(
+      records: state.records?.map((post) {
+        return post.id == postId
+            ? post.copyWith(commentCount: post.commentCount - 1)
+            : post;
+      }).toList(),
+    );
+  }
+
   void likePost(String postId) {
     state = state.copyWith(
       records: state.records?.map((post) {

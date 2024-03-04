@@ -136,8 +136,8 @@ class _StoryItemState extends ConsumerState<StoryItem> {
                           const Color.fromARGB(255, 98, 40, 215),
                         ]
                       : [
-                          const Color.fromARGB(255, 215, 215, 215),
-                          const Color.fromARGB(255, 215, 215, 215),
+                          const Color.fromARGB(255, 176, 176, 176),
+                          const Color.fromARGB(255, 199, 199, 199),
                         ],
                   begin: Alignment.bottomLeft,
                   end: Alignment.topRight,

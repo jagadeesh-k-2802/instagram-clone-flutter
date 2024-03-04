@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 const Color primaryColor = Color(0xff0095f6);
 const Color primaryColorDark = Color(0xff0891f7);
@@ -75,6 +76,16 @@ ThemeData instagramAppTheme = ThemeData(
   dialogTheme: const DialogTheme(
     surfaceTintColor: lightGrayColor,
     backgroundColor: Colors.white,
+  ),
+);
+
+// Stream Chat Theme
+final streamChatTheme = StreamChatThemeData(
+  colorTheme: StreamColorTheme.light(
+    accentPrimary: primaryColor,
+  ),
+  primaryIconTheme: const IconThemeData(
+    color: primaryColor,
   ),
 );
 

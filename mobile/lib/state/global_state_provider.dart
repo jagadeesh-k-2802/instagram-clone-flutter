@@ -59,6 +59,15 @@ class Notifier extends StateNotifier<Data> {
     );
   }
 
+  void onNotification() {
+    state = State(
+      state.user?.copyWith(
+        unReadNotificationsCount:
+            (state.user?.unReadNotificationsCount ?? 0) + 1,
+      ),
+    );
+  }
+
   void readNotifications() {
     state = State(state.user?.copyWith(unReadNotificationsCount: 0));
   }

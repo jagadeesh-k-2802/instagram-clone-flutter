@@ -15,6 +15,7 @@ interface User {
   password?: string;
   address: string;
   fcmToken: string;
+  streamToken: string;
   isPrivateAccount: boolean;
   postCount: number;
   followersCount: number;
@@ -76,6 +77,9 @@ const schema = new mongoose.Schema<User, UserModel, UserMethods>(
       select: false
     },
     fcmToken: {
+      type: String
+    },
+    streamToken: {
       type: String
     },
     isPrivateAccount: {

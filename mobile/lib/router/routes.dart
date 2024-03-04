@@ -17,6 +17,7 @@ class Routes {
   static const notifications = "notifications";
   static const profile = "profile";
   static const message = "message";
+  static messageDetailPath(String id) => "/message-detail/$id";
   static const newPost = "new-post";
   static const postUpload = "post-upload";
   static const tagPeople = "tag-people";

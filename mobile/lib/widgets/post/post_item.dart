@@ -14,7 +14,9 @@ import 'package:instagram_clone/theme/theme.dart';
 import 'package:instagram_clone/utils/extensions.dart';
 import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/post/comments_modal.dart';
+import 'package:instagram_clone/widgets/post/post_share_modal.dart';
 import 'package:instagram_clone/widgets/post/video_item.dart';
+import 'package:moment_dart/moment_dart.dart';
 
 class PostItem extends ConsumerStatefulWidget {
   final String id;
@@ -25,11 +27,11 @@ class PostItem extends ConsumerStatefulWidget {
   final bool isSaved;
   final int likeCount;
   final int commentCount;
+  final DateTime createdAt;
 
   final void Function() onLike;
   final void Function() onUnLike;
   final void Function(String comment) onComment;
-  final void Function() onShare;
   final void Function() onSave;
   final void Function() onUnsave;
   final void Function() onDelete;
@@ -47,10 +49,10 @@ class PostItem extends ConsumerStatefulWidget {
     required this.isSaved,
     required this.likeCount,
     required this.commentCount,
+    required this.createdAt,
     required this.onLike,
     required this.onUnLike,
     required this.onComment,
-    required this.onShare,
     required this.onSave,
     required this.onUnsave,
     required this.onDelete,
@@ -63,7 +65,8 @@ class PostItem extends ConsumerStatefulWidget {
   ConsumerState<PostItem> createState() => _PostItemState();
 }
 
-class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMixin {
+class _PostItemState extends ConsumerState<PostItem>
+    with TickerProviderStateMixin {
   bool showFullCaption = false;
   int selectedIndex = 0;
   bool isHeartVisible = false;
@@ -124,6 +127,23 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
           onCommentLike: widget.onCommentLike,
           onCommentUnLike: widget.onCommentUnLike,
           onCommentDelete: widget.onCommentDelete,
+        );
+      },
+    );
+  }
+
+  void showPostShareModal() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      useRootNavigator: true,
+      useSafeArea: true,
+      context: context,
+      constraints: const BoxConstraints(maxHeight: double.infinity),
+      builder: (context) {
+        return PostShareModal(
+          postId: widget.id,
+          assetUrl: widget.assets[0].url,
         );
       },
     );
@@ -247,9 +267,19 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                           );
                         }
 
-                        return CachedNetworkImage(
-                          imageUrl: '$apiUrl/posts/${item.url}',
-                          fit: BoxFit.cover,
+                        return InteractiveViewer(
+                          child: CachedNetworkImage(
+                            imageUrl: '$apiUrl/posts/${item.url}',
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) {
+                              return Center(
+                                child: Text(
+                                  'Something went wrong',
+                                  style: textTheme.bodyLarge,
+                                ),
+                              );
+                            },
+                          ),
                         );
                       },
                     ),
@@ -303,7 +333,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                 ),
                 const SizedBox(width: 16.0),
                 GestureDetector(
-                  onTap: widget.onShare,
+                  onTap: showPostShareModal,
                   child: SvgPicture.asset(
                     AssetsConstants.share,
                     height: 28,
@@ -364,7 +394,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                         style: bodyLargeBold(context),
                         children: [
                           TextSpan(
-                            text: widget.caption,
+                            text: widget.caption.trim(),
                             style: textTheme.bodyMedium,
                           ),
                         ],
@@ -380,7 +410,7 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                                 style: bodyLargeBold(context),
                               ),
                               TextSpan(
-                                text: widget.caption.take(80),
+                                text: widget.caption.take(80).trim(),
                                 style: textTheme.bodyMedium,
                               ),
                               widget.caption.length > 80
@@ -416,6 +446,16 @@ class _PostItemState extends ConsumerState<PostItem> with TickerProviderStateMix
                   style: textTheme.labelLarge?.copyWith(color: Colors.black45),
                 ),
               ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8.0,
+              vertical: 2.0,
+            ),
+            child: Text(
+              widget.createdAt.toMoment().fromNow(),
+              style: textTheme.labelMedium?.copyWith(color: Colors.black45),
             ),
           ),
         ],

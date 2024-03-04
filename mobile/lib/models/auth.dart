@@ -39,6 +39,7 @@ class UserResponseData with _$UserResponseData {
     required bool isPrivateAccount,
     required int unReadNotificationsCount,
     required String? fcmToken,
+    required String? streamToken,
     required int postCount,
     required int followersCount,
     required int followingCount,

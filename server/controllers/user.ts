@@ -4,6 +4,7 @@ import { Post } from '@models/Post';
 import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
 import { Notification, NotificationTypeEnum } from '@models/Notification';
 import catchAsync from '@utils/catchAsync';
+import sendPushNotification from '@utils/sendPushNotfication';
 import ErrorResponse from '@utils/errorResponse';
 
 /**
@@ -152,9 +153,13 @@ export const followUser = catchAsync(async (req, res, next) => {
       type: NotificationTypeEnum.followRequest,
       data: { user }
     });
-  }
 
-  // TODO: Send Push Notification
+    await sendPushNotification({
+      title: 'New follow request',
+      body: `${user.username} sent you follow request`,
+      tokens: [otherUser.fcmToken]
+    });
+  }
 
   try {
     await UserFollows.create({ follower: user.id, followee: followeeId, type });
@@ -162,6 +167,19 @@ export const followUser = catchAsync(async (req, res, next) => {
     if (type === UserFollowsTypeEnum.following) {
       await User.findByIdAndUpdate(user.id, { $inc: { followingCount: 1 } });
       await User.findByIdAndUpdate(followeeId, { $inc: { followersCount: 1 } });
+
+      await Notification.create({
+        content: `${user.username} Started following you`,
+        user: followeeId,
+        data: { user },
+        type: NotificationTypeEnum.info
+      });
+
+      await sendPushNotification({
+        title: 'New follower',
+        body: `${user.username} Started following you`,
+        tokens: [otherUser.fcmToken]
+      });
     }
     await session.commitTransaction();
   } catch (error) {
@@ -427,11 +445,7 @@ export const acceptFollowRequest = catchAsync(async (req, res, next) => {
       { type: UserFollowsTypeEnum.following }
     );
 
-    await Notification.findByIdAndUpdate(notificationId, {
-      content: `${otherUser.username} has started following you`,
-      type: NotificationTypeEnum.info
-    });
-
+    await Notification.findByIdAndDelete(notificationId);
     await User.findByIdAndUpdate(otherUser, { $inc: { followingCount: 1 } });
     await User.findByIdAndUpdate(user, { $inc: { followersCount: 1 } });
     await session.commitTransaction();

@@ -3,9 +3,11 @@ import { Comment } from '@models/Comment';
 import { Post } from '@models/Post';
 import { CommentLikes } from '@models/CommentLikes';
 import { UserType } from '@models/User';
+import { Notification, NotificationTypeEnum } from '@models/Notification';
 import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
 import { zParse } from '@validation/index';
 import * as commentValidation from '@validation/comment';
+import sendPushNotification from '@utils/sendPushNotfication';
 import catchAsync from '@utils/catchAsync';
 import ErrorResponse from '@utils/errorResponse';
 
@@ -135,11 +137,26 @@ export const createCommentOnPost = catchAsync(async (req, res, next) => {
     }
   }
 
-  // TODO: Send Push Notification
-
   try {
     await Comment.create({ comment, user, post: postId });
     await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
+
+    // Don't send notification if owner comments on their own post
+    if (user.id != post.user.toString()) {
+      await Notification.create({
+        content: `${user.username} Commented on your post '${comment}'`,
+        user: post.user,
+        data: { user, post },
+        type: NotificationTypeEnum.info
+      });
+
+      await sendPushNotification({
+        title: 'New comment on your post',
+        body: `${user.username} Commented on your post '${comment}'`,
+        tokens: [post.user.fcmToken]
+      });
+    }
+
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -203,12 +220,36 @@ export const likeComment = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  // TODO: Send Push Notification
+  const comment = await Comment.findById(commentId)
+    .populate<{ user: UserType }>('user')
+    .lean();
+
+  // Check if comment exists
+  if (!comment) {
+    next(new ErrorResponse('Comment no found', 404));
+    return;
+  }
 
   try {
     await CommentLikes.create({ user: user.id, comment: commentId });
     await Comment.findByIdAndUpdate(commentId, { $inc: { likeCount: 1 } });
     await session.commitTransaction();
+
+    // Don't send notification if owner likes their own comment
+    if (user.id != comment.user.toString()) {
+      await Notification.create({
+        content: `${user.username} Liked your comment '${comment.comment}'`,
+        user: comment.user,
+        data: { user, post: comment.post },
+        type: NotificationTypeEnum.info
+      });
+
+      await sendPushNotification({
+        title: 'Your comment got a like',
+        body: `${user.username} Commented on your post '${comment}'`,
+        tokens: [comment.user.fcmToken]
+      });
+    }
   } catch (error) {
     await session.abortTransaction();
     next(error);
@@ -230,8 +271,6 @@ export const unLikeComment = catchAsync(async (req, res, next) => {
   const commentId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
-
-  // TODO: Send Push Notification
 
   try {
     await CommentLikes.deleteOne({ user: user.id, comment: commentId });

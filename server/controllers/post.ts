@@ -7,10 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { AssetType, Post } from '@models/Post';
 import { User, UserType } from '@models/User';
 import { UserFollows, UserFollowsTypeEnum } from '@models/UserFollows';
+import { Notification, NotificationTypeEnum } from '@models/Notification';
 import { PostLikes } from '@models/PostLikes';
 import { PostSaves } from '@models/PostSaves';
 import { zParse } from '@validation/index';
 import catchAsync from '@utils/catchAsync';
+import sendPushNotification from '@utils/sendPushNotfication';
 import ErrorResponse from '@utils/errorResponse';
 import * as functions from '@utils/functions';
 import * as postValidation from '@validation/post';
@@ -190,11 +192,26 @@ export const likePost = catchAsync(async (req, res, next) => {
     }
   }
 
-  // TODO: Send Push Notification
-
   try {
     await PostLikes.create({ user: user.id, post: postId });
     await Post.findByIdAndUpdate(postId, { $inc: { likeCount: 1 } });
+
+    // Don't send notification if owner likes their own post
+    if (user.id != post.user.id.toString()) {
+      await Notification.create({
+        content: `${user.username} Liked your post`,
+        user: post.user,
+        data: { user, post },
+        type: NotificationTypeEnum.info
+      });
+
+      await sendPushNotification({
+        title: 'Your post got a like',
+        body: `${user.username} Liked your post`,
+        tokens: [post.user.fcmToken]
+      });
+    }
+
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();
@@ -238,8 +255,6 @@ export const unLikePost = catchAsync(async (req, res, next) => {
       return;
     }
   }
-
-  // TODO: Send Push Notification
 
   try {
     await PostLikes.deleteOne({ user: user.id, post: postId });
@@ -287,8 +302,6 @@ export const savePost = catchAsync(async (req, res, next) => {
     }
   }
 
-  // TODO: Send Push Notification
-
   try {
     await PostSaves.create({ user: user.id, post: postId });
     await session.commitTransaction();
@@ -335,8 +348,6 @@ export const unSavePost = catchAsync(async (req, res, next) => {
     }
   }
 
-  // TODO: Send Push Notification
-
   try {
     await PostSaves.deleteOne({ user: user.id, post: postId });
     await session.commitTransaction();
@@ -379,6 +390,7 @@ export const deletePost = catchAsync(async (req, res, next) => {
   try {
     await Post.findByIdAndDelete(postId);
     await User.findByIdAndUpdate(user.id, { $inc: { postCount: -1 } });
+    await Notification.deleteMany({ data: { post: postId } });
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();

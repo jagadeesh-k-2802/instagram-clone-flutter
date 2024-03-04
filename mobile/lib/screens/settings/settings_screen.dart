@@ -5,7 +5,9 @@ import 'package:instagram_clone/router/routes.dart';
 import 'package:instagram_clone/services/auth.dart';
 import 'package:instagram_clone/state/global_state_provider.dart';
 import 'package:instagram_clone/theme/theme.dart';
+import 'package:instagram_clone/utils/stream_chat.dart';
 import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +17,8 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  StreamChatClient? client = StreamChatSingleton.instance?.client;
+
   void navigateToChangePassword() {
     context.pushNamed(Routes.changePassword);
   }
@@ -26,6 +30,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> logout() async {
     try {
       await AuthService.logout();
+      await client?.disconnectUser();
       ref.read(globalStateProvider.notifier).setUser(null);
       if (!mounted) return;
       context.goNamed(Routes.login);
