@@ -240,9 +240,9 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
     try {
       ref.read(feedStoriesProvider.notifier).deleteStory(userId, storyId);
       removeStoryFromLocalState(storyId);
+      Navigator.pop(context);
       await StoryService.deleteStory(storyId: storyId);
       if (!mounted) return;
-      Navigator.pop(context);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Your Story has been deleted')),
@@ -274,16 +274,6 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
               child: ClipOval(
                 child: CachedNetworkImage(
                   imageUrl: '$apiUrl/avatar/${item.avatar}',
-                  errorWidget: (_, __, ___) {
-                    return Center(
-                      child: Text(
-                        'Something went wrong',
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-                  },
                 ),
               ),
             ),
@@ -375,6 +365,7 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
   }
 
   Widget buildStoryDetail() {
+    TextTheme textTheme = Theme.of(context).textTheme;
     UserResponseData? userData = ref.read(globalStateProvider).user;
     final storyData = storiesList?[currentPage];
     StoryItem? storyItem = storyData?.stories[currentIndex];
@@ -389,9 +380,26 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
               children: [
                 Positioned.fill(
                   child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Row(
-                      children: buildProgressBars(),
+                    alignment: Alignment.center,
+                    child: GestureDetector(
+                      onTapDown: (details) => onStoryTapDown(
+                        details,
+                        constraints,
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: '$apiUrl/story/${storyItem?.asset.url}',
+                        fit: BoxFit.cover,
+                        errorWidget: (_, __, ___) {
+                          return Center(
+                            child: Text(
+                              'Something went wrong',
+                              style: textTheme.bodyLarge?.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -438,20 +446,6 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
                 ),
                 Positioned.fill(
                   child: Align(
-                    alignment: Alignment.center,
-                    child: GestureDetector(
-                      onTapDown: (details) => onStoryTapDown(
-                        details,
-                        constraints,
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: '$apiUrl/story/${storyItem?.asset.url}',
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -484,6 +478,14 @@ class _StoryDetailScreenState extends ConsumerState<StoryDetailScreen> {
                           ],
                         ),
                       ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Row(
+                      children: buildProgressBars(),
                     ),
                   ),
                 ),

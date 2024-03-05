@@ -448,6 +448,32 @@ export const acceptFollowRequest = catchAsync(async (req, res, next) => {
     await Notification.findByIdAndDelete(notificationId);
     await User.findByIdAndUpdate(otherUser, { $inc: { followingCount: 1 } });
     await User.findByIdAndUpdate(user, { $inc: { followersCount: 1 } });
+
+    await Notification.create({
+      content: `${otherUser.username} Started following you`,
+      data: { user: otherUser },
+      user: user,
+      type: NotificationTypeEnum.info
+    });
+
+    await sendPushNotification({
+      title: 'New follower',
+      body: `${otherUser.username} Started following you`,
+      tokens: [user.fcmToken]
+    });
+
+    await Notification.create({
+      content: `${user.username} accepted your follow request`,
+      data: { user },
+      user: otherUser,
+      type: NotificationTypeEnum.info
+    });
+
+    await sendPushNotification({
+      title: 'Follow request accepted',
+      body: `${user.username} accepted your follow request`,
+      tokens: [otherUser.fcmToken]
+    });
     await session.commitTransaction();
   } catch (error) {
     await session.abortTransaction();

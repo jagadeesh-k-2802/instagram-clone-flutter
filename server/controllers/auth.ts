@@ -11,6 +11,7 @@ import { zParse } from '@validation/index';
 import * as functions from '@utils/functions';
 import * as authValidation from '@validation/auth';
 import { Notification } from '@models/Notification';
+import mongoose from 'mongoose';
 
 /**
  * @route POST /api/auth/login
@@ -95,10 +96,15 @@ export const register = catchAsync(async (req, res, next) => {
     process.env.STREAM_SECRET
   );
 
-  const streamToken = serverClient.createToken(username);
-  await serverClient.upsertUsers([{ id: username, role: 'user' }]);
+  const objectId = new mongoose.Types.ObjectId();
+  const streamToken = serverClient.createToken(objectId.toString());
+
+  await serverClient.upsertUsers([
+    { id: objectId.toString(), name, role: 'user' }
+  ]);
 
   const user = await User.create({
+    _id: objectId,
     name,
     username,
     avatar: filename,
@@ -236,6 +242,16 @@ export const updateDetails = catchAsync(async (req, res) => {
     gender,
     isPrivateAccount
   };
+
+  // Update on Stream Chat
+  const serverClient = StreamChat.getInstance(
+    process.env.STREAM_API_KEY,
+    process.env.STREAM_SECRET
+  );
+
+  await serverClient.upsertUsers([
+    { id: user.id.toString(), name, role: 'user' }
+  ]);
 
   await User.findByIdAndUpdate(user.id, fieldsToUpdate, {
     new: true,

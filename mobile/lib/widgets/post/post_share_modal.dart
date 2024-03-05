@@ -1,16 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/models/post.dart';
 import 'package:instagram_clone/theme/theme.dart';
+import 'package:instagram_clone/utils/extensions.dart';
 import 'package:instagram_clone/utils/stream_chat.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class PostShareModal extends StatefulWidget {
   final String postId;
+  final String caption;
+  final PostUser user;
   final String assetUrl;
 
   const PostShareModal({
     super.key,
     required this.postId,
+    required this.caption,
+    required this.user,
     required this.assetUrl,
   });
 
@@ -47,17 +53,19 @@ class _PostShareModalState extends State<PostShareModal> {
 
   Future<void> onPostShare() async {
     Message message = Message(
-      type: 'post',
       text: '',
       attachments: [
         Attachment(
           type: 'post',
+          title: 'Sent a post by ${widget.user.username}',
+          text: '',
           uploadState: const UploadState.success(),
           extraData: {
-            'id': widget.postId,
+            'postId': widget.postId,
             'url': widget.assetUrl,
+            'caption': widget.caption.take(50),
           },
-        ),
+        )
       ],
     );
 
@@ -87,7 +95,9 @@ class _PostShareModalState extends State<PostShareModal> {
         padding: const EdgeInsets.all(defaultPagePadding),
         child: ElevatedButton(
           onPressed: selectedChannels.isNotEmpty ? onPostShare : null,
-          child: Text('Share (${selectedChannels.length})'),
+          child: Text(
+            'Share ${selectedChannels.isNotEmpty ? '(${selectedChannels.length})' : ''}',
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

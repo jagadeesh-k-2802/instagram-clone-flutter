@@ -15,20 +15,12 @@ import 'package:instagram_clone/utils/extensions.dart';
 import 'package:instagram_clone/widgets/core/clickable_list_item.dart';
 import 'package:instagram_clone/widgets/post/comments_modal.dart';
 import 'package:instagram_clone/widgets/post/post_share_modal.dart';
+import 'package:instagram_clone/widgets/post/tagged_users_modal.dart';
 import 'package:instagram_clone/widgets/post/video_item.dart';
 import 'package:moment_dart/moment_dart.dart';
 
 class PostItem extends ConsumerStatefulWidget {
-  final String id;
-  final List<PostAssetItem> assets;
-  final PostUser user;
-  final String caption;
-  final bool isLiked;
-  final bool isSaved;
-  final int likeCount;
-  final int commentCount;
-  final DateTime createdAt;
-
+  final GetFeedPostsResponseData item;
   final void Function() onLike;
   final void Function() onUnLike;
   final void Function(String comment) onComment;
@@ -41,15 +33,7 @@ class PostItem extends ConsumerStatefulWidget {
 
   const PostItem({
     super.key,
-    required this.id,
-    required this.assets,
-    required this.user,
-    required this.caption,
-    required this.isLiked,
-    required this.isSaved,
-    required this.likeCount,
-    required this.commentCount,
-    required this.createdAt,
+    required this.item,
     required this.onLike,
     required this.onUnLike,
     required this.onComment,
@@ -117,12 +101,13 @@ class _PostItemState extends ConsumerState<PostItem>
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
+      useRootNavigator: true,
       context: context,
       constraints: const BoxConstraints(maxHeight: double.infinity),
       builder: (context) {
         return CommentsModal(
-          id: widget.id,
-          user: widget.user,
+          id: widget.item.id,
+          user: widget.item.user,
           onComment: widget.onComment,
           onCommentLike: widget.onCommentLike,
           onCommentUnLike: widget.onCommentUnLike,
@@ -142,8 +127,26 @@ class _PostItemState extends ConsumerState<PostItem>
       constraints: const BoxConstraints(maxHeight: double.infinity),
       builder: (context) {
         return PostShareModal(
-          postId: widget.id,
-          assetUrl: widget.assets[0].url,
+          postId: widget.item.id,
+          user: widget.item.user,
+          caption: widget.item.caption,
+          assetUrl: widget.item.assets[0].url,
+        );
+      },
+    );
+  }
+
+  void showTaggedUsersModal() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      showDragHandle: true,
+      useRootNavigator: true,
+      useSafeArea: true,
+      context: context,
+      constraints: const BoxConstraints(maxHeight: double.infinity),
+      builder: (context) {
+        return TaggedUsersModal(
+          taggedUsers: widget.item.taggedUsers,
         );
       },
     );
@@ -158,7 +161,7 @@ class _PostItemState extends ConsumerState<PostItem>
     scale = Tween<double>(begin: 1, end: 1.2).animate(controller);
     if (isHeartVisible || !mounted) return;
     setState(() => isHeartVisible = true);
-    if (!widget.isLiked) widget.onLike();
+    if (!widget.item.isLiked) widget.onLike();
     await controller.forward();
     await controller.reverse();
 
@@ -191,7 +194,7 @@ class _PostItemState extends ConsumerState<PostItem>
   List<Widget> buildPageIndicator() {
     List<Widget> list = [];
 
-    for (int i = 0; i < widget.assets.length; i++) {
+    for (int i = 0; i < widget.item.assets.length; i++) {
       list.add(
         i == selectedIndex ? pageIndicator(true) : pageIndicator(false),
       );
@@ -201,14 +204,14 @@ class _PostItemState extends ConsumerState<PostItem>
   }
 
   void navigateToLikedDetail() {
-    context.push(Routes.postLikeDetailPath(widget.id));
+    context.push(Routes.postLikeDetailPath(widget.item.id));
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     UserResponseData? user = ref.read(globalStateProvider).user;
-    bool isOwner = user?.id == widget.user.id;
+    bool isOwner = user?.id == widget.item.user.id;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
@@ -216,7 +219,7 @@ class _PostItemState extends ConsumerState<PostItem>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => openUserProfile(widget.user.id, isOwner),
+            onTap: () => openUserProfile(widget.item.user.id, isOwner),
             child: Row(
               children: [
                 const SizedBox(width: 12.0),
@@ -224,12 +227,12 @@ class _PostItemState extends ConsumerState<PostItem>
                   radius: 22.0,
                   child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: '$apiUrl/avatar/${widget.user.avatar}',
+                      imageUrl: '$apiUrl/avatar/${widget.item.user.avatar}',
                     ),
                   ),
                 ),
                 const SizedBox(width: 12.0),
-                Text(widget.user.username, style: bodyLargeBold(context)),
+                Text(widget.item.user.username, style: bodyLargeBold(context)),
                 const Spacer(),
                 Visibility(
                   visible: isOwner,
@@ -252,13 +255,13 @@ class _PostItemState extends ConsumerState<PostItem>
                     height: 250,
                     width: double.maxFinite,
                     child: PageView.builder(
-                      itemCount: widget.assets.length,
-                      restorationId: widget.id + widget.user.id,
+                      itemCount: widget.item.assets.length,
+                      restorationId: widget.item.id + widget.item.user.id,
                       onPageChanged: (int page) {
                         setState(() => selectedIndex = page);
                       },
                       itemBuilder: (context, index) {
-                        PostAssetItem item = widget.assets[index];
+                        PostAssetItem item = widget.item.assets[index];
 
                         if (item.assetType == 'video') {
                           return VideoItem(
@@ -286,6 +289,27 @@ class _PostItemState extends ConsumerState<PostItem>
                   ),
                 ),
               ),
+              Positioned.fill(
+                child: Visibility(
+                  visible: widget.item.taggedUsers.isNotEmpty,
+                  child: GestureDetector(
+                    onTap: showTaggedUsersModal,
+                    child: const Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 14,
+                        ),
+                        child: Icon(
+                          Icons.account_circle,
+                          color: lightGrayColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               scale != null
                   ? AnimatedOpacity(
                       opacity: isHeartVisible ? 1 : 0,
@@ -309,8 +333,8 @@ class _PostItemState extends ConsumerState<PostItem>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: widget.isLiked ? widget.onUnLike : widget.onLike,
-                  child: widget.isLiked
+                  onTap: widget.item.isLiked ? widget.onUnLike : widget.onLike,
+                  child: widget.item.isLiked
                       ? SvgPicture.asset(
                           AssetsConstants.unlike,
                           height: 28,
@@ -341,7 +365,7 @@ class _PostItemState extends ConsumerState<PostItem>
                   ),
                 ),
                 Visibility(
-                  visible: widget.assets.length > 1,
+                  visible: widget.item.assets.length > 1,
                   child: Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -354,8 +378,8 @@ class _PostItemState extends ConsumerState<PostItem>
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: widget.isSaved ? widget.onUnsave : widget.onSave,
-                  child: widget.isSaved
+                  onTap: widget.item.isSaved ? widget.onUnsave : widget.onSave,
+                  child: widget.item.isSaved
                       ? SvgPicture.asset(
                           AssetsConstants.unsave,
                           height: 28,
@@ -378,23 +402,23 @@ class _PostItemState extends ConsumerState<PostItem>
                 vertical: 4.0,
               ),
               child: Text(
-                '${widget.likeCount} like${widget.likeCount > 1 ? 's' : ''}',
+                '${widget.item.likeCount} like${widget.item.likeCount > 1 ? 's' : ''}',
                 style: bodyLargeBold(context),
               ),
             ),
           ),
           Visibility(
-            visible: widget.caption.isNotEmpty,
+            visible: widget.item.caption.isNotEmpty,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: showFullCaption
                   ? RichText(
                       text: TextSpan(
-                        text: "${widget.user.username} ",
+                        text: "${widget.item.user.username} ",
                         style: bodyLargeBold(context),
                         children: [
                           TextSpan(
-                            text: widget.caption.trim(),
+                            text: widget.item.caption.trim(),
                             style: textTheme.bodyMedium,
                           ),
                         ],
@@ -406,14 +430,14 @@ class _PostItemState extends ConsumerState<PostItem>
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: "${widget.user.username} ",
+                                text: "${widget.item.user.username} ",
                                 style: bodyLargeBold(context),
                               ),
                               TextSpan(
-                                text: widget.caption.take(80).trim(),
+                                text: widget.item.caption.take(80).trim(),
                                 style: textTheme.bodyMedium,
                               ),
-                              widget.caption.length > 80
+                              widget.item.caption.length > 80
                                   ? TextSpan(
                                       text: ' ... more',
                                       style: textTheme.bodyMedium?.copyWith(
@@ -435,14 +459,14 @@ class _PostItemState extends ConsumerState<PostItem>
           GestureDetector(
             onTap: showCommentsModal,
             child: Visibility(
-              visible: widget.commentCount > 0,
+              visible: widget.item.commentCount > 0,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8.0,
                   vertical: 2.0,
                 ),
                 child: Text(
-                  'View all ${widget.commentCount} comment${widget.commentCount > 1 ? 's' : ''}',
+                  'View all ${widget.item.commentCount} comment${widget.item.commentCount > 1 ? 's' : ''}',
                   style: textTheme.labelLarge?.copyWith(color: Colors.black45),
                 ),
               ),
@@ -454,7 +478,7 @@ class _PostItemState extends ConsumerState<PostItem>
               vertical: 2.0,
             ),
             child: Text(
-              widget.createdAt.toMoment().fromNow(),
+              widget.item.createdAt.toMoment().fromNow(),
               style: textTheme.labelMedium?.copyWith(color: Colors.black45),
             ),
           ),

@@ -15,6 +15,31 @@ class Notifier extends PagedNotifier<int, Data> {
               limit: limit,
             );
 
+            if (page == 1) {
+              // Temp item to show stories
+              return [
+                GetFeedPostsResponseData(
+                  id: 'stories-list',
+                  caption: '',
+                  assets: [],
+                  likeCount: 0,
+                  commentCount: 0,
+                  taggedUsers: [],
+                  user: const PostUser(
+                    id: '',
+                    name: '',
+                    avatar: '',
+                    username: '',
+                  ),
+                  isLiked: false,
+                  isSaved: false,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                ),
+                ...posts.data
+              ];
+            }
+
             return posts.data;
           },
         );

@@ -104,36 +104,33 @@ class _CommentsModalState extends ConsumerState<CommentsModal> {
               ),
             ),
             const SizedBox(width: 12.0),
-            SizedBox(
-              width: 300,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        item.user.username,
-                        style: bodyLargeBold(context),
-                      ),
-                      const SizedBox(width: 6.0),
-                      Text(
-                        item.createdAt.toMoment().fromNow(
-                              dropPrefixOrSuffix: true,
-                              form: Abbreviation.full,
-                            ),
-                        style: textTheme.labelMedium,
-                      ),
-                    ],
-                  ),
-                  Text(
-                    item.comment,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5,
-                    softWrap: true,
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      item.user.username,
+                      style: bodyLargeBold(context),
+                    ),
+                    const SizedBox(width: 6.0),
+                    Text(
+                      item.createdAt.toMoment().fromNow(
+                            dropPrefixOrSuffix: true,
+                            form: Abbreviation.full,
+                          ),
+                      style: textTheme.labelMedium,
+                    ),
+                  ],
+                ),
+                Text(
+                  item.comment,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 5,
+                  softWrap: true,
+                  style: textTheme.bodyMedium,
+                ),
+              ],
             ),
             const Spacer(),
             Column(
@@ -175,7 +172,9 @@ class _CommentsModalState extends ConsumerState<CommentsModal> {
             title: const Text('Comments'),
             automaticallyImplyLeading: false,
           ),
-          bottomNavigationBar: Padding(
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [

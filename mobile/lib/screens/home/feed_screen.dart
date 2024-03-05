@@ -142,6 +142,9 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
         noItemsFoundIndicatorBuilder: (context, controller) {
           return Container();
         },
+        newPageProgressIndicatorBuilder: (context, controller) {
+          return Container();
+        },
         pagedBuilder: (controller, builder) => PagedListView(
           pagingController: controller,
           builderDelegate: builder,
@@ -183,10 +186,6 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
                   )
                 ],
               ),
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(115),
-                child: buildStoriesList(),
-              ),
             ),
           ];
         },
@@ -199,17 +198,13 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
             provider: feedPostsProvider,
             pullToRefresh: true,
             itemBuilder: (context, item, index) {
+              if (item.id == 'stories-list') {
+                return buildStoriesList();
+              }
+
               return PostItem(
                 key: Key(item.id),
-                id: item.id,
-                assets: item.assets,
-                user: item.user,
-                caption: item.caption,
-                isLiked: item.isLiked,
-                isSaved: item.isSaved,
-                likeCount: item.likeCount,
-                commentCount: item.commentCount,
-                createdAt: item.createdAt,
+                item: item,
                 onLike: () => onLike(item.id),
                 onUnLike: () => onUnLike(item.id),
                 onComment: (comment) => onComment(item.id, comment),

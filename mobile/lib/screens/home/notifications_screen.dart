@@ -69,7 +69,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: 275,
+                        width: MediaQuery.of(context).size.width / 1.5,
                         child: Text(
                           data.content,
                           style: textTheme.bodyMedium,

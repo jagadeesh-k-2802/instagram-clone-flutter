@@ -52,6 +52,23 @@ Map<String, dynamic> _$$PostAssetItemImplToJson(_$PostAssetItemImpl instance) =>
       'url': instance.url,
     };
 
+_$TaggedUserItemImpl _$$TaggedUserItemImplFromJson(Map<String, dynamic> json) =>
+    _$TaggedUserItemImpl(
+      id: json['_id'] as String,
+      avatar: json['avatar'] as String,
+      name: json['name'] as String,
+      username: json['username'] as String,
+    );
+
+Map<String, dynamic> _$$TaggedUserItemImplToJson(
+        _$TaggedUserItemImpl instance) =>
+    <String, dynamic>{
+      '_id': instance.id,
+      'avatar': instance.avatar,
+      'name': instance.name,
+      'username': instance.username,
+    };
+
 _$GetFeedPostsResponseImpl _$$GetFeedPostsResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$GetFeedPostsResponseImpl(
@@ -77,6 +94,9 @@ _$GetFeedPostsResponseDataImpl _$$GetFeedPostsResponseDataImplFromJson(
       assets: (json['assets'] as List<dynamic>)
           .map((e) => PostAssetItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      taggedUsers: (json['taggedUsers'] as List<dynamic>)
+          .map((e) => TaggedUserItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
       likeCount: json['likeCount'] as int,
       commentCount: json['commentCount'] as int,
       user: PostUser.fromJson(json['user'] as Map<String, dynamic>),
@@ -93,6 +113,7 @@ Map<String, dynamic> _$$GetFeedPostsResponseDataImplToJson(
       '_id': instance.id,
       'caption': instance.caption,
       'assets': instance.assets,
+      'taggedUsers': instance.taggedUsers,
       'likeCount': instance.likeCount,
       'commentCount': instance.commentCount,
       'user': instance.user,

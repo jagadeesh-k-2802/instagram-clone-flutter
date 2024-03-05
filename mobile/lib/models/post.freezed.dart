@@ -516,6 +516,211 @@ abstract class _PostAssetItem implements PostAssetItem {
       throw _privateConstructorUsedError;
 }
 
+TaggedUserItem _$TaggedUserItemFromJson(Map<String, dynamic> json) {
+  return _TaggedUserItem.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TaggedUserItem {
+  @JsonKey(name: '_id')
+  String get id => throw _privateConstructorUsedError;
+  String get avatar => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  String get username => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $TaggedUserItemCopyWith<TaggedUserItem> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TaggedUserItemCopyWith<$Res> {
+  factory $TaggedUserItemCopyWith(
+          TaggedUserItem value, $Res Function(TaggedUserItem) then) =
+      _$TaggedUserItemCopyWithImpl<$Res, TaggedUserItem>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String avatar,
+      String name,
+      String username});
+}
+
+/// @nodoc
+class _$TaggedUserItemCopyWithImpl<$Res, $Val extends TaggedUserItem>
+    implements $TaggedUserItemCopyWith<$Res> {
+  _$TaggedUserItemCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatar = null,
+    Object? name = null,
+    Object? username = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TaggedUserItemImplCopyWith<$Res>
+    implements $TaggedUserItemCopyWith<$Res> {
+  factory _$$TaggedUserItemImplCopyWith(_$TaggedUserItemImpl value,
+          $Res Function(_$TaggedUserItemImpl) then) =
+      __$$TaggedUserItemImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      String avatar,
+      String name,
+      String username});
+}
+
+/// @nodoc
+class __$$TaggedUserItemImplCopyWithImpl<$Res>
+    extends _$TaggedUserItemCopyWithImpl<$Res, _$TaggedUserItemImpl>
+    implements _$$TaggedUserItemImplCopyWith<$Res> {
+  __$$TaggedUserItemImplCopyWithImpl(
+      _$TaggedUserItemImpl _value, $Res Function(_$TaggedUserItemImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? avatar = null,
+    Object? name = null,
+    Object? username = null,
+  }) {
+    return _then(_$TaggedUserItemImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      avatar: null == avatar
+          ? _value.avatar
+          : avatar // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      username: null == username
+          ? _value.username
+          : username // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TaggedUserItemImpl implements _TaggedUserItem {
+  const _$TaggedUserItemImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required this.avatar,
+      required this.name,
+      required this.username});
+
+  factory _$TaggedUserItemImpl.fromJson(Map<String, dynamic> json) =>
+      _$$TaggedUserItemImplFromJson(json);
+
+  @override
+  @JsonKey(name: '_id')
+  final String id;
+  @override
+  final String avatar;
+  @override
+  final String name;
+  @override
+  final String username;
+
+  @override
+  String toString() {
+    return 'TaggedUserItem(id: $id, avatar: $avatar, name: $name, username: $username)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TaggedUserItemImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.avatar, avatar) || other.avatar == avatar) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.username, username) ||
+                other.username == username));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, avatar, name, username);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TaggedUserItemImplCopyWith<_$TaggedUserItemImpl> get copyWith =>
+      __$$TaggedUserItemImplCopyWithImpl<_$TaggedUserItemImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TaggedUserItemImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TaggedUserItem implements TaggedUserItem {
+  const factory _TaggedUserItem(
+      {@JsonKey(name: '_id') required final String id,
+      required final String avatar,
+      required final String name,
+      required final String username}) = _$TaggedUserItemImpl;
+
+  factory _TaggedUserItem.fromJson(Map<String, dynamic> json) =
+      _$TaggedUserItemImpl.fromJson;
+
+  @override
+  @JsonKey(name: '_id')
+  String get id;
+  @override
+  String get avatar;
+  @override
+  String get name;
+  @override
+  String get username;
+  @override
+  @JsonKey(ignore: true)
+  _$$TaggedUserItemImplCopyWith<_$TaggedUserItemImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 GetFeedPostsResponse _$GetFeedPostsResponseFromJson(Map<String, dynamic> json) {
   return _GetFeedPostsResponse.fromJson(json);
 }
@@ -694,6 +899,7 @@ mixin _$GetFeedPostsResponseData {
   String get id => throw _privateConstructorUsedError;
   String get caption => throw _privateConstructorUsedError;
   List<PostAssetItem> get assets => throw _privateConstructorUsedError;
+  List<TaggedUserItem> get taggedUsers => throw _privateConstructorUsedError;
   int get likeCount => throw _privateConstructorUsedError;
   int get commentCount => throw _privateConstructorUsedError;
   PostUser get user => throw _privateConstructorUsedError;
@@ -719,6 +925,7 @@ abstract class $GetFeedPostsResponseDataCopyWith<$Res> {
       {@JsonKey(name: '_id') String id,
       String caption,
       List<PostAssetItem> assets,
+      List<TaggedUserItem> taggedUsers,
       int likeCount,
       int commentCount,
       PostUser user,
@@ -747,6 +954,7 @@ class _$GetFeedPostsResponseDataCopyWithImpl<$Res,
     Object? id = null,
     Object? caption = null,
     Object? assets = null,
+    Object? taggedUsers = null,
     Object? likeCount = null,
     Object? commentCount = null,
     Object? user = null,
@@ -768,6 +976,10 @@ class _$GetFeedPostsResponseDataCopyWithImpl<$Res,
           ? _value.assets
           : assets // ignore: cast_nullable_to_non_nullable
               as List<PostAssetItem>,
+      taggedUsers: null == taggedUsers
+          ? _value.taggedUsers
+          : taggedUsers // ignore: cast_nullable_to_non_nullable
+              as List<TaggedUserItem>,
       likeCount: null == likeCount
           ? _value.likeCount
           : likeCount // ignore: cast_nullable_to_non_nullable
@@ -821,6 +1033,7 @@ abstract class _$$GetFeedPostsResponseDataImplCopyWith<$Res>
       {@JsonKey(name: '_id') String id,
       String caption,
       List<PostAssetItem> assets,
+      List<TaggedUserItem> taggedUsers,
       int likeCount,
       int commentCount,
       PostUser user,
@@ -849,6 +1062,7 @@ class __$$GetFeedPostsResponseDataImplCopyWithImpl<$Res>
     Object? id = null,
     Object? caption = null,
     Object? assets = null,
+    Object? taggedUsers = null,
     Object? likeCount = null,
     Object? commentCount = null,
     Object? user = null,
@@ -870,6 +1084,10 @@ class __$$GetFeedPostsResponseDataImplCopyWithImpl<$Res>
           ? _value._assets
           : assets // ignore: cast_nullable_to_non_nullable
               as List<PostAssetItem>,
+      taggedUsers: null == taggedUsers
+          ? _value._taggedUsers
+          : taggedUsers // ignore: cast_nullable_to_non_nullable
+              as List<TaggedUserItem>,
       likeCount: null == likeCount
           ? _value.likeCount
           : likeCount // ignore: cast_nullable_to_non_nullable
@@ -909,6 +1127,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
       {@JsonKey(name: '_id') required this.id,
       required this.caption,
       required final List<PostAssetItem> assets,
+      required final List<TaggedUserItem> taggedUsers,
       required this.likeCount,
       required this.commentCount,
       required this.user,
@@ -916,7 +1135,8 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
       required this.isSaved,
       @DateTimeConvertor() required this.createdAt,
       required this.updatedAt})
-      : _assets = assets;
+      : _assets = assets,
+        _taggedUsers = taggedUsers;
 
   factory _$GetFeedPostsResponseDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetFeedPostsResponseDataImplFromJson(json);
@@ -932,6 +1152,14 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
     if (_assets is EqualUnmodifiableListView) return _assets;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_assets);
+  }
+
+  final List<TaggedUserItem> _taggedUsers;
+  @override
+  List<TaggedUserItem> get taggedUsers {
+    if (_taggedUsers is EqualUnmodifiableListView) return _taggedUsers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_taggedUsers);
   }
 
   @override
@@ -952,7 +1180,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
 
   @override
   String toString() {
-    return 'GetFeedPostsResponseData(id: $id, caption: $caption, assets: $assets, likeCount: $likeCount, commentCount: $commentCount, user: $user, isLiked: $isLiked, isSaved: $isSaved, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'GetFeedPostsResponseData(id: $id, caption: $caption, assets: $assets, taggedUsers: $taggedUsers, likeCount: $likeCount, commentCount: $commentCount, user: $user, isLiked: $isLiked, isSaved: $isSaved, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -963,6 +1191,8 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.caption, caption) || other.caption == caption) &&
             const DeepCollectionEquality().equals(other._assets, _assets) &&
+            const DeepCollectionEquality()
+                .equals(other._taggedUsers, _taggedUsers) &&
             (identical(other.likeCount, likeCount) ||
                 other.likeCount == likeCount) &&
             (identical(other.commentCount, commentCount) ||
@@ -983,6 +1213,7 @@ class _$GetFeedPostsResponseDataImpl implements _GetFeedPostsResponseData {
       id,
       caption,
       const DeepCollectionEquality().hash(_assets),
+      const DeepCollectionEquality().hash(_taggedUsers),
       likeCount,
       commentCount,
       user,
@@ -1011,6 +1242,7 @@ abstract class _GetFeedPostsResponseData implements GetFeedPostsResponseData {
       {@JsonKey(name: '_id') required final String id,
       required final String caption,
       required final List<PostAssetItem> assets,
+      required final List<TaggedUserItem> taggedUsers,
       required final int likeCount,
       required final int commentCount,
       required final PostUser user,
@@ -1029,6 +1261,8 @@ abstract class _GetFeedPostsResponseData implements GetFeedPostsResponseData {
   String get caption;
   @override
   List<PostAssetItem> get assets;
+  @override
+  List<TaggedUserItem> get taggedUsers;
   @override
   int get likeCount;
   @override

@@ -38,6 +38,19 @@ class PostAssetItem with _$PostAssetItem {
 }
 
 @freezed
+class TaggedUserItem with _$TaggedUserItem {
+  const factory TaggedUserItem({
+    @JsonKey(name: '_id') required String id,
+    required String avatar,
+    required String name,
+    required String username,
+  }) = _TaggedUserItem;
+
+  factory TaggedUserItem.fromJson(Map<String, Object?> json) =>
+      _$TaggedUserItemFromJson(json);
+}
+
+@freezed
 class GetFeedPostsResponse with _$GetFeedPostsResponse {
   const factory GetFeedPostsResponse({
     required bool success,
@@ -54,6 +67,7 @@ class GetFeedPostsResponseData with _$GetFeedPostsResponseData {
     @JsonKey(name: '_id') required String id,
     required String caption,
     required List<PostAssetItem> assets,
+    required List<TaggedUserItem> taggedUsers,
     required int likeCount,
     required int commentCount,
     required PostUser user,
@@ -93,10 +107,9 @@ class GetUsersPostResponse with _$GetUsersPostResponse {
 
 @freezed
 class GetUsersPostResponseData with _$GetUsersPostResponseData {
-  const factory GetUsersPostResponseData({
-    @JsonKey(name: '_id') required String id,
-    required UserPostItem post
-  }) = _GetUsersPostResponseData;
+  const factory GetUsersPostResponseData(
+      {@JsonKey(name: '_id') required String id,
+      required UserPostItem post}) = _GetUsersPostResponseData;
 
   factory GetUsersPostResponseData.fromJson(Map<String, Object?> json) =>
       _$GetUsersPostResponseDataFromJson(json);

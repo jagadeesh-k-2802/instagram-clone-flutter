@@ -82,7 +82,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
 
   Future<void> onMessage(GetUserResponseData otherUser) async {
     UserResponseData? user = ref.read(globalStateProvider).user;
-    final filter = Filter.in_('members', [user!.avatar, otherUser.username]);
+    final filter = Filter.in_('members', [user!.id, otherUser.id]);
     final prevChannel = await client.queryChannels(filter: filter).last;
 
     // If already exists return it
@@ -95,13 +95,13 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
     // Create channel if not exists with user avatars with opposite ids (username)
     Channel channel = client.channel(
       'messaging',
-      id: '${user.username}_${otherUser.username}',
+      id: '${user.id}_${otherUser.id}',
       extraData: {
-        'members': [user.username, otherUser.username],
+        'members': [user.id, otherUser.id],
         client.state.currentUser!.id: '$apiUrl/avatar/${otherUser.avatar}',
-        otherUser.username: '$apiUrl/avatar/${user.avatar}',
+        otherUser.id: '$apiUrl/avatar/${user.avatar}',
         '${client.state.currentUser!.id}-name': otherUser.name,
-        '${otherUser.username}-name': user.name,
+        '${otherUser.id}-name': user.name,
       },
     );
 

@@ -142,7 +142,7 @@ export const createCommentOnPost = catchAsync(async (req, res, next) => {
     await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
 
     // Don't send notification if owner comments on their own post
-    if (user.id != post.user.toString()) {
+    if (user.id != post.user.id.toString()) {
       await Notification.create({
         content: `${user.username} Commented on your post '${comment}'`,
         user: post.user,
@@ -236,7 +236,7 @@ export const likeComment = catchAsync(async (req, res, next) => {
     await session.commitTransaction();
 
     // Don't send notification if owner likes their own comment
-    if (user.id != comment.user.toString()) {
+    if (user.id != comment.user.id.toString()) {
       await Notification.create({
         content: `${user.username} Liked your comment '${comment.comment}'`,
         user: comment.user,

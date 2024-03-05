@@ -1,8 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:instagram_clone/config/constants.dart';
-import 'package:instagram_clone/router/routes.dart';
+import 'package:instagram_clone/screens/post/post_detail_screen.dart';
 import 'package:instagram_clone/utils/stream_chat.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
@@ -23,13 +22,24 @@ class _MessageDetailScreenState extends State<MessageDetailScreen> {
   late final channel = client.channel('messaging', id: widget.channelId);
 
   Widget buildPostMessageItem(MessageDetails details) {
-    String? id = details.message.attachments.first.extraData['id'] as String?;
-    String url = details.message.attachments.first.extraData['url'] as String;
+    Attachment attachment = details.message.attachments.first;
+    String? id = attachment.extraData['postId'] as String?;
+    String url = attachment.extraData['url'] as String;
+    String caption = attachment.extraData['caption'] as String;
     url = '$apiUrl/posts/$url';
     bool isOwner = details.message.user?.id == client.state.currentUser?.id;
 
     return InkWell(
-      onTap: () => context.push(Routes.postDetailPath(id ?? '')),
+      onTap: () {
+        // TEMP FIX: Go Router does not work here
+        Navigator.of(context).push<dynamic>(
+          MaterialPageRoute<dynamic>(
+            builder: (BuildContext context) {
+              return PostDetailScreen(postId: id);
+            },
+          ),
+        );
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Column(
@@ -53,6 +63,12 @@ class _MessageDetailScreenState extends State<MessageDetailScreen> {
                       width: 250,
                     ),
                   ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(caption),
+              ],
+            ),
           ],
         ),
       ),
@@ -119,9 +135,7 @@ class _MessageDetailScreenState extends State<MessageDetailScreen> {
                   },
                 ),
               ),
-              const StreamMessageInput(
-                showCommandsButton: false,
-              ),
+              const StreamMessageInput(showCommandsButton: false),
             ],
           ),
         ),

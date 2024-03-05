@@ -50,9 +50,29 @@ export const getFeedPosts = catchAsync(async (req, res) => {
     },
     { $unwind: '$user' },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'taggedUsers',
+        foreignField: '_id',
+        as: 'taggedUsers'
+      }
+    },
+    {
       $project: {
         _id: 1,
         caption: 1,
+        taggedUsers: {
+          $map: {
+            input: '$taggedUsers',
+            as: 'taggedUser',
+            in: {
+              _id: '$$taggedUser._id',
+              avatar: '$$taggedUser.avatar',
+              username: '$$taggedUser.username',
+              name: '$$taggedUser.name'
+            }
+          }
+        },
         'assets.assetType': 1,
         'assets.url': 1,
         'user._id': 1,
@@ -170,6 +190,7 @@ export const likePost = catchAsync(async (req, res, next) => {
   const postId = req.params.id;
   const session = await mongoose.startSession();
   session.startTransaction();
+
   const post = await Post.findById(postId).populate<{ user: UserType }>('user');
 
   // Check if post exists
@@ -610,18 +631,37 @@ export const getPost = catchAsync(async (req, res, next) => {
     },
     { $unwind: '$user' },
     {
+      $lookup: {
+        from: 'users',
+        localField: 'taggedUsers',
+        foreignField: '_id',
+        as: 'taggedUsers'
+      }
+    },
+    {
       $project: {
         _id: 1,
         caption: 1,
+        taggedUsers: {
+          $map: {
+            input: '$taggedUsers',
+            as: 'taggedUser',
+            in: {
+              _id: '$$taggedUser._id',
+              avatar: '$$taggedUser.avatar',
+              username: '$$taggedUser.username',
+              name: '$$taggedUser.name'
+            }
+          }
+        },
         'assets.assetType': 1,
         'assets.url': 1,
         'user._id': 1,
         'user.name': 1,
         'user.avatar': 1,
         'user.username': 1,
-        'user.isPrivateAccount': 1,
-        commentCount: 1,
         likeCount: 1,
+        commentCount: 1,
         isLiked: 1,
         isSaved: 1,
         createdAt: 1,

@@ -46,7 +46,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
       await singleton.client.connectUser(
         User(
-          id: user?.username ?? '',
+          id: user?.id ?? '',
           extraData: {
             'name': user?.name,
             'image': '$apiUrl/avatar/${user?.avatar}',
