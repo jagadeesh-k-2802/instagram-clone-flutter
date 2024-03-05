@@ -51,33 +51,33 @@ Instagram Clone Mobile Application built with Flutter, Node.js, Express.js, Mong
 
 ## Screenshots 📷
 
-<img src="./images/login.png" width="250" />
-<img src="./images/signup.png" width="250" />
-<img src="./images/forgot_password.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/0ada6226-1768-4cdb-a3a9-ba31154e2f39" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/8adbba29-f984-4c32-998e-d75fe375c5c7" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/dbeaf944-f6ba-4142-99b4-8daf93cd383a" width="250" />
 <br />
-<img src="./images/feed.png" width="250" />
-<img src="./images/story_detail.png" width="250" />
-<img src="./images/messages.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/c5ce11cb-4acb-480b-81c6-87d2be7b1064" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/6485977b-533b-4ed6-aac2-712a1c308fe7" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/70b2d372-d54a-43e5-82c6-ebc45c796f4a" width="250" />
 <br />
-<img src="./images/message_detail.png" width="250" />
-<img src="./images/explore.png" width="250" />
-<img src="./images/search.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/cb4c846d-f821-4972-9ab8-3e6cd72cd1e7" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/9a62107f-1aea-46a7-b0f5-12872160efd2" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/a3398cba-c2a4-4d79-a073-a53986fd93ff" width="250" />
 <br />
-<img src="./images/tagged_users.png" width="250" />
-<img src="./images/comments.png" width="250" />
-<img src="./images/share_post.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/e3953453-716a-4bf2-8b32-388e7a8f4b7c" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/2e303fc0-abb6-457c-a245-2a805a2e7536" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/fcdd449e-bcdb-41ad-ad05-e6a7fe9a121a" width="250" />
 <br />
-<img src="./images/post_upload.png" width="250" />
-<img src="./images/post_uploading.png" width="250" />
-<img src="./images/story_upload.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/0ce98431-977e-476c-932a-35b80a0bc586" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/bbdfd7e6-0edd-4918-84ed-625780c20682" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/e657d156-7c31-4130-a426-ccda920255a5" width="250" />
 <br />
-<img src="./images/notifications.png" width="250" />
-<img src="./images/profile.png" width="250" />
-<img src="./images/followers.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/d9331306-99e8-421d-9129-a920ce7afd43" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/a1a4cffb-acba-4819-922d-8037b3cf4add" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/06fbd3bd-f3a2-446c-ad6f-53c424f0e159" width="250" />
 <br />
-<img src="./images/liked_posts.png" width="250" />
-<img src="./images/saved_posts.png" width="250" />
-<img src="./images/settings.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/dfd1300d-d0d6-41fc-bef9-379b89cd7ada" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/24dbaf50-35f7-4c5f-890f-7460d7265162" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/29ffa396-f435-4f63-9feb-25346a5e9b6c" width="250" />
 <br />
-<img src="./images/change_password.png" width="250" />
-<img src="./images/private_account.png" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/c2e4bf77-01fb-4eec-b697-2b0e84615b4a" width="250" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/32c17d82-e219-47f2-b631-b726bc8bb424" width="250" />
