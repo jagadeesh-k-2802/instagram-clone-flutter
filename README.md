@@ -47,7 +47,7 @@ Instagram Clone Mobile Application built with Flutter, Node.js, Express.js, Mong
 
 ## Database Schema 💾
 
-<img src="./images/db_schema.jpg" width="500" />
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/c0943829-be25-4818-9f0d-bcf3dd04907a" width="500" />
 
 ## Screenshots 📷
 
@@ -81,3 +81,9 @@ Instagram Clone Mobile Application built with Flutter, Node.js, Express.js, Mong
 <br />
 <img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/c2e4bf77-01fb-4eec-b697-2b0e84615b4a" width="250" />
 <img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/32c17d82-e219-47f2-b631-b726bc8bb424" width="250" />
+
+## Screen Record 📽️
+
+https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/67bc255b-cb76-4a6a-96bf-63ec1e95c45b
+
+
