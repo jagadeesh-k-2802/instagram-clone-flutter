@@ -1,6 +1,6 @@
 # Instagram Clone 📸
 
-Instagram Clone Mobile Application built with Flutter, Node.js, Express.js, MongoDB
+<img src="https://github.com/jagadeesh-k-2802/instagram-clone-flutter/assets/63912668/b197374d-82af-4fac-acc5-56c315603cce" width="600" />
 
 ## Technologies ⚙️
 
