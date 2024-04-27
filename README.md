@@ -43,6 +43,7 @@
 - `npm install -g firebase-tools` Install firebase CLI using NPM
 - `cd mobile && flutterfire configure` Configure firebase using your own firebase project
 - Place your stream sdk api key in `./mobile/config/env.example.json`
+- Run this command ```dart run build_runner build``` to generate freezed JSON model files
 - open `./mobile` inside your code editor and run flutter app with the environment json file
 
 ## Database Schema 💾
